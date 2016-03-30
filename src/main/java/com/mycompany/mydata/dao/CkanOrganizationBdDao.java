@@ -22,7 +22,7 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
     public boolean insert(CkanOrganization obj) {
         try {
             conectar();
-            String sql = "INSERT INTO ORGANIZATION values (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO ORGANIZATION values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getApprovalStatus());
@@ -39,7 +39,6 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
             ps.setString(13, obj.getTitle());
             ps.setString(14, obj.getType());
             ps.setBoolean(15, obj.isOrganization());
-            ps.setString(16, obj.nameOrId());
                      
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
