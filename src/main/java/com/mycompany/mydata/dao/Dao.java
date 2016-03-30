@@ -11,9 +11,9 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public interface Dao<T,J>
+public interface Dao<T,I>
 {
     boolean insert(T obj);
-    T get(J obj);
+    T get(I obj);
     List<T> getAll();
 }
