@@ -5,7 +5,7 @@
  */
 package com.mycompany.mydata.dao;
 
-import eu.trentorise.opendata.jackan.model.CkanGroup;
+import eu.trentorise.opendata.jackan.model.CkanUser;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -16,30 +16,31 @@ import java.util.List;
  *
  * @author wensttay
  */
-public class CkanGroupBdBao extends GenericBdDao<CkanGroup, String> {
-
+public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
     @Override
-    public boolean insert(CkanGroup obj) {
+    public boolean insert(CkanUser obj) {
         try {
             conectar();
-            String sql = "INSERT INTO GROUP values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO USER values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
-            ps.setString(2, obj.getApprovalStatus());
-            ps.setTimestamp(3, obj.getCreated());
-            ps.setString(4, obj.getDescription());
+            ps.setString(2, obj.getAbout());
+            ps.setString(3, obj.getCapacity());
+            ps.setTimestamp(4, obj.getCreated());
             ps.setString(5, obj.getDisplayName());
-            ps.setString(6, obj.getImageDisplayUrl());
-            ps.setString(7, obj.getImageUrl());
-            ps.setString(8, obj.getName());
-            ps.setInt(9, obj.getNumFollowers());
-            ps.setInt(10, obj.getPackageCount());
-            ps.setString(11, obj.getRevisionId());
-            ps.setString(12, obj.getState().toString());
-            ps.setString(13, obj.getTitle());
-            ps.setString(14, obj.getType());
-            ps.setBoolean(15, obj.isOrganization());
-           
+            ps.setString(6, obj.getEmail());
+            ps.setString(7, obj.getEmailHash());
+            ps.setString(8, obj.getFullname());
+            ps.setString(9, obj.getName());
+            ps.setInt(10, obj.getNumFollowers());
+            ps.setInt(11, obj.getNumberAdministeredPackages());
+            ps.setInt(12, obj.getNumberOfEdits());
+            ps.setString(13, obj.getOpenid());
+            ps.setString(14, obj.getPassword());
+            ps.setString(15, obj.getState().toString());
+            ps.setBoolean(16, obj.isActivityStreamsEmailNotifications());
+            ps.setBoolean(17, obj.isSysadmin());
+            
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             return false;
@@ -49,12 +50,12 @@ public class CkanGroupBdBao extends GenericBdDao<CkanGroup, String> {
     }
 
     @Override
-    public CkanGroup get(String obj) {
+    public CkanUser get(String obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<CkanGroup> getAll() {
+    public List<CkanUser> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

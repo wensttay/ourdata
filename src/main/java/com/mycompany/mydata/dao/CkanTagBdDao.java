@@ -22,7 +22,7 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
     public boolean insert(CkanTag obj) {
         try {
             conectar();
-            String sql = "INSERT INTO ACTIVITY values (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO TAG values (?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getDisplayName());
