@@ -31,7 +31,7 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.setTimestamp(2, obj.getApprovedTimestamp());
             ps.setString(3, obj.getAuthor());
             ps.setString(4, obj.getMessage());
-            ps.setString(5, obj.getState().toString());
+            ps.setString(5, String.valueOf(obj.getState()));
             ps.setTimestamp(6, obj.getTimestamp());
             
             List<String> auxListGroup = obj.getGroups();

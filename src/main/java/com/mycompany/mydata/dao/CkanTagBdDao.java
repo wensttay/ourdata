@@ -28,7 +28,7 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
             ps.setString(2, obj.getDisplayName());
             ps.setString(3, obj.getName());
             ps.setTimestamp(4, obj.getRevisionTimestamp());
-            ps.setString(5, obj.getState().toString());
+            ps.setString(5, String.valueOf(obj.getState()));
             ps.setString(6, obj.getVocabularyId());
             
             return (ps.executeUpdate() != 0);

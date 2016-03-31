@@ -49,7 +49,7 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
             ps.setInt(12, obj.getNumberOfEdits());
             ps.setString(13, obj.getOpenid());
             ps.setString(14, obj.getPassword());
-            ps.setString(15, obj.getState().toString());
+            ps.setString(15, String.valueOf(obj.getState()));
             ps.setBoolean(16, obj.isActivityStreamsEmailNotifications());
             ps.setBoolean(17, obj.isSysadmin());
             

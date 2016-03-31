@@ -31,7 +31,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
                     + " ?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?, ?,"
-                    + " ?, ?)";
+                    + " ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, obj.getId());
@@ -50,12 +50,14 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             ps.setInt(14, obj.getPosition());
             ps.setString(15, obj.getResourceGroupId());
             ps.setString(16, obj.getResourceType());
-            ps.setString(17, obj.getRevisionTimestamp());
-            ps.setString(18, obj.getSize());
-            ps.setString(19, obj.getState().toString());
-            ps.setString(20, obj.getUrlType());
-            ps.setTimestamp(21, obj.getWebstoreLastUpdated());
-            ps.setString(22, obj.getWebstoreUrl());
+            ps.setString(17, obj.getRevisionId());
+            ps.setString(18, obj.getRevisionTimestamp());
+            ps.setString(19, obj.getSize());
+            ps.setString(20, String.valueOf(obj.getState()));
+            ps.setString(21, obj.getUrl());
+            ps.setString(22, obj.getUrlType());
+            ps.setTimestamp(23, obj.getWebstoreLastUpdated());
+            ps.setString(24, obj.getWebstoreUrl());
             
             if(obj.getOthers() != null)
                 insertResourceOthers(obj.getOthers(), obj.getId());
