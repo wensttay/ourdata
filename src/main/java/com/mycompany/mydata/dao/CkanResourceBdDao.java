@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -58,29 +59,37 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             ps.setString(22, obj.getUrlType());
             ps.setTimestamp(23, obj.getWebstoreLastUpdated());
             ps.setString(24, obj.getWebstoreUrl());
-            
-            if(obj.getOthers() != null)
+
+            if (obj.getOthers() != null) {
                 insertResourceOthers(obj.getOthers(), obj.getId());
-            
-            if(obj.getTrackingSummary() != null)
+            }
+
+            if (obj.getTrackingSummary() != null) {
                 insertResourceTrackingSummary(obj.getTrackingSummary(), obj.getId());
+            }
 
             return (ps.executeUpdate() != 0);
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma Resource com o ID: " + obj.getId());
+            } else {
+                ex.printStackTrace();
+            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         } finally {
             desconectar();
         }
+        return false;
     }
-    
-   private boolean insertResourceOthers(Map<String, Object> others, String resourceId) {
+
+    private boolean insertResourceOthers(Map<String, Object> others, String resourceId) {
 
         try {
             conectar();
             String sql;
             PreparedStatement ps;
-            
+
             for (Map.Entry<String, Object> entry : others.entrySet()) {
                 sql = "INSERT INTO RESOURCE_OTHER values (?, ?, ?)";
                 ps = getConnection().prepareStatement(sql);
@@ -92,18 +101,18 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         }
+        return false;
     }
-   
-   private boolean insertResourceTrackingSummary(CkanTrackingSummary trackingSummary, String resourceId) {
-        
+
+    private boolean insertResourceTrackingSummary(CkanTrackingSummary trackingSummary, String resourceId) {
+
         try {
             conectar();
             String sql = "INSERT INTO RESOURCE_TRACKING_SUMMARY values (?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
-            
+
             ps.setInt(1, trackingSummary.getRecent());
             ps.setInt(2, trackingSummary.getTotal());
             ps.setString(3, resourceId);
@@ -112,9 +121,9 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-           // ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         }
+        return false;
     }
 
     @Override
@@ -131,7 +140,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
 
             return cr;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
+            ex.printStackTrace();
             return null;
         }
     }

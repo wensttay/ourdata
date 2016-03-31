@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -31,12 +32,18 @@ public class CkanDatasetRelationshipBdDao extends GenericBdDao<CkanDatasetRelati
             ps.setString(5, obj.getType());
             
             return (ps.executeUpdate() != 0);
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma DataSetRelationshipObject com o ID: " + obj.getId());
+            }else{
+            	ex.printStackTrace();
+            }
+        }  catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-            return false;
         } finally {
             desconectar();
         }
+        return false;
     }
     
     public boolean insertSubject(CkanDatasetRelationship obj) {
@@ -51,12 +58,18 @@ public class CkanDatasetRelationshipBdDao extends GenericBdDao<CkanDatasetRelati
             ps.setString(5, obj.getType());
             
             return (ps.executeUpdate() != 0);
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma DataSetRelationshipSubject com o ID: " + obj.getId());
+            }else{
+            	ex.printStackTrace();
+            }
+        }  catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         } finally {
             desconectar();
         }
+        return false;
     }
 
     @Override

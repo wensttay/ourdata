@@ -11,9 +11,11 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public interface Dao<T,I>
-{
+public interface Dao<T, I> {
+
     boolean insert(T obj);
+
     T get(I obj);
+
     List<T> getAll();
 }

@@ -14,13 +14,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.postgresql.util.PSQLException;
 
 /**
  *
  * @author wensttay
  */
-public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
-    
+public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String> {
+
     @Override
     public boolean insert(CkanActivity obj) {
         try {
@@ -33,30 +34,38 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.setString(4, obj.getMessage());
             ps.setString(5, String.valueOf(obj.getState()));
             ps.setTimestamp(6, obj.getTimestamp());
-            
+
             List<String> auxListGroup = obj.getGroups();
-            if(auxListGroup == null)
+            List<CkanDataset> auxListDataSet = obj.getPackages();
+
+            if (auxListGroup == null) {
                 auxListGroup = new ArrayList<>();
-            
+            }
+            if (auxListDataSet == null) {
+                auxListDataSet = new ArrayList<>();
+            }
+
             for (String string : auxListGroup) {
                 insertActivityGroup(obj.getId(), string);
             }
-            
-            List<CkanDataset> auxListDataSet = obj.getPackages();
-            if(auxListDataSet == null)
-                auxListDataSet = new ArrayList<>();
-            
+
             for (CkanDataset ckanDataset : auxListDataSet) {
                 insertActivityDataSet(obj.getId(), ckanDataset.getId());
             }
-            
+
             return (ps.executeUpdate() != 0);
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma Activity com o ID: " + obj.getId());
+            }else{
+            	ex.printStackTrace();
+            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         } finally {
             desconectar();
         }
+        return false;
     }
 
     @Override
@@ -68,9 +77,9 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
     public List<CkanActivity> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     private boolean insertActivityGroup(String idActivity, String group) {
-        
+
         try {
             conectar();
             String sql = "INSERT INTO ACTIVITY_GROUP values (?, ?)";
@@ -82,15 +91,15 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.executeUpdate();
 
             return true;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        }catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-            return false;
         }
+        return false;
 
     }
-    
+
     private boolean insertActivityDataSet(String idActivity, String idDataSet) {
-        
+
         try {
             conectar();
             String sql = "INSERT INTO ACTIVITY_DATASET values (?, ?)";
@@ -102,10 +111,10 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.executeUpdate();
 
             return true;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        }catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-            return false;
         }
+        return false;
 
     }
 }

@@ -43,7 +43,7 @@ public abstract class GenericBdDao<T, I> implements Dao<T, I> {
 
     }
 
-    public void desconectar(){
+    public void desconectar() {
         try {
             if (getConnection() != null && !getConnection().isClosed()) {
                 connection.close();

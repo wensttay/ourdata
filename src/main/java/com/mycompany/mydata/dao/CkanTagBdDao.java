@@ -11,12 +11,13 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import org.postgresql.util.PSQLException;
 
 /**
  *
  * @author wensttay
  */
-public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
+public class CkanTagBdDao extends GenericBdDao<CkanTag, String> {
 
     @Override
     public boolean insert(CkanTag obj) {
@@ -30,14 +31,20 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
             ps.setTimestamp(4, obj.getRevisionTimestamp());
             ps.setString(5, String.valueOf(obj.getState()));
             ps.setString(6, obj.getVocabularyId());
-            
+
             return (ps.executeUpdate() != 0);
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma Tag com o ID: " + obj.getId());
+            } else {
+                ex.printStackTrace();
+            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//            ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         } finally {
             desconectar();
         }
+        return false;
     }
 
     @Override
@@ -49,5 +56,5 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
     public List<CkanTag> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

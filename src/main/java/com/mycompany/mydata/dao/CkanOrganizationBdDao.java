@@ -13,31 +13,33 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import org.postgresql.util.PSQLException;
 
 /**
  *
  * @author wensttay
  */
-public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String>{
+public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String> {
 
     CkanGroupBdBao ckanGroupBdBao;
     CkanUserBdDao ckanUserBdDao;
-    
+
     public CkanGroupBdBao getCkanGroupBdBao() {
-        if(ckanGroupBdBao == null){
+        if (ckanGroupBdBao == null) {
             ckanGroupBdBao = new CkanGroupBdBao();
         }
         return this.ckanGroupBdBao;
     }
-    
-    public CkanUserBdDao getCkanUserBdDao(){
-        if(ckanUserBdDao == null){
+
+    public CkanUserBdDao getCkanUserBdDao() {
+        if (ckanUserBdDao == null) {
             ckanUserBdDao = new CkanUserBdDao();
         }
         return this.ckanUserBdDao;
     }
-    
+
     @Override
     public boolean insert(CkanOrganization obj) {
         try {
@@ -59,47 +61,54 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
             ps.setString(13, obj.getTitle());
             ps.setString(14, obj.getType());
             ps.setBoolean(15, obj.isOrganization());
-            
-               
+
             List<CkanGroup> auxListGroup = obj.getGroups();
             List<CkanUser> auxListUser = obj.getUsers();
-            
-            if(auxListGroup != null){
-                for(CkanGroup cg : auxListGroup){
-                    getCkanGroupBdBao().insert(cg);
-                    insertOrganizationGroup(obj.getId(), cg.getId());
-                }
+
+            if (auxListGroup == null) {
+                auxListGroup = new ArrayList<>();
             }
-            
-            if(auxListUser != null){
-                for(CkanUser cuser : auxListUser){
-                    getCkanUserBdDao().insert(cuser);
-                    insertOrganizationUser(obj.getId(), cuser.getId());
-                }
+            if (auxListUser == null) {
+                auxListUser = new ArrayList<>();
             }
-                    
+
+            for (CkanGroup cg : auxListGroup) {
+                getCkanGroupBdBao().insert(cg);
+                insertOrganizationGroup(obj.getId(), cg.getId());
+            }
+            for (CkanUser cuser : auxListUser) {
+                getCkanUserBdDao().insert(cuser);
+                insertOrganizationUser(obj.getId(), cuser.getId());
+            }
+
             return (ps.executeUpdate() != 0);
+        } catch (PSQLException ex) {
+            if (ex.getErrorCode() == 0) {
+                System.out.println("Error: Já existe uma Organization com o ID: " + obj.getId());
+            } else {
+                ex.printStackTrace();
+            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         } finally {
             desconectar();
         }
+        return false;
     }
-    
-    public boolean insertOrganizationExtra(CkanPair extra, String id_organization) throws URISyntaxException, IOException, SQLException, ClassNotFoundException{
+
+    public boolean insertOrganizationExtra(CkanPair extra, String id_organization) throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
         conectar();
         String sql = "INSERT INTO ORGANIZATION_EXTRA VALUES(?,?,?)";
         PreparedStatement pstm = getConnection().prepareCall(sql);
-        pstm.setString(1,extra.getKey());
-        pstm.setString(2,extra.getValue());
-        pstm.setString(3,id_organization);
-        
+        pstm.setString(1, extra.getKey());
+        pstm.setString(2, extra.getValue());
+        pstm.setString(3, id_organization);
+
         return (pstm.executeUpdate() != 0);
     }
-    
+
     private boolean insertOrganizationGroup(String organizationId, String organizationGroupId) {
-        
+
         try {
             conectar();
             String sql = "INSERT INTO ORGANIZATION_GRUPO values (?, ?)";
@@ -112,12 +121,12 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-           // ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         }
+        return false;
     }
-    
-    public boolean insertOrganizationUser(String organizationId, String userId){
+
+    public boolean insertOrganizationUser(String organizationId, String userId) {
         try {
             conectar();
             String sql = "INSERT INTO ORGANIZATION_USER values (?, ?)";
@@ -130,9 +139,9 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            //ex.printStackTrace();
-            return false;
+            ex.printStackTrace();
         }
+        return false;
     }
 
     @Override
@@ -144,5 +153,5 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
     public List<CkanOrganization> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
