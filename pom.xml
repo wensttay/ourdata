@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.ancoron.postgresql</groupId>
+            <artifactId>org.postgresql</artifactId>
+            <version>9.1.901.jdbc4.1-rc9</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>6.0</version>

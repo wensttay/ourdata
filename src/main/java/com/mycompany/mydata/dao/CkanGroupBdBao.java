@@ -42,6 +42,7 @@ public class CkanGroupBdBao extends GenericBdDao<CkanGroup, String> {
            
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         } finally {
             desconectar();

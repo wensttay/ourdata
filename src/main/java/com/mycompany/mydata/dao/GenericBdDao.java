@@ -49,12 +49,11 @@ public abstract class GenericBdDao<T, I> implements Dao<T, I> {
                 connection.close();
             }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
         }
     }
 
     public Connection getConnection() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
-        if(connection == null || connection.isClosed())
-            conectar();
         return connection;
     }
 }

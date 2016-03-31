@@ -70,10 +70,14 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
     public boolean insert(CkanDataset obj) {
         try {
             conectar();
-            String sql = "INSERT INTO DATASET values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, )";
+            
+            String sql = "INSERT INTO DATASET values (?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ? )";
             PreparedStatement ps = getConnection().prepareStatement(sql);
-
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getAuthor());
             ps.setString(3, obj.getAuthorEmail());
@@ -100,13 +104,21 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             ps.setString(24, obj.getVersion());
             ps.setBoolean(25, obj.isOpen());
             ps.setBoolean(26, obj.isPriv());
-
-            insertDataSetOthers(obj.getOthers(), obj.getId());
-            insertDataSetExtra(obj.getExtras(), obj.getId());
-             
-            getCkanOrganizationBdDao().insert(obj.getOrganization());
-            insertDataSetOrganization(obj.getId(), obj.getOrganization().getId());
-            insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
+            
+            
+            if(obj.getOthers() != null)
+                insertDataSetOthers(obj.getOthers(), obj.getId());
+            if(obj.getExtras() != null)
+                insertDataSetExtra(obj.getExtras(), obj.getId());
+            
+            
+            if(obj.getOrganization() != null){
+                getCkanOrganizationBdDao().insert(obj.getOrganization());
+                insertDataSetOrganization(obj.getId(), obj.getOrganization().getId());
+            }
+            
+            if(obj.getTrackingSummary() != null)
+                insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
             
             List<CkanTag> auxListTag = obj.getTags();
             List<CkanResource> auxListResource = obj.getResources();
@@ -141,6 +153,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         } finally {
             desconectar();
@@ -163,7 +176,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             conectar();
             String sql;
             PreparedStatement ps;
-
+            
             for (Map.Entry<String, Object> entry : others.entrySet()) {
                 sql = "INSERT INTO DATASET_OTHER values (?, ?, ?)";
                 ps = getConnection().prepareStatement(sql);
@@ -175,6 +188,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -198,6 +212,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -217,6 +232,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -236,6 +252,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -255,6 +272,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -274,6 +292,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -296,6 +315,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
 
@@ -315,6 +335,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
     }
@@ -323,17 +344,18 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
         
         try {
             conectar();
-            String sql = "INSERT DATASET_GROUP values (?, ?, ?)";
+            String sql = "INSERT DATASET_GRUPO values (?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             
             ps.setInt(1, trackingSummary.getRecent());
-            ps.setInt(1, trackingSummary.getTotal());
+            ps.setInt(2, trackingSummary.getTotal());
             ps.setString(3, dataSetId);
 
             ps.executeUpdate();
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
             return false;
         }
     }
