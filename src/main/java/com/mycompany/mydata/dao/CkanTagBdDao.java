@@ -33,7 +33,7 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String>{
             
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
             return false;
         } finally {
             desconectar();
