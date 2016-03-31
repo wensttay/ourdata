@@ -108,9 +108,9 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             
             if(obj.getOthers() != null)
                 insertDataSetOthers(obj.getOthers(), obj.getId());
-            if(obj.getExtras() != null)
-                insertDataSetExtra(obj.getExtras(), obj.getId());
             
+            if(obj.getExtras() != null)
+                insertDataSetExtra(obj.getExtras(), obj.getId());    
             
             if(obj.getOrganization() != null){
                 getCkanOrganizationBdDao().insert(obj.getOrganization());
@@ -149,7 +149,9 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             for (CkanResource ckanResource : auxListResource) {
                 getCkanResourceBdDao().insert(ckanResource);
                 insertDataSetTag(obj.getId(), ckanResource.getId());
+                insertDataSetResources(obj.getId(), ckanResource.getId());
             }
+            
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
