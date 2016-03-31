@@ -5,19 +5,7 @@
  */
 package com.mycompany.mydata;
 
-import com.mycompany.mydata.dao.CkanDataSetBdDao;
-import eu.trentorise.opendata.jackan.CkanClient;
-import eu.trentorise.opendata.jackan.model.CkanActivity;
-import eu.trentorise.opendata.jackan.model.CkanDataset;
-import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
-import eu.trentorise.opendata.jackan.model.CkanGroup;
-import eu.trentorise.opendata.jackan.model.CkanOrganization;
-import eu.trentorise.opendata.jackan.model.CkanPair;
-import eu.trentorise.opendata.jackan.model.CkanResource;
-import eu.trentorise.opendata.jackan.model.CkanState;
-import eu.trentorise.opendata.jackan.model.CkanTag;
-import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
-import eu.trentorise.opendata.jackan.model.CkanUser;
+
 import java.util.List;
 
 /**
@@ -27,20 +15,9 @@ import java.util.List;
 public class main
 {
     public static void main(String[] args){
-        String url = "http://dados.gov.br/";
-        CkanClient cc = new CkanClient(url);
-        List<String> datasetlist = cc.getDatasetList();
+        
 
-            CkanDataset dataset1 = cc.getDataset(datasetlist.get(15));
-             CkanDataset dataset2 = cc.getDataset(datasetlist.get(16));
-              CkanDataset dataset3 = cc.getDataset(datasetlist.get(17));
-               CkanDataset dataset4 = cc.getDataset(datasetlist.get(18));
-            
-            CkanDataSetBdDao cdsbd = new CkanDataSetBdDao();
-            cdsbd.insert(dataset1);
-            cdsbd.insert(dataset2);
-            cdsbd.insert(dataset3);
-            cdsbd.insert(dataset4);
+
         
         
     }

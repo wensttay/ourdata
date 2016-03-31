@@ -6,10 +6,13 @@
 package com.mycompany.mydata.dao;
 
 import eu.trentorise.opendata.jackan.model.CkanActivity;
+import eu.trentorise.opendata.jackan.model.CkanGroup;
+import eu.trentorise.opendata.jackan.model.CkanDataset;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +20,7 @@ import java.util.List;
  * @author wensttay
  */
 public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
-
+    
     @Override
     public boolean insert(CkanActivity obj) {
         try {
@@ -30,6 +33,22 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.setString(4, obj.getMessage());
             ps.setString(5, obj.getState().toString());
             ps.setTimestamp(6, obj.getTimestamp());
+            
+            List<String> auxListGroup = obj.getGroups();
+            if(auxListGroup == null)
+                auxListGroup = new ArrayList<>();
+            
+            for (String string : auxListGroup) {
+                insertActivityGroup(obj.getId(), string);
+            }
+            
+            List<CkanDataset> auxListDataSet = obj.getPackages();
+            if(auxListDataSet == null)
+                auxListDataSet = new ArrayList<>();
+            
+            for (CkanDataset ckanDataset : auxListDataSet) {
+                insertActivityDataSet(obj.getId(), ckanDataset.getId());
+            }
             
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -48,5 +67,45 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
     @Override
     public List<CkanActivity> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private boolean insertActivityGroup(String idActivity, String group) {
+        
+        try {
+            conectar();
+            String sql = "INSERT INTO ACTIVITY_GROUP values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, idActivity);
+            ps.setString(2, group);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+    }
+    
+    private boolean insertActivityDataSet(String idActivity, String idDataSet) {
+        
+        try {
+            conectar();
+            String sql = "INSERT INTO ACTIVITY_DATASET values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, idDataSet);
+            ps.setString(2, idActivity);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
     }
 }

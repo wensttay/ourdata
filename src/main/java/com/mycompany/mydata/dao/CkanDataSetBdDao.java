@@ -309,11 +309,10 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             sql = "INSERT INTO DATASET_ORGANIZATION values (?, ?)";
             ps = getConnection().prepareStatement(sql);
-            ps.setString(1, dataSetId);
-            ps.setString(2, dataSetOrganizationId);
             
-            ps.executeUpdate();
-
+            ps.setString(1, dataSetOrganizationId);
+            ps.setString(2, dataSetId);
+       
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {

@@ -5,11 +5,14 @@
  */
 package com.mycompany.mydata.dao;
 
+import eu.trentorise.opendata.jackan.model.CkanActivity;
 import eu.trentorise.opendata.jackan.model.CkanUser;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +20,15 @@ import java.util.List;
  * @author wensttay
  */
 public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
+    
+    CkanActivityBdDao activityBdDao;
+
+    public CkanActivityBdDao getActivityBdDao() {
+        if( activityBdDao == null)
+            activityBdDao = new CkanActivityBdDao();
+        return activityBdDao;
+    }
+    
     @Override
     public boolean insert(CkanUser obj) {
         try {
@@ -41,6 +53,16 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
             ps.setBoolean(16, obj.isActivityStreamsEmailNotifications());
             ps.setBoolean(17, obj.isSysadmin());
             
+            List<CkanActivity> auxListActivity =  obj.getActivity();
+            if(auxListActivity == null)
+                auxListActivity = new ArrayList<>();
+            
+            for (CkanActivity ckanActivity : auxListActivity) {
+                getActivityBdDao().insert(ckanActivity);
+                insertUserActivity(obj.getId(), ckanActivity.getId());
+            }
+            
+            
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -58,6 +80,26 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
     @Override
     public List<CkanUser> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private boolean insertUserActivity(String idUser, String idActivity) {
+        
+        try {
+            conectar();
+            String sql = "INSERT INTO ACTIVITY_DATASET values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, idUser);
+            ps.setString(2, idActivity);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
     }
     
 }
