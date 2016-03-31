@@ -22,7 +22,7 @@ public class CkanGroupBdBao extends GenericBdDao<CkanGroup, String> {
     public boolean insert(CkanGroup obj) {
         try {
             conectar();
-            String sql = "INSERT INTO GROUP values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO GRUPO values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getApprovalStatus());

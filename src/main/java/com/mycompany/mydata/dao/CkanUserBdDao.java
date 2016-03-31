@@ -21,7 +21,7 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
     public boolean insert(CkanUser obj) {
         try {
             conectar();
-            String sql = "INSERT INTO USER values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO USERS values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getAbout());

@@ -6,6 +6,12 @@
 package com.mycompany.mydata.dao;
 
 import eu.trentorise.opendata.jackan.model.CkanDataset;
+import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
+import eu.trentorise.opendata.jackan.model.CkanGroup;
+import eu.trentorise.opendata.jackan.model.CkanPair;
+import eu.trentorise.opendata.jackan.model.CkanResource;
+import eu.trentorise.opendata.jackan.model.CkanTag;
+import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -18,7 +24,48 @@ import java.util.Map;
  * @author wensttay
  */
 public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
-    
+
+    CkanTagBdDao ckanTagBdDao;
+    CkanResourceBdDao ckanResourceBdDao;
+    CkanDatasetRelationshipBdDao ckanDatasetRelationshipBdDao;
+    CkanOrganizationBdDao ckanOrganizationBdDao;
+    CkanGroupBdBao ckanGroupBdBao;
+
+    public CkanOrganizationBdDao getCkanOrganizationBdDao() {
+        if(ckanOrganizationBdDao == null){
+            ckanOrganizationBdDao = new CkanOrganizationBdDao();
+        }
+        return this.ckanOrganizationBdDao;
+    }
+
+    public CkanGroupBdBao getCkanGroupBdBao() {
+        if(ckanGroupBdBao == null){
+            ckanGroupBdBao = new CkanGroupBdBao();
+        }
+        return this.ckanGroupBdBao;
+    }
+
+    public CkanDatasetRelationshipBdDao getCkanDatasetRelationshipBdDao() {
+        if (ckanDatasetRelationshipBdDao == null) {
+            ckanDatasetRelationshipBdDao = new CkanDatasetRelationshipBdDao();
+        }
+        return this.ckanDatasetRelationshipBdDao;
+    }
+
+    public CkanResourceBdDao getCkanResourceBdDao() {
+        if (ckanResourceBdDao == null) {
+            ckanResourceBdDao = new CkanResourceBdDao();
+        }
+        return this.ckanResourceBdDao;
+    }
+
+    public CkanTagBdDao getCkanTagBdDao() {
+        if (ckanTagBdDao == null) {
+            ckanTagBdDao = new CkanTagBdDao();
+        }
+        return this.ckanTagBdDao;
+    }
+
     @Override
     public boolean insert(CkanDataset obj) {
         try {
@@ -53,7 +100,44 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             ps.setString(24, obj.getVersion());
             ps.setBoolean(25, obj.isOpen());
             ps.setBoolean(26, obj.isPriv());
-            insertOthers(obj.getOthers(), obj.getId());
+
+            insertDataSetOthers(obj.getOthers(), obj.getId());
+            insertDataSetExtra(obj.getExtras(), obj.getId());
+             
+            getCkanOrganizationBdDao().insert(obj.getOrganization());
+            insertDataSetOrganization(obj.getId(), obj.getOrganization().getId());
+            insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
+            
+            List<CkanTag> auxListTag = obj.getTags();
+            List<CkanResource> auxListResource = obj.getResources();
+            List<CkanDatasetRelationship> auxListDatasetRelationshipsAsObject = obj.getRelationshipsAsObject();
+            List<CkanDatasetRelationship> auxListDatasetRelationshipsAsSubject = obj.getRelationshipsAsSubject();
+            List<CkanGroup> auxListGroup = obj.getGroups();
+            
+            for(CkanGroup cg : auxListGroup){
+                getCkanGroupBdBao().insert(cg);
+                insertDataSetGroup(obj.getId(), cg.getId());
+            }
+            
+            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsObject) {
+                getCkanDatasetRelationshipBdDao().insert(cdr);
+                insertDataSetDataSetRelationshipAsObject(obj.getId(), cdr.getId());
+            }
+
+            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsSubject) {
+                getCkanDatasetRelationshipBdDao().insertSubject(cdr);
+                insertDataSetDataSetRelationshipAsSubject(obj.getId(), cdr.getId());
+            }
+
+            for (CkanTag ckanTag : auxListTag) {
+                getCkanTagBdDao().insert(ckanTag);
+                insertDataSetTag(obj.getId(), ckanTag.getId());
+            }
+
+            for (CkanResource ckanResource : auxListResource) {
+                getCkanResourceBdDao().insert(ckanResource);
+                insertDataSetTag(obj.getId(), ckanResource.getId());
+            }
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -73,7 +157,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private boolean insertOthers(Map<String, Object> others, String dataSetId) {
+    private boolean insertDataSetOthers(Map<String, Object> others, String dataSetId) {
 
         try {
             conectar();
@@ -81,7 +165,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             PreparedStatement ps;
 
             for (Map.Entry<String, Object> entry : others.entrySet()) {
-                sql = "INSERT INTO DATASET_TAGS values (?, ?, ?)";
+                sql = "INSERT INTO DATASET_OTHER values (?, ?, ?)";
                 ps = getConnection().prepareStatement(sql);
                 ps.setString(1, entry.getKey());
                 ps.setString(2, entry.getValue().toString());
@@ -94,5 +178,163 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             return false;
         }
 
+    }
+    
+    private boolean insertDataSetExtra(List<CkanPair> extra, String dataSetId) {
+        
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            for (CkanPair ckanPair : extra) {
+                sql = "INSERT INTO DATASET_EXTRA values (?, ?, ?)";
+                ps = getConnection().prepareStatement(sql);
+                ps.setString(1, ckanPair.getKey());
+                ps.setString(2, ckanPair.getValue().toString());
+                ps.setString(3, dataSetId);
+                ps.executeUpdate();
+            }
+            return true;
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetTag(String dataSetId, String tagId) {
+
+        try {
+            conectar();
+            String sql = "INSERT INTO DATASET_TAG values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, dataSetId);
+            ps.setString(2, tagId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetResources(String dataSetId, String resourcesId) {
+
+        try {
+            conectar();
+            String sql = "INSERT DATASET_RESOURCES values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, dataSetId);
+            ps.setString(2, resourcesId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetDataSetRelationshipAsObject(String dataSetId, String dataSetRelationshipAsObjectId) {
+
+        try {
+            conectar();
+            String sql = "INSERT DATASET_DATASET_RELATIONSHIP_AS_OBJECT values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, dataSetId);
+            ps.setString(2, dataSetRelationshipAsObjectId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetDataSetRelationshipAsSubject(String dataSetId, String dataSetRelationshipAsObjectId) {
+
+        try {
+            conectar();
+            String sql = "INSERT DATASET_DATASET_RELATIONSHIP_AS_SUBJECT values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, dataSetId);
+            ps.setString(2, dataSetRelationshipAsObjectId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetOrganization(String dataSetId, String dataSetOrganizationId) {
+
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            sql = "INSERT INTO DATASET_ORGANIZATION values (?, ?, ?)";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, dataSetId);
+            ps.setString(2, dataSetOrganizationId);
+
+            ps.executeUpdate();
+
+            return true;
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
+    }
+
+    private boolean insertDataSetGroup(String dataSetId, String dataSetGroupId) {
+        
+        try {
+            conectar();
+            String sql = "INSERT DATASET_GROUP values (?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setString(1, dataSetId);
+            ps.setString(2, dataSetGroupId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+    }
+
+    private boolean insertDataSetTrackingSummary(CkanTrackingSummary trackingSummary, String dataSetId) {
+        
+        try {
+            conectar();
+            String sql = "INSERT DATASET_GROUP values (?, ?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            
+            ps.setInt(1, trackingSummary.getRecent());
+            ps.setInt(1, trackingSummary.getTotal());
+            ps.setString(3, dataSetId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            return false;
+        }
     }
 }
