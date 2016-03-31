@@ -102,7 +102,10 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             ps.setString(22, obj.getType());
             ps.setString(23, obj.getUrl());
             ps.setString(24, obj.getVersion());
-            ps.setBoolean(25, obj.isOpen());
+            if(obj.isOpen() != null)
+                ps.setBoolean(25, obj.isOpen());
+            else
+                ps.setBoolean(25, true);
             ps.setBoolean(26, obj.isPriv());
             
             

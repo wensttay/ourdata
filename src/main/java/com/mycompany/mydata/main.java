@@ -23,8 +23,12 @@ public class main {
         List<String> datasetlist = cc.getDatasetList();
        
         for (String string : datasetlist) {
-            CkanDataset dataset = cc.getDataset(string);
-            cdsbd.insert(dataset);
+            try{
+                CkanDataset dataset = cc.getDataset(string);
+                cdsbd.insert(dataset);
+            }catch(Exception ex){
+                System.out.println("Acesso negado.");
+            }
         }
         
         

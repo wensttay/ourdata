@@ -63,7 +63,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
                 insertResourceOthers(obj.getOthers(), obj.getId());
             
             if(obj.getTrackingSummary() != null)
-                insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
+                insertResourceTrackingSummary(obj.getTrackingSummary(), obj.getId());
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -97,11 +97,11 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
         }
     }
    
-   private boolean insertDataSetTrackingSummary(CkanTrackingSummary trackingSummary, String resourceId) {
+   private boolean insertResourceTrackingSummary(CkanTrackingSummary trackingSummary, String resourceId) {
         
         try {
             conectar();
-            String sql = "INSERT INTO DATASET_TRACKING_SUMMARY values (?, ?, ?)";
+            String sql = "INSERT INTO RESOURCE_TRACKING_SUMMARY values (?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             
             ps.setInt(1, trackingSummary.getRecent());
