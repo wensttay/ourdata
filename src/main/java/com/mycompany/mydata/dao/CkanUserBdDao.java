@@ -65,7 +65,7 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
             
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         } finally {
             desconectar();
@@ -96,7 +96,7 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         }
 

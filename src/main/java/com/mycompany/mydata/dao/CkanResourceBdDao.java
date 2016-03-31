@@ -67,7 +67,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         } finally {
             desconectar();
@@ -92,7 +92,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             return true;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
 
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+           // ex.printStackTrace();
             return false;
         }
     }
@@ -131,7 +131,7 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
 
             return cr;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return null;
         }
     }

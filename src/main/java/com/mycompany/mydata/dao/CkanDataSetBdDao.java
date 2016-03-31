@@ -158,7 +158,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         } finally {
             desconectar();
