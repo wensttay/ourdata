@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,6 +54,9 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String>{
             ps.setBoolean(17, obj.isSysadmin());
             
             List<CkanActivity> auxListActivity =  obj.getActivity();
+            if(auxListActivity == null)
+                auxListActivity = new ArrayList<>();
+            
             for (CkanActivity ckanActivity : auxListActivity) {
                 getActivityBdDao().insert(ckanActivity);
                 insertUserActivity(obj.getId(), ckanActivity.getId());

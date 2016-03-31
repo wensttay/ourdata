@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,10 +35,17 @@ public class CkanActivityBdDao extends GenericBdDao<CkanActivity, String>{
             ps.setTimestamp(6, obj.getTimestamp());
             
             List<String> auxListGroup = obj.getGroups();
+            if(auxListGroup == null)
+                auxListGroup = new ArrayList<>();
+            
             for (String string : auxListGroup) {
                 insertActivityGroup(obj.getId(), string);
             }
+            
             List<CkanDataset> auxListDataSet = obj.getPackages();
+            if(auxListDataSet == null)
+                auxListDataSet = new ArrayList<>();
+            
             for (CkanDataset ckanDataset : auxListDataSet) {
                 insertActivityDataSet(obj.getId(), ckanDataset.getId());
             }
