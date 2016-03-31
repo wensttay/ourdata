@@ -31,7 +31,7 @@ public class main
         CkanClient cc = new CkanClient(url);
         List<String> datasetlist = cc.getDatasetList();
 
-            CkanDataset dataset = cc.getDataset(datasetlist.get(2));
+            CkanDataset dataset = cc.getDataset(datasetlist.get(15));
             
             CkanDataSetBdDao cdsbd = new CkanDataSetBdDao();
             cdsbd.insert(dataset);

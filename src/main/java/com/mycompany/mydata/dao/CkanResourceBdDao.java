@@ -25,8 +25,11 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
     public boolean insert(CkanResource obj) {
         try {
             conectar();
-            String sql = "INSERT INTO RESOURCE values (?, ?, ?, ?, ?, ?, ?, ?, ?,"
-                    + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO RESOURCE values (?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?, ?, ?, ?,"
+                    + " ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, obj.getId());
@@ -41,15 +44,16 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             ps.setString(10, obj.getMimetypeInner());
             ps.setString(11, obj.getName());
             ps.setString(12, obj.getOwner());
-            ps.setInt(13, obj.getPosition());
-            ps.setString(14, obj.getResourceGroupId());
-            ps.setString(15, obj.getResourceType());
-            ps.setString(16, obj.getRevisionTimestamp());
-            ps.setString(17, obj.getSize());
-            ps.setString(18, obj.getState().toString());
-            ps.setString(19, obj.getUrlType());
-            ps.setTimestamp(20, obj.getWebstoreLastUpdated());
-            ps.setString(21, obj.getWebstoreUrl());
+            ps.setString(13, obj.getPackageId());
+            ps.setInt(14, obj.getPosition());
+            ps.setString(15, obj.getResourceGroupId());
+            ps.setString(16, obj.getResourceType());
+            ps.setString(17, obj.getRevisionTimestamp());
+            ps.setString(18, obj.getSize());
+            ps.setString(19, obj.getState().toString());
+            ps.setString(20, obj.getUrlType());
+            ps.setTimestamp(21, obj.getWebstoreLastUpdated());
+            ps.setString(22, obj.getWebstoreUrl());
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {

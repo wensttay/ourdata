@@ -309,7 +309,8 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             ps = getConnection().prepareStatement(sql);
             ps.setString(1, dataSetId);
             ps.setString(2, dataSetOrganizationId);
-
+            ps.setString(3, dataSetOrganizationId);
+            
             ps.executeUpdate();
 
             return true;
@@ -325,7 +326,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
         
         try {
             conectar();
-            String sql = "INSERT DATASET_GROUP values (?, ?)";
+            String sql = "INSERT INTO DATASET_GROUP values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);
@@ -344,7 +345,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
         
         try {
             conectar();
-            String sql = "INSERT DATASET_GRUPO values (?, ?, ?)";
+            String sql = "INSERT INTO DATASET_TRACKING_SUMMARY values (?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             
             ps.setInt(1, trackingSummary.getRecent());
