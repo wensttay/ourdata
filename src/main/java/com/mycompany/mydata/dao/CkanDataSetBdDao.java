@@ -97,7 +97,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             ps.setString(17, obj.getOwnerOrg());
             ps.setString(18, obj.getRevisionId());
             ps.setTimestamp(19, obj.getRevisionTimestamp());
-            ps.setString(20, obj.getState().toString());
+            ps.setString(20, String.valueOf(obj.getState()));
             ps.setString(21, obj.getTitle());
             ps.setString(22, obj.getType());
             ps.setString(23, obj.getUrl());
@@ -244,7 +244,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
         try {
             conectar();
-            String sql = "INSERT INTO DATASET_RESOURCES values (?, ?)";
+            String sql = "INSERT INTO DATASET_RESOURCE values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);
@@ -307,11 +307,10 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             String sql;
             PreparedStatement ps;
 
-            sql = "INSERT INTO DATASET_ORGANIZATION values (?, ?, ?)";
+            sql = "INSERT INTO DATASET_ORGANIZATION values (?, ?)";
             ps = getConnection().prepareStatement(sql);
             ps.setString(1, dataSetId);
             ps.setString(2, dataSetOrganizationId);
-            ps.setString(3, dataSetOrganizationId);
             
             ps.executeUpdate();
 
@@ -328,7 +327,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
         
         try {
             conectar();
-            String sql = "INSERT INTO DATASET_GROUP values (?, ?)";
+            String sql = "INSERT INTO DATASET_GRUPO values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);

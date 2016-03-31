@@ -55,7 +55,7 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
             ps.setInt(9, obj.getNumFollowers());
             ps.setInt(10, obj.getPackageCount());
             ps.setString(11, obj.getRevisionId());
-            ps.setString(12, obj.getState().toString());
+            ps.setString(12, String.valueOf(obj.getState()));
             ps.setString(13, obj.getTitle());
             ps.setString(14, obj.getType());
             ps.setBoolean(15, obj.isOrganization());
@@ -64,14 +64,18 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
             List<CkanGroup> auxListGroup = obj.getGroups();
             List<CkanUser> auxListUser = obj.getUsers();
             
-            for(CkanGroup cg : auxListGroup){
-                getCkanGroupBdBao().insert(cg);
-                insertOrganizationGroup(obj.getId(), cg.getId());
+            if(auxListGroup != null){
+                for(CkanGroup cg : auxListGroup){
+                    getCkanGroupBdBao().insert(cg);
+                    insertOrganizationGroup(obj.getId(), cg.getId());
+                }
             }
             
-            for(CkanUser cuser : auxListUser){
-                getCkanUserBdDao().insert(cuser);
-                insertOrganizationUser(obj.getId(), cuser.getId());
+            if(auxListUser != null){
+                for(CkanUser cuser : auxListUser){
+                    getCkanUserBdDao().insert(cuser);
+                    insertOrganizationUser(obj.getId(), cuser.getId());
+                }
             }
                     
             return (ps.executeUpdate() != 0);

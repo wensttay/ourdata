@@ -31,10 +31,16 @@ public class main
         CkanClient cc = new CkanClient(url);
         List<String> datasetlist = cc.getDatasetList();
 
-            CkanDataset dataset = cc.getDataset(datasetlist.get(15));
+            CkanDataset dataset1 = cc.getDataset(datasetlist.get(15));
+             CkanDataset dataset2 = cc.getDataset(datasetlist.get(16));
+              CkanDataset dataset3 = cc.getDataset(datasetlist.get(17));
+               CkanDataset dataset4 = cc.getDataset(datasetlist.get(18));
             
             CkanDataSetBdDao cdsbd = new CkanDataSetBdDao();
-            cdsbd.insert(dataset);
+            cdsbd.insert(dataset1);
+            cdsbd.insert(dataset2);
+            cdsbd.insert(dataset3);
+            cdsbd.insert(dataset4);
         
         
     }
