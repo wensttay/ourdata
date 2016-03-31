@@ -6,12 +6,14 @@
 package com.mycompany.mydata.dao;
 
 import eu.trentorise.opendata.jackan.model.CkanResource;
+import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +56,12 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             ps.setString(20, obj.getUrlType());
             ps.setTimestamp(21, obj.getWebstoreLastUpdated());
             ps.setString(22, obj.getWebstoreUrl());
+            
+            if(obj.getOthers() != null)
+                insertResourceOthers(obj.getOthers(), obj.getId());
+            
+            if(obj.getTrackingSummary() != null)
+                insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -61,6 +69,49 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             return false;
         } finally {
             desconectar();
+        }
+    }
+    
+   private boolean insertResourceOthers(Map<String, Object> others, String resourceId) {
+
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+            
+            for (Map.Entry<String, Object> entry : others.entrySet()) {
+                sql = "INSERT INTO RESOURCE_OTHER values (?, ?, ?)";
+                ps = getConnection().prepareStatement(sql);
+                ps.setString(1, entry.getKey());
+                ps.setString(2, entry.getValue().toString());
+                ps.setString(3, resourceId);
+                ps.executeUpdate();
+            }
+            return true;
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+   
+   private boolean insertDataSetTrackingSummary(CkanTrackingSummary trackingSummary, String resourceId) {
+        
+        try {
+            conectar();
+            String sql = "INSERT INTO DATASET_TRACKING_SUMMARY values (?, ?, ?)";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            
+            ps.setInt(1, trackingSummary.getRecent());
+            ps.setInt(2, trackingSummary.getTotal());
+            ps.setString(3, resourceId);
+
+            ps.executeUpdate();
+
+            return true;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 
@@ -81,7 +132,6 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             ex.printStackTrace();
             return null;
         }
-
     }
 
     @Override

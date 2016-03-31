@@ -108,9 +108,9 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             
             if(obj.getOthers() != null)
                 insertDataSetOthers(obj.getOthers(), obj.getId());
-            if(obj.getExtras() != null)
-                insertDataSetExtra(obj.getExtras(), obj.getId());
             
+            if(obj.getExtras() != null)
+                insertDataSetExtra(obj.getExtras(), obj.getId());    
             
             if(obj.getOrganization() != null){
                 getCkanOrganizationBdDao().insert(obj.getOrganization());
@@ -149,7 +149,9 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
             for (CkanResource ckanResource : auxListResource) {
                 getCkanResourceBdDao().insert(ckanResource);
                 insertDataSetTag(obj.getId(), ckanResource.getId());
+                insertDataSetResources(obj.getId(), ckanResource.getId());
             }
+            
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -242,7 +244,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
         try {
             conectar();
-            String sql = "INSERT DATASET_RESOURCES values (?, ?)";
+            String sql = "INSERT INTO DATASET_RESOURCES values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);
@@ -262,7 +264,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
         try {
             conectar();
-            String sql = "INSERT DATASET_DATASET_RELATIONSHIP_AS_OBJECT values (?, ?)";
+            String sql = "INSERT INTO DATASET_DATASET_RELATIONSHIP_AS_OBJECT values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);
@@ -282,7 +284,7 @@ public class CkanDataSetBdDao extends GenericBdDao<CkanDataset, String> {
 
         try {
             conectar();
-            String sql = "INSERT DATASET_DATASET_RELATIONSHIP_AS_SUBJECT values (?, ?)";
+            String sql = "INSERT INTO DATASET_DATASET_RELATIONSHIP_AS_SUBJECT values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
             ps.setString(1, dataSetId);
