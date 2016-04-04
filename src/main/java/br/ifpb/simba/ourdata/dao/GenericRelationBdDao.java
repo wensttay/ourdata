@@ -10,5 +10,5 @@ package br.ifpb.simba.ourdata.dao;
  * @author wensttay
  */
 public abstract class GenericRelationBdDao <T, I> extends GenericBdDao implements DaoRelation<T, I>{
-    
+
 }

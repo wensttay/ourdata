@@ -23,13 +23,13 @@ import org.postgresql.util.PSQLException;
  * @author wensttay
  */
 public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> {
-    
+
     ActivityDataSetBdDao activityDataSetBdDao;
     ActivityGroupBdDao activityGroupBdDao;
-    
+
     List<String> auxListGroup;
     List<CkanDataset> auxListDataSet;
-    
+
     @Override
     public boolean insert(CkanActivity obj) {
         try {
@@ -65,8 +65,8 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
         } catch (PSQLException ex) {
             if (ex.getErrorCode() == 0) {
                 System.out.println("Error: Já existe uma Activity com o ID: " + obj.getId());
-            }else{
-            	ex.printStackTrace();
+            } else {
+                ex.printStackTrace();
             }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -77,16 +77,52 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
     }
 
     public ActivityDataSetBdDao getActivityDataSetBdDao() {
-        if(activityDataSetBdDao == null)
+        if (activityDataSetBdDao == null) {
             activityDataSetBdDao = new ActivityDataSetBdDao();
+        }
         return activityDataSetBdDao;
     }
 
     public ActivityGroupBdDao getActivityGroupBdDao() {
-        if(activityGroupBdDao == null)
+        if (activityGroupBdDao == null) {
             activityGroupBdDao = new ActivityGroupBdDao();
+        }
         return activityGroupBdDao;
     }
-    
-    
+
+    @Override
+    public boolean update(CkanActivity obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM ACTIVITY WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanActivity obj) {
+        //        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
+
+    }
 }

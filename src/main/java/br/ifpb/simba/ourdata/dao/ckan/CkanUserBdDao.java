@@ -94,4 +94,39 @@ public class CkanUserBdDao extends GenericObjectBdDao<CkanUser, String> {
         return userActivityBdDao;
     }
 
+    @Override
+    public boolean update(CkanUser obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM USERS WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanUser obj) {
+//        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
+    }
+
 }

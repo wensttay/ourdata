@@ -30,7 +30,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
 
     ResourceOthersBdDao resourceOthersBdDao;
     ResourceTrackingSummaryBdDao resourceTrackingSummaryBdDao;
-    
+
     @Override
     public boolean insert(CkanResource obj) {
         try {
@@ -73,7 +73,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
             if (obj.getTrackingSummary() != null) {
                 getResourceTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());
             }
-            
+
             return (ps.executeUpdate() != 0);
         } catch (PSQLException ex) {
             if (ex.getErrorCode() == 0) {
@@ -97,9 +97,45 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
     }
 
     public ResourceTrackingSummaryBdDao getResourceTrackingSummaryBdDao() {
-        if(resourceTrackingSummaryBdDao == null)
+        if (resourceTrackingSummaryBdDao == null) {
             resourceTrackingSummaryBdDao = new ResourceTrackingSummaryBdDao();
+        }
         return resourceTrackingSummaryBdDao;
     }
-    
+
+    @Override
+    public boolean update(CkanResource obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM RESOURCE WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanResource obj) {
+//        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
+    }
+
 }

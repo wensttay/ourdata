@@ -77,15 +77,15 @@ public class CkanGroupBdBao extends GenericObjectBdDao<CkanGroup, String> {
                 getCkanGroupBdBao().insert(cg);
                 getGrupoGruposBdDao().insert(cg.getId(), obj.getId());
             }
-            
+
             for (CkanUser cuser : auxListUser) {
                 getCkanUserBdDao().insert(cuser);
                 getGrupoUserBdDao().insert(cuser.getId(), obj.getId());
             }
-            
-            for(CkanPair cp : auxListExtras){
+
+            for (CkanPair cp : auxListExtras) {
                 getGrupoExtraBdDao().insert(cp, obj.getId());
-                
+
             }
 
             return (ps.executeUpdate() != 0);
@@ -136,6 +136,41 @@ public class CkanGroupBdBao extends GenericObjectBdDao<CkanGroup, String> {
             grupoUserBdDao = new GrupoUserBdDao();
         }
         return grupoUserBdDao;
+    }
+
+    @Override
+    public boolean update(CkanGroup obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM GRUPO WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanGroup obj) {
+//        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
     }
 
 }

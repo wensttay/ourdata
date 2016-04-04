@@ -82,7 +82,7 @@ public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, 
                 getCkanUserBdDao().insert(cuser);
                 getOrganizationUserBdDao().insert(obj.getId(), cuser.getId());
             }
-            for(CkanPair cp : auxListExtras){
+            for (CkanPair cp : auxListExtras) {
                 getOrganizationExtraBdDao().insert(cp, obj.getId());
             }
 
@@ -134,6 +134,41 @@ public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, 
             organizationUserBdDao = new OrganizationUserBdDao();
         }
         return organizationUserBdDao;
+    }
+
+    @Override
+    public boolean update(CkanOrganization obj) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM ORGANIZATION WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanOrganization obj) {
+//        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
     }
 
 }

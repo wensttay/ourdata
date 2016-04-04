@@ -39,7 +39,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     CkanDatasetRelationshipBdDao ckanDatasetRelationshipBdDao;
     CkanOrganizationBdDao ckanOrganizationBdDao;
     CkanGroupBdBao ckanGroupBdBao;
-    
+
     DataSetOthersBdDao dataSetOthersBdDao;
     DataSetExtraBdDao dataSetExtraBdDao;
     DataSetTagBdDao dataSetTagBdDao;
@@ -49,13 +49,13 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     DataSetOrganizationBdDao dataSetOrganizationBdDao;
     DataSetGroupBdDao dataSetGroupBdDao;
     DataSetTrackingSummaryBdDao dataSetTrackingSummaryBdDao;
-    
+
     List<CkanTag> auxListTag;
     List<CkanResource> auxListResource;
     List<CkanDatasetRelationship> auxListDatasetRelationshipsAsObject;
     List<CkanDatasetRelationship> auxListDatasetRelationshipsAsSubject;
     List<CkanGroup> auxListGroup;
-    
+
     @Override
     public boolean insert(CkanDataset obj) {
         try {
@@ -106,7 +106,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
                 ps.setBoolean(26, true);
             }
 
-            if (obj.getOthers() != null) {    
+            if (obj.getOthers() != null) {
                 getDataSetOthersBdDao().insert(obj.getOthers(), obj.getId());
             }
 
@@ -132,38 +132,38 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             if (auxListTag == null) {
                 auxListTag = new ArrayList<>();
             }
-            
+
             if (auxListResource == null) {
                 auxListResource = new ArrayList<>();
             }
-            
+
             if (auxListDatasetRelationshipsAsObject == null) {
                 auxListDatasetRelationshipsAsObject = new ArrayList<>();
             }
-            
+
             if (auxListDatasetRelationshipsAsSubject == null) {
                 auxListDatasetRelationshipsAsSubject = new ArrayList<>();
             }
-            
+
             if (auxListGroup == null) {
                 auxListGroup = new ArrayList<>();
             }
-            
+
             for (CkanTag ckanTag : auxListTag) {
                 getCkanTagBdDao().insert(ckanTag);
                 getDataSetTagBdDao().insert(obj.getId(), ckanTag.getId());
             }
-            
+
             for (CkanResource ckanResource : auxListResource) {
                 getCkanResourceBdDao().insert(ckanResource);
                 getDataSetResourcesBdDao().insert(obj.getId(), ckanResource.getId());
             }
-            
+
             for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsObject) {
                 getCkanDatasetRelationshipBdDao().insert(cdr);
                 getDataSetRelationshipAsObjectBdDao().insert(obj.getId(), cdr.getId());
             }
-            
+
             for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsSubject) {
                 getCkanDatasetRelationshipBdDao().insertSubject(cdr);
                 getDataSetRelationshipAsSubjectBdDao().insert(obj.getId(), cdr.getId());
@@ -175,29 +175,127 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             }
 
             return (ps.executeUpdate() != 0);
-            
+
         } catch (PSQLException ex) {
-            
+
             if (ex.getErrorCode() == 0) {
                 System.out.println("Error: Já existe um DataSet com o ID: " + obj.getId());
             } else {
                 ex.printStackTrace();
-            
+
             }
-        
+
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-        
+
             ex.printStackTrace();
-        
+
         } finally {
-        
+
             desconectar();
-        
+
         }
         return false;
     }
 
-//    @Override
+    public CkanOrganizationBdDao getCkanOrganizationBdDao() {
+        if (ckanOrganizationBdDao == null) {
+            ckanOrganizationBdDao = new CkanOrganizationBdDao();
+        }
+        return this.ckanOrganizationBdDao;
+    }
+
+    public CkanGroupBdBao getCkanGroupBdBao() {
+        if (ckanGroupBdBao == null) {
+            ckanGroupBdBao = new CkanGroupBdBao();
+        }
+        return this.ckanGroupBdBao;
+    }
+
+    public CkanDatasetRelationshipBdDao getCkanDatasetRelationshipBdDao() {
+        if (ckanDatasetRelationshipBdDao == null) {
+            ckanDatasetRelationshipBdDao = new CkanDatasetRelationshipBdDao();
+        }
+        return this.ckanDatasetRelationshipBdDao;
+    }
+
+    public CkanResourceBdDao getCkanResourceBdDao() {
+        if (ckanResourceBdDao == null) {
+            ckanResourceBdDao = new CkanResourceBdDao();
+        }
+        return this.ckanResourceBdDao;
+    }
+
+    public CkanTagBdDao getCkanTagBdDao() {
+        if (ckanTagBdDao == null) {
+            ckanTagBdDao = new CkanTagBdDao();
+        }
+        return this.ckanTagBdDao;
+    }
+
+    public DataSetOthersBdDao getDataSetOthersBdDao() {
+        if (dataSetOthersBdDao == null) {
+            dataSetOthersBdDao = new DataSetOthersBdDao();
+        }
+        return dataSetOthersBdDao;
+    }
+
+    public DataSetExtraBdDao getDataSetExtraBdDao() {
+        if (dataSetExtraBdDao == null) {
+            dataSetExtraBdDao = new DataSetExtraBdDao();
+        }
+        return dataSetExtraBdDao;
+    }
+
+    public DataSetTagBdDao getDataSetTagBdDao() {
+        if (dataSetTagBdDao == null) {
+            dataSetTagBdDao = new DataSetTagBdDao();
+        }
+        return dataSetTagBdDao;
+    }
+
+    public DataSetResourcesBdDao getDataSetResourcesBdDao() {
+        if (dataSetResourcesBdDao == null) {
+            dataSetResourcesBdDao = new DataSetResourcesBdDao();
+        }
+        return dataSetResourcesBdDao;
+    }
+
+    public DataSetRelationshipAsObjectBdDao getDataSetRelationshipAsObjectBdDao() {
+        if (dataSetRelationshipAsObjectBdDao == null) {
+            dataSetRelationshipAsObjectBdDao = new DataSetRelationshipAsObjectBdDao();
+        }
+        return dataSetRelationshipAsObjectBdDao;
+    }
+
+    public DataSetRelationshipAsSubjectBdDao getDataSetRelationshipAsSubjectBdDao() {
+        if (dataSetRelationshipAsSubjectBdDao == null) {
+            dataSetRelationshipAsSubjectBdDao = new DataSetRelationshipAsSubjectBdDao();
+        }
+        return dataSetRelationshipAsSubjectBdDao;
+    }
+
+    public DataSetOrganizationBdDao getDataSetOrganizationBdDao() {
+        if (dataSetOrganizationBdDao == null) {
+            dataSetOrganizationBdDao = new DataSetOrganizationBdDao();
+        }
+        return dataSetOrganizationBdDao;
+    }
+
+    public DataSetGroupBdDao getDataSetGroupBdDao() {
+        if (dataSetGroupBdDao == null) {
+            dataSetGroupBdDao = new DataSetGroupBdDao();
+        }
+        return dataSetGroupBdDao;
+    }
+
+    public DataSetTrackingSummaryBdDao getDataSetTrackingSummaryBdDao() {
+        if (dataSetTrackingSummaryBdDao == null) {
+            dataSetTrackingSummaryBdDao = new DataSetTrackingSummaryBdDao();
+        }
+        return dataSetTrackingSummaryBdDao;
+    }
+
+    @Override
     public boolean update(CkanDataset obj) {
         try {
             conectar();
@@ -215,7 +313,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
                     + " WHERE ID = ?";
 
             PreparedStatement ps = getConnection().prepareStatement(sql);
-            
+
             ps.setString(1, obj.getAuthor());
             ps.setString(2, obj.getAuthorEmail());
             ps.setString(3, obj.getCreatorUserId());
@@ -239,8 +337,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             ps.setString(21, obj.getType());
             ps.setString(22, obj.getUrl());
             ps.setString(23, obj.getVersion());
-            
-            
+
             if (obj.isOpen() != null) {
                 ps.setBoolean(24, obj.isOpen());
             } else {
@@ -252,69 +349,76 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             } else {
                 ps.setBoolean(25, true);
             }
-            
+
             ps.setString(26, obj.getId());
-            
-//            if (obj.getOthers() != null) {
-//                insertDataSetOthers(obj.getOthers(), obj.getId());
-//            }
-//
-//            if (obj.getExtras() != null) {
-//                insertDataSetExtra(obj.getExtras(), obj.getId());
-//            }
-//
-//            if (obj.getOrganization() != null) {
-//                getCkanOrganizationBdDao().insert(obj.getOrganization());
-//                insertDataSetOrganization(obj.getId(), obj.getOrganization().getId());
-//            }
-//
-//            if (obj.getTrackingSummary() != null) {
-//                insertDataSetTrackingSummary(obj.getTrackingSummary(), obj.getId());
-//            }
-//
-//            auxListTag = obj.getTags();
-//            auxListResource = obj.getResources();
-//            auxListDatasetRelationshipsAsObject = obj.getRelationshipsAsObject();
-//            auxListDatasetRelationshipsAsSubject = obj.getRelationshipsAsSubject();
-//            auxListGroup = obj.getGroups();
-//
-//            if (auxListTag == null) {
-//                auxListTag = new ArrayList<>();
-//            }
-//            if (auxListResource == null) {
-//                auxListResource = new ArrayList<>();
-//            }
-//            if (auxListDatasetRelationshipsAsObject == null) {
-//                auxListDatasetRelationshipsAsObject = new ArrayList<>();
-//            }
-//            if (auxListDatasetRelationshipsAsSubject == null) {
-//                auxListDatasetRelationshipsAsSubject = new ArrayList<>();
-//            }
-//            if (auxListGroup == null) {
-//                auxListGroup = new ArrayList<>();
-//            }
-//            for (CkanTag ckanTag : auxListTag) {
-//                getCkanTagBdDao().insert(ckanTag);
-//                insertDataSetTag(obj.getId(), ckanTag.getId());
-//            }
-//            for (CkanResource ckanResource : auxListResource) {
-//                getCkanResourceBdDao().insert(ckanResource);
-//                insertDataSetTag(obj.getId(), ckanResource.getId());
-//                insertDataSetResources(obj.getId(), ckanResource.getId());
-//            }
-//            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsObject) {
-//                getCkanDatasetRelationshipBdDao().insert(cdr);
-//                insertDataSetDataSetRelationshipAsObject(obj.getId(), cdr.getId());
-//            }
-//            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsSubject) {
-//                getCkanDatasetRelationshipBdDao().insertSubject(cdr);
-//                insertDataSetDataSetRelationshipAsSubject(obj.getId(), cdr.getId());
-//            }
-//
-//            for (CkanGroup cg : auxListGroup) {
-//                getCkanGroupBdBao().insert(cg);
-//                insertDataSetGroup(obj.getId(), cg.getId());
-//            }
+
+            if (obj.getOthers() != null) {
+//                getDataSetOthersBdDao().insert(obj.getOthers(), obj.getId());
+            }
+
+            if (obj.getExtras() != null) {
+//                getDataSetExtraBdDao().insert(obj.getExtras(), obj.getId());
+            }
+
+            if (obj.getOrganization() != null) {
+                getCkanOrganizationBdDao().insertOrUpdate(obj.getOrganization());
+//                getDataSetOrganizationBdDao().insert(obj.getId(), obj.getOrganization().getId());
+            }
+
+            if (obj.getTrackingSummary() != null) {
+//                getDataSetTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());
+            }
+
+            auxListTag = obj.getTags();
+            auxListResource = obj.getResources();
+            auxListDatasetRelationshipsAsObject = obj.getRelationshipsAsObject();
+            auxListDatasetRelationshipsAsSubject = obj.getRelationshipsAsSubject();
+            auxListGroup = obj.getGroups();
+
+            if (auxListTag == null) {
+                auxListTag = new ArrayList<>();
+            }
+
+            if (auxListResource == null) {
+                auxListResource = new ArrayList<>();
+            }
+
+            if (auxListDatasetRelationshipsAsObject == null) {
+                auxListDatasetRelationshipsAsObject = new ArrayList<>();
+            }
+
+            if (auxListDatasetRelationshipsAsSubject == null) {
+                auxListDatasetRelationshipsAsSubject = new ArrayList<>();
+            }
+
+            if (auxListGroup == null) {
+                auxListGroup = new ArrayList<>();
+            }
+
+            for (CkanTag ckanTag : auxListTag) {
+                getCkanTagBdDao().insertOrUpdate(ckanTag);
+//                getDataSetTagBdDao().insert(obj.getId(), ckanTag.getId());
+            }
+
+            for (CkanResource ckanResource : auxListResource) {
+                getCkanResourceBdDao().insertOrUpdate(ckanResource);
+//                getDataSetResourcesBdDao().insert(obj.getId(), ckanResource.getId());
+            }
+
+            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsObject) {
+                getCkanDatasetRelationshipBdDao().insertOrUpdate(cdr);
+//                getDataSetRelationshipAsObjectBdDao().insert(obj.getId(), cdr.getId());
+            }
+
+            for (CkanDatasetRelationship cdr : auxListDatasetRelationshipsAsSubject) {
+                getCkanDatasetRelationshipBdDao().insertOrUpdateSubject(cdr);
+//                getDataSetRelationshipAsSubjectBdDao().insert(obj.getId(), cdr.getId());
+            }
+
+            for (CkanGroup cg : auxListGroup) {
+                getCkanGroupBdBao().insertOrUpdate(cg);
+//                getDataSetGroupBdDao().insert(obj.getId(), cg.getId());
+            }
 
             return (ps.executeUpdate() != 0);
         } catch (PSQLException ex) {
@@ -330,89 +434,34 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         }
         return false;
     }
-    
-//    @Override
-    public boolean insertOrUpdate(CkanDataset obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    @Override
+    public boolean isExist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM DATASET WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
     }
 
-    
-    public CkanOrganizationBdDao getCkanOrganizationBdDao() {
-        if (ckanOrganizationBdDao == null) {
-            ckanOrganizationBdDao = new CkanOrganizationBdDao();
+    @Override
+    public void insertOrUpdate(CkanDataset obj) {
+//        Falta comparar as datas de utimo update
+        if (isExist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
         }
-        return this.ckanOrganizationBdDao;
     }
-    public CkanGroupBdBao getCkanGroupBdBao() {
-        if (ckanGroupBdBao == null) {
-            ckanGroupBdBao = new CkanGroupBdBao();
-        }
-        return this.ckanGroupBdBao;
-    }
-    public CkanDatasetRelationshipBdDao getCkanDatasetRelationshipBdDao() {
-        if (ckanDatasetRelationshipBdDao == null) {
-            ckanDatasetRelationshipBdDao = new CkanDatasetRelationshipBdDao();
-        }
-        return this.ckanDatasetRelationshipBdDao;
-    }
-    public CkanResourceBdDao getCkanResourceBdDao() {
-        if (ckanResourceBdDao == null) {
-            ckanResourceBdDao = new CkanResourceBdDao();
-        }
-        return this.ckanResourceBdDao;
-    }
-    public CkanTagBdDao getCkanTagBdDao() {
-        if (ckanTagBdDao == null) {
-            ckanTagBdDao = new CkanTagBdDao();
-        }
-        return this.ckanTagBdDao;
-    }
-
-    public DataSetOthersBdDao getDataSetOthersBdDao() {
-        if(dataSetOthersBdDao == null)
-            dataSetOthersBdDao = new DataSetOthersBdDao();
-        return dataSetOthersBdDao;
-    }
-    public DataSetExtraBdDao getDataSetExtraBdDao() {
-        if(dataSetExtraBdDao == null)
-            dataSetExtraBdDao = new DataSetExtraBdDao();
-        return dataSetExtraBdDao;
-    }
-    public DataSetTagBdDao getDataSetTagBdDao() {
-        if(dataSetTagBdDao == null)
-            dataSetTagBdDao = new DataSetTagBdDao();
-        return dataSetTagBdDao;
-    }
-    public DataSetResourcesBdDao getDataSetResourcesBdDao() {
-        if(dataSetResourcesBdDao == null)
-            dataSetResourcesBdDao = new DataSetResourcesBdDao();
-        return dataSetResourcesBdDao;
-    }
-    public DataSetRelationshipAsObjectBdDao getDataSetRelationshipAsObjectBdDao() {
-        if(dataSetRelationshipAsObjectBdDao == null)
-            dataSetRelationshipAsObjectBdDao = new DataSetRelationshipAsObjectBdDao();
-        return dataSetRelationshipAsObjectBdDao;
-    }
-    public DataSetRelationshipAsSubjectBdDao getDataSetRelationshipAsSubjectBdDao() {
-        if(dataSetRelationshipAsSubjectBdDao == null)
-            dataSetRelationshipAsSubjectBdDao = new DataSetRelationshipAsSubjectBdDao();
-        return dataSetRelationshipAsSubjectBdDao;
-    }
-    public DataSetOrganizationBdDao getDataSetOrganizationBdDao() {
-        if(dataSetOrganizationBdDao == null)
-            dataSetOrganizationBdDao = new DataSetOrganizationBdDao();
-        return dataSetOrganizationBdDao;
-    }
-    public DataSetGroupBdDao getDataSetGroupBdDao() {
-        if(dataSetGroupBdDao == null)
-            dataSetGroupBdDao = new DataSetGroupBdDao();
-        return dataSetGroupBdDao;
-    }
-    public DataSetTrackingSummaryBdDao getDataSetTrackingSummaryBdDao() {
-        if(dataSetTrackingSummaryBdDao == null)
-            dataSetTrackingSummaryBdDao = new DataSetTrackingSummaryBdDao();
-        return dataSetTrackingSummaryBdDao;
-    }
-    
 }
-

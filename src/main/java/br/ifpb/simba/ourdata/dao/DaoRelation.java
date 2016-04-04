@@ -12,8 +12,7 @@ package br.ifpb.simba.ourdata.dao;
 public interface DaoRelation<T, I> {
 
     boolean insert(T obj, I id);
-
 //    boolean update(T obj);
-//    
-//    boolean insertOrUpdate(T obj);
+//    boolean isExist(I id);  
+//    void insertOrUpdate(T obj);
 }
