@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mydata.dao;
+package com.mycompany.mydata.dao.ckan;
 
+import com.mycompany.mydata.dao.GenericBdDao;
+import com.mycompany.mydata.dao.GenericObjectBdDao;
+import com.mycompany.mydata.dao.ckan.relation.ResourceOthersBdDao;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
 import java.io.IOException;
@@ -22,8 +25,16 @@ import org.postgresql.util.PSQLException;
  *
  * @author wensttay
  */
-public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
+public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> {
+    
+    ResourceOthersBdDao resourceOthersBdDao;
 
+    public ResourceOthersBdDao getResourceOthersBdDao() {
+        if(resourceOthersBdDao == null)
+            resourceOthersBdDao = new ResourceOthersBdDao();
+        return resourceOthersBdDao;
+    }
+    
     @Override
     public boolean insert(CkanResource obj) {
         try {
@@ -34,7 +45,6 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
                     + " ?, ?, ?, ?, ?,"
                     + " ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
-
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getCacheLastUpdated());
             ps.setString(3, obj.getCacheUrl());
@@ -67,6 +77,8 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
             if (obj.getTrackingSummary() != null) {
                 insertResourceTrackingSummary(obj.getTrackingSummary(), obj.getId());
             }
+            
+            getResourceOthersBdDao().insert(obj.getOthers(), obj.getId());
 
             return (ps.executeUpdate() != 0);
         } catch (PSQLException ex) {
@@ -126,33 +138,5 @@ public class CkanResourceBdDao extends GenericBdDao<CkanResource, String> {
         return false;
     }
 
-    @Override
-    public CkanResource get(String obj) {
-        CkanResource cr = new CkanResource();
-
-        try {
-            conectar();
-            String sql = "SELECT * FROM RESOURCE WHERE id = ?";
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setString(1, obj);
-            ResultSet rs = ps.executeQuery();
-            cr = preencherCkanResource(rs);
-
-            return cr;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public List<CkanResource> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private CkanResource preencherCkanResource(ResultSet rs) {
-        CkanResource cr = new CkanResource();
-        return cr;
-    }
 
 }

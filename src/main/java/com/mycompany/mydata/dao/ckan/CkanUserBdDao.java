@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mydata.dao;
+package com.mycompany.mydata.dao.ckan;
 
+import com.mycompany.mydata.dao.GenericBdDao;
+import com.mycompany.mydata.dao.GenericObjectBdDao;
 import eu.trentorise.opendata.jackan.model.CkanActivity;
 import eu.trentorise.opendata.jackan.model.CkanUser;
 import java.io.IOException;
@@ -20,7 +22,7 @@ import org.postgresql.util.PSQLException;
  *
  * @author wensttay
  */
-public class CkanUserBdDao extends GenericBdDao<CkanUser, String> {
+public class CkanUserBdDao extends GenericObjectBdDao<CkanUser, String> {
 
     CkanActivityBdDao activityBdDao;
 
@@ -78,16 +80,6 @@ public class CkanUserBdDao extends GenericBdDao<CkanUser, String> {
             desconectar();
         }
         return false;
-    }
-
-    @Override
-    public CkanUser get(String obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CkanUser> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private boolean insertUserActivity(String idUser, String idActivity) {

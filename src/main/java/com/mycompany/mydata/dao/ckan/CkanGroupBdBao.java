@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mydata.dao;
+package com.mycompany.mydata.dao.ckan;
 
+import com.mycompany.mydata.dao.GenericBdDao;
+import com.mycompany.mydata.dao.GenericObjectBdDao;
 import eu.trentorise.opendata.jackan.model.CkanGroup;
-import eu.trentorise.opendata.jackan.model.CkanOrganization;
 import eu.trentorise.opendata.jackan.model.CkanPair;
 import eu.trentorise.opendata.jackan.model.CkanUser;
 import java.io.IOException;
@@ -21,7 +22,7 @@ import org.postgresql.util.PSQLException;
  *
  * @author wensttay
  */
-public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String> {
+public class CkanGroupBdBao extends GenericObjectBdDao<CkanGroup, String> {
 
     CkanGroupBdBao ckanGroupBdBao;
     CkanUserBdDao ckanUserBdDao;
@@ -41,10 +42,10 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
     }
 
     @Override
-    public boolean insert(CkanOrganization obj) {
+    public boolean insert(CkanGroup obj) {
         try {
             conectar();
-            String sql = "INSERT INTO ORGANIZATION values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO GRUPO values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getId());
             ps.setString(2, obj.getApprovalStatus());
@@ -71,24 +72,23 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
             if (auxListUser == null) {
                 auxListUser = new ArrayList<>();
             }
-
             for (CkanGroup cg : auxListGroup) {
                 getCkanGroupBdBao().insert(cg);
-                insertOrganizationGroup(obj.getId(), cg.getId());
+                insertGrupoGrupos(obj.getId(), cg.getId());
             }
             for (CkanUser cuser : auxListUser) {
                 getCkanUserBdDao().insert(cuser);
-                insertOrganizationUser(obj.getId(), cuser.getId());
+                insertGrupoUser(obj.getId(), cuser.getId());
             }
 
             return (ps.executeUpdate() != 0);
         } catch (PSQLException ex) {
             if (ex.getErrorCode() == 0) {
-                System.out.println("Error: Já existe uma Organization com o ID: " + obj.getId());
-            } else {
-                ex.printStackTrace();
+                System.out.println("Error: Já existe um Group com o ID: " + obj.getId());
+            }else{
+            	ex.printStackTrace();
             }
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        }  catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {
             desconectar();
@@ -96,62 +96,52 @@ public class CkanOrganizationBdDao extends GenericBdDao<CkanOrganization, String
         return false;
     }
 
-    public boolean insertOrganizationExtra(CkanPair extra, String id_organization) throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
+    public boolean insertGrupoExtra(CkanPair extra, String id_grupo) throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
         conectar();
-        String sql = "INSERT INTO ORGANIZATION_EXTRA VALUES(?,?,?)";
+        String sql = "INSERT INTO GRUPO_EXTRA VALUES(?,?,?)";
         PreparedStatement pstm = getConnection().prepareCall(sql);
         pstm.setString(1, extra.getKey());
         pstm.setString(2, extra.getValue());
-        pstm.setString(3, id_organization);
+        pstm.setString(3, id_grupo);
 
         return (pstm.executeUpdate() != 0);
     }
 
-    private boolean insertOrganizationGroup(String organizationId, String organizationGroupId) {
+    private boolean insertGrupoGrupos(String groupParentId, String groupSonId) {
 
         try {
             conectar();
-            String sql = "INSERT INTO ORGANIZATION_GRUPO values (?, ?)";
+            String sql = "INSERT INTO GRUPO_GRUPOS values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
-            ps.setString(1, organizationId);
-            ps.setString(2, organizationGroupId);
+            ps.setString(1, groupParentId);
+            ps.setString(2, groupSonId);
 
             ps.executeUpdate();
 
             return true;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        }catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
         return false;
     }
 
-    public boolean insertOrganizationUser(String organizationId, String userId) {
+    public boolean insertGrupoUser(String groupId, String userId) {
         try {
             conectar();
-            String sql = "INSERT INTO ORGANIZATION_USER values (?, ?)";
+            String sql = "INSERT INTO GRUPO_USER values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
-            ps.setString(1, organizationId);
+            ps.setString(1, groupId);
             ps.setString(2, userId);
 
             ps.executeUpdate();
 
             return true;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        }catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
         return false;
-    }
-
-    @Override
-    public CkanOrganization get(String obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CkanOrganization> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

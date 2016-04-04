@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mydata.dao;
+package com.mycompany.mydata.dao.ckan;
 
+import com.mycompany.mydata.dao.GenericBdDao;
+import com.mycompany.mydata.dao.GenericObjectBdDao;
 import eu.trentorise.opendata.jackan.model.CkanTag;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,7 +19,7 @@ import org.postgresql.util.PSQLException;
  *
  * @author wensttay
  */
-public class CkanTagBdDao extends GenericBdDao<CkanTag, String> {
+public class CkanTagBdDao extends GenericObjectBdDao<CkanTag, String> {
 
     @Override
     public boolean insert(CkanTag obj) {
@@ -45,16 +47,6 @@ public class CkanTagBdDao extends GenericBdDao<CkanTag, String> {
             desconectar();
         }
         return false;
-    }
-
-    @Override
-    public CkanTag get(String obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CkanTag> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

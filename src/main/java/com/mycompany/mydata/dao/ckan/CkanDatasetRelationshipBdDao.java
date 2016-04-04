@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.mydata.dao;
+package com.mycompany.mydata.dao.ckan;
 
+import com.mycompany.mydata.dao.GenericBdDao;
+import com.mycompany.mydata.dao.GenericObjectBdDao;
 import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,7 +19,7 @@ import org.postgresql.util.PSQLException;
  *
  * @author wensttay
  */
-public class CkanDatasetRelationshipBdDao extends GenericBdDao<CkanDatasetRelationship, String>{
+public class CkanDatasetRelationshipBdDao extends GenericObjectBdDao<CkanDatasetRelationship, String>{
 
     @Override
     public boolean insert(CkanDatasetRelationship obj) {
@@ -70,16 +72,6 @@ public class CkanDatasetRelationshipBdDao extends GenericBdDao<CkanDatasetRelati
             desconectar();
         }
         return false;
-    }
-
-    @Override
-    public CkanDatasetRelationship get(String obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<CkanDatasetRelationship> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

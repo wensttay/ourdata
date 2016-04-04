@@ -5,7 +5,7 @@
  */
 package com.mycompany.mydata;
 
-import com.mycompany.mydata.dao.CkanDataSetBdDao;
+import com.mycompany.mydata.dao.ckan.CkanDataSetBdDao;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.exceptions.CkanException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
@@ -22,17 +22,16 @@ public class main {
         CkanClient cc = new CkanClient(url);
         CkanDataSetBdDao cdsbd = new CkanDataSetBdDao();
         List<String> datasetlist = cc.getDatasetList();
-       
+
         for (int i = 0; i < datasetlist.size(); i++) {
-            try{
+            try {
                 System.out.println("Index DataSet: " + i);
                 CkanDataset dataset = cc.getDataset(datasetlist.get(i));
                 cdsbd.insert(dataset);
-            }catch(CkanException ex){
+            } catch (CkanException ex) {
                 System.out.println("Acesso negado.");
             }
         }
-        
 
     }
 }

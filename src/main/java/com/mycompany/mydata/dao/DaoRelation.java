@@ -5,17 +5,15 @@
  */
 package com.mycompany.mydata.dao;
 
-
 /**
  *
- * @author kieckegard
+ * @author wensttay
  */
-public interface Dao<T, I> {
+public interface DaoRelation<T, I> {
 
-    boolean insert(T obj);
-    
+    boolean insert(T obj, I id);
+
 //    boolean update(T obj);
 //    
 //    boolean insertOrUpdate(T obj);
-    
 }

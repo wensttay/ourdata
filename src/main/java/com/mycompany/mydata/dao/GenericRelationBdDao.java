@@ -5,17 +5,10 @@
  */
 package com.mycompany.mydata.dao;
 
-
 /**
  *
- * @author kieckegard
+ * @author wensttay
  */
-public interface Dao<T, I> {
-
-    boolean insert(T obj);
-    
-//    boolean update(T obj);
-//    
-//    boolean insertOrUpdate(T obj);
+public abstract class GenericRelationBdDao <T, I> extends GenericBdDao implements DaoRelation<T, I>{
     
 }

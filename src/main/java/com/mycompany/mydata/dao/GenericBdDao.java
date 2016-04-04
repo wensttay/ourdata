@@ -12,8 +12,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,8 +19,12 @@ import java.util.logging.Logger;
  * @param <T>
  * @param <I>
  */
-public abstract class GenericBdDao<T, I> implements Dao<T, I> {
-
+public abstract class GenericBdDao{
+    
+    String user;
+    String url;
+    String password;
+    String driver;
     Connection connection;
 
     public void conectar() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
@@ -32,11 +34,10 @@ public abstract class GenericBdDao<T, I> implements Dao<T, I> {
         Properties prop = new Properties();
         prop.load(new FileInputStream(getClass().getResource("/banco/banco.properties").toURI().getPath()));
 
-        String nome = prop.getProperty("nome");
-        String user = prop.getProperty("user");
-        String url = prop.getProperty("url");
-        String password = prop.getProperty("password");
-        String driver = prop.getProperty("driver");
+        user = prop.getProperty("user");
+        url = prop.getProperty("url");
+        password = prop.getProperty("password");
+        driver = prop.getProperty("driver");
 
         Class.forName(driver);
         connection = DriverManager.getConnection(url, user, password);
