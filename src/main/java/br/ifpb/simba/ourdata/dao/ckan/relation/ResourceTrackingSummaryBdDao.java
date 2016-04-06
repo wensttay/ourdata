@@ -16,7 +16,7 @@ import java.sql.SQLException;
  *
  * @author wensttay
  */
-public class ResourceTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrackingSummary, String> {
+public class ResourceTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrackingSummary, String>{
 
     @Override
     public boolean insert(CkanTrackingSummary obj, String id) {
@@ -35,8 +35,9 @@ public class ResourceTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrack
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
-    }
-    
+    } 
 }

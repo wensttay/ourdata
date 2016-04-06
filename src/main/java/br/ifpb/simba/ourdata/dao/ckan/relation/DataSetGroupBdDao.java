@@ -33,6 +33,8 @@ public class DataSetGroupBdDao extends GenericRelationBdDao<String, String>{
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
     }

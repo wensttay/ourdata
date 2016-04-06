@@ -11,14 +11,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author wensttay
  */
-public class GrupoExtraBdDao extends GenericRelationBdDao<CkanPair, String> {
+public class GrupoExtraBdDao extends GenericRelationBdDao<CkanPair, String>{
 
     @Override
     public boolean insert(CkanPair obj, String id) {
@@ -33,6 +31,8 @@ public class GrupoExtraBdDao extends GenericRelationBdDao<CkanPair, String> {
             return (pstm.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
     }

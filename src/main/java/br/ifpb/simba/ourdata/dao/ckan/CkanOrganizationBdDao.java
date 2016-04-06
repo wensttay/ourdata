@@ -5,7 +5,6 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan;
 
-import br.ifpb.simba.ourdata.dao.GenericBdDao;
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.OrganizationExtraBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.OrganizationGroupBdDao;
@@ -20,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -61,44 +59,112 @@ public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, 
             ps.setString(14, obj.getType());
             ps.setBoolean(15, obj.isOrganization());
 
-            auxListGroup = obj.getGroups();
-            auxListUser = obj.getUsers();
-
-            if (auxListGroup == null) {
-                auxListGroup = new ArrayList<>();
-            }
-            if (auxListUser == null) {
-                auxListUser = new ArrayList<>();
-            }
-            if (auxListExtras == null) {
-                auxListExtras = new ArrayList<>();
-            }
-
-            for (CkanGroup cg : auxListGroup) {
-                getCkanGroupBdBao().insert(cg);
-                getOrganizationGroupBdDao().insert(obj.getId(), cg.getId());
-            }
-            for (CkanUser cuser : auxListUser) {
-                getCkanUserBdDao().insert(cuser);
-                getOrganizationUserBdDao().insert(obj.getId(), cuser.getId());
-            }
-            for (CkanPair cp : auxListExtras) {
-                getOrganizationExtraBdDao().insert(cp, obj.getId());
-            }
-
             return (ps.executeUpdate() != 0);
-        } catch (PSQLException ex) {
-            if (ex.getErrorCode() == 0) {
-                System.out.println("Error: Já existe uma Organization com o ID: " + obj.getId());
-            } else {
-                ex.printStackTrace();
-            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {
             desconectar();
         }
         return false;
+    }
+
+    @Override
+    public boolean update(CkanOrganization obj) {
+        try {
+            conectar();
+            String sql = "UPDATE ORGANIZATION SET APPROVAL_STATUS = ?, CREATED = ?,"
+                    + " DESCRIPTION = ?, DISPLAY_NAME = ?,"
+                    + " IMAGE_DISPLAY_URL = ?, IMAGE_URL = ?,"
+                    + " NAME = ?, NUM_FOLLOWERS = ?,"
+                    + " DATASET_COUNT = ?, REVISION_ID = ?,"
+                    + " STATE = ?, TITLE = ?,"
+                    + " TYPE = ?, IS_ORGANIZATION = ?"
+                    + " WHERE ID = ?";
+            
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, obj.getApprovalStatus());
+            ps.setTimestamp(2, obj.getCreated());
+            ps.setString(3, obj.getDescription());
+            ps.setString(4, obj.getDisplayName());
+            ps.setString(5, obj.getImageDisplayUrl());
+            ps.setString(6, obj.getImageUrl());
+            ps.setString(7, obj.getName());
+            ps.setInt(8, obj.getNumFollowers());
+            ps.setInt(9, obj.getPackageCount());
+            ps.setString(10, obj.getRevisionId());
+            ps.setString(11, String.valueOf(obj.getState()));
+            ps.setString(12, obj.getTitle());
+            ps.setString(13, obj.getType());
+            ps.setBoolean(14, obj.isOrganization());
+            ps.setString(15, obj.getId());
+
+            return (ps.executeUpdate() != 0);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean exist(String id) {
+        try {
+            conectar();
+
+            String sql = "SELECT * FROM ORGANIZATION WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+
+            return (ps.executeQuery().next());
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanOrganization obj) {
+        if (exist(obj.getId())) {
+            update(obj);
+        } else {
+            insert(obj);
+        }
+        insertOrUpdateAtributes(obj);
+    }
+
+    @Override
+    public void insertOrUpdateAtributes(CkanOrganization obj) {
+
+        auxListGroup = obj.getGroups();
+        auxListUser = obj.getUsers();
+        auxListExtras = obj.getExtras();
+
+        if (auxListGroup == null) {
+            auxListGroup = new ArrayList<>();
+        }
+        if (auxListUser == null) {
+            auxListUser = new ArrayList<>();
+        }
+        if (auxListExtras == null) {
+            auxListExtras = new ArrayList<>();
+        }
+
+        for (CkanGroup cg : auxListGroup) {
+            getCkanGroupBdBao().insertOrUpdate(cg);
+            getOrganizationGroupBdDao().insert(obj.getId(), cg.getId());
+        }
+        for (CkanUser cuser : auxListUser) {
+            getCkanUserBdDao().insertOrUpdate(cuser);
+            getOrganizationUserBdDao().insert(obj.getId(), cuser.getId());
+        }
+        for (CkanPair cp : auxListExtras) {
+            getOrganizationExtraBdDao().insert(cp, obj.getId());
+        }
     }
 
     public CkanGroupBdBao getCkanGroupBdBao() {
@@ -135,40 +201,4 @@ public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, 
         }
         return organizationUserBdDao;
     }
-
-    @Override
-    public boolean update(CkanOrganization obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isExist(String id) {
-        try {
-            conectar();
-
-            String sql = "SELECT * FROM ORGANIZATION WHERE ID = ?";
-
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setString(1, id);
-
-            return (ps.executeQuery().next());
-
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } finally {
-            desconectar();
-        }
-        return false;
-    }
-
-    @Override
-    public void insertOrUpdate(CkanOrganization obj) {
-//        Falta comparar as datas de utimo update
-        if (isExist(obj.getId())) {
-            update(obj);
-        } else {
-            insert(obj);
-        }
-    }
-
 }

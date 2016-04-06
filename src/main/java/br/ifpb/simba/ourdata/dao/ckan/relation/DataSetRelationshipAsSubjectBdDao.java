@@ -33,6 +33,8 @@ public class DataSetRelationshipAsSubjectBdDao extends GenericRelationBdDao<Stri
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
 

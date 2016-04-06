@@ -36,5 +36,4 @@ public class ActivityDataSetBdDao extends GenericRelationBdDao<String, String>{
         }
         return false;
     }
-    
 }

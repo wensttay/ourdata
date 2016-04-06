@@ -35,6 +35,8 @@ public class DataSetOrganizationBdDao extends GenericRelationBdDao<String, Strin
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
 

@@ -16,7 +16,8 @@ import java.util.List;
  * @author kieckegard
  */
 public class main {
-
+        public static int datasetTag = 0;
+        
     public static void main(String[] args) {
         String url = "http://dados.gov.br/";
         CkanClient cc = new CkanClient(url);
@@ -27,11 +28,12 @@ public class main {
             try {
                 System.out.println("Index DataSet: " + i);
                 CkanDataset dataset = cc.getDataset(datasetlist.get(i));
-                cdsbd.insert(dataset);
+                cdsbd.insertOrUpdate(dataset);
             } catch (CkanException ex) {
                 System.out.println("Acesso negado.");
             }
         }
+        System.out.println("DATASET TAG |O| : " + datasetTag);
 
     }
 }

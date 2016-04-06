@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author wensttay
  */
-public class DataSetExtraBdDao extends GenericRelationBdDao<List<CkanPair>, String>{
+public class DataSetExtraBdDao extends GenericRelationBdDao<List<CkanPair>, String> {
 
     @Override
     public boolean insert(List<CkanPair> obj, String id) {
@@ -39,9 +39,10 @@ public class DataSetExtraBdDao extends GenericRelationBdDao<List<CkanPair>, Stri
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
 
-    }
-    
+    }  
 }

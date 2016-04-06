@@ -39,6 +39,8 @@ public class DataSetOthersBdDao extends GenericRelationBdDao<Map<String, Object>
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
             
         return false;

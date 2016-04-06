@@ -5,22 +5,14 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan;
 
-import br.ifpb.simba.ourdata.dao.GenericBdDao;
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.ResourceOthersBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.ResourceTrackingSummaryBdDao;
 import eu.trentorise.opendata.jackan.model.CkanResource;
-import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -66,21 +58,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
             ps.setTimestamp(23, obj.getWebstoreLastUpdated());
             ps.setString(24, obj.getWebstoreUrl());
 
-            if (obj.getOthers() != null) {
-                getResourceOthersBdDao().insert(obj.getOthers(), obj.getId());
-            }
-
-            if (obj.getTrackingSummary() != null) {
-                getResourceTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());
-            }
-
             return (ps.executeUpdate() != 0);
-        } catch (PSQLException ex) {
-            if (ex.getErrorCode() == 0) {
-                System.out.println("Error: Já existe uma Resource com o ID: " + obj.getId());
-            } else {
-                ex.printStackTrace();
-            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {
@@ -89,27 +67,62 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
         return false;
     }
 
-    public ResourceOthersBdDao getResourceOthersBdDao() {
-        if (resourceOthersBdDao == null) {
-            resourceOthersBdDao = new ResourceOthersBdDao();
-        }
-        return resourceOthersBdDao;
-    }
-
-    public ResourceTrackingSummaryBdDao getResourceTrackingSummaryBdDao() {
-        if (resourceTrackingSummaryBdDao == null) {
-            resourceTrackingSummaryBdDao = new ResourceTrackingSummaryBdDao();
-        }
-        return resourceTrackingSummaryBdDao;
-    }
-
     @Override
     public boolean update(CkanResource obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            conectar();
+            String sql = "UPDATE RESOURCE SET CACHE_LAST_UPDATED = ?, CACHE_URL = ?,"
+                    + " CREATED = ?, DESCRIPTION = ?,"
+                    + " FORMAT = ?, HASH = ?,"
+                    + " LAST_MODIFIED = ?, MIMETYPE = ?,"
+                    + " MIMETYPE_INNER = ?, NAME = ?,"
+                    + " OWNER = ?, ID_DATASET = ?,"
+                    + " POSITION = ?, RESOURCE_GROUP_ID = ?,"
+                    + " RESOURCE_TYPE = ?, REVISION_ID = ?,"
+                    + " REVISION_TIMESTAMP = ?, SIZE = ?,"
+                    + " STATE = ?, URL = ?,"
+                    + " URL_TYPE = ?, WEBSTORE_LAST_UPDATED = ?,"
+                    + " WEBSTORE_URL = ?"
+                    + " WHERE ID = ?";
+            
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            
+            ps.setString(1, obj.getCacheLastUpdated());
+            ps.setString(2, obj.getCacheUrl());
+            ps.setTimestamp(3, obj.getCreated());
+            ps.setString(4, obj.getDescription());
+            ps.setString(5, obj.getFormat());
+            ps.setString(6, obj.getHash());
+            ps.setString(7, obj.getLastModified());
+            ps.setString(8, obj.getMimetype());
+            ps.setString(9, obj.getMimetypeInner());
+            ps.setString(10, obj.getName());
+            ps.setString(11, obj.getOwner());
+            ps.setString(12, obj.getPackageId());
+            ps.setInt(13, obj.getPosition());
+            ps.setString(14, obj.getResourceGroupId());
+            ps.setString(15, obj.getResourceType());
+            ps.setString(16, obj.getRevisionId());
+            ps.setString(17, obj.getRevisionTimestamp());
+            ps.setString(18, obj.getSize());
+            ps.setString(19, String.valueOf(obj.getState()));
+            ps.setString(20, obj.getUrl());
+            ps.setString(21, obj.getUrlType());
+            ps.setTimestamp(22, obj.getWebstoreLastUpdated());
+            ps.setString(23, obj.getWebstoreUrl());
+            ps.setString(24, obj.getId());
+
+            return (ps.executeUpdate() != 0);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
     }
 
     @Override
-    public boolean isExist(String id) {
+    public boolean exist(String id) {
         try {
             conectar();
 
@@ -130,12 +143,37 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
 
     @Override
     public void insertOrUpdate(CkanResource obj) {
-//        Falta comparar as datas de utimo update
-        if (isExist(obj.getId())) {
+        if (exist(obj.getId())) {
             update(obj);
         } else {
             insert(obj);
         }
+        insertOrUpdateAtributes(obj);
+    }
+
+    @Override
+    public void insertOrUpdateAtributes(CkanResource obj) {
+        if (obj.getOthers() != null) {
+            getResourceOthersBdDao().insert(obj.getOthers(), obj.getId());
+        }
+
+        if (obj.getTrackingSummary() != null) {
+            getResourceTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());
+        }
+    }
+
+    public ResourceOthersBdDao getResourceOthersBdDao() {
+        if (resourceOthersBdDao == null) {
+            resourceOthersBdDao = new ResourceOthersBdDao();
+        }
+        return resourceOthersBdDao;
+    }
+
+    public ResourceTrackingSummaryBdDao getResourceTrackingSummaryBdDao() {
+        if (resourceTrackingSummaryBdDao == null) {
+            resourceTrackingSummaryBdDao = new ResourceTrackingSummaryBdDao();
+        }
+        return resourceTrackingSummaryBdDao;
     }
 
 }

@@ -7,15 +7,9 @@ package br.ifpb.simba.ourdata.dao;
 
 /**
  *
- * @author kieckegard
+ * @author wensttay
  */
-public interface Dao<T, I> {
-
-    boolean insert(T obj);
-    boolean update(T obj);
-    void insertOrUpdate(T obj);
-    void insertOrUpdateAtributes(T obj);
-    boolean exist(I id);
-    
-    
+public interface DaoUpdatable <T,I> {
+    boolean update(T obj, I id);
+    void insertOrUpdate(T obj, I id);
 }

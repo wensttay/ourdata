@@ -20,7 +20,7 @@ public class DataSetTrackingSummaryBdDao extends GenericRelationBdDao<CkanTracki
 
     @Override
     public boolean insert(CkanTrackingSummary obj, String id) {
-                try {
+        try {
             conectar();
             String sql = "INSERT INTO DATASET_TRACKING_SUMMARY values (?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -34,8 +34,9 @@ public class DataSetTrackingSummaryBdDao extends GenericRelationBdDao<CkanTracki
             return true;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+            desconectar();
         }
         return false;
     }
-    
 }

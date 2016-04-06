@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -43,31 +42,7 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
             ps.setString(5, String.valueOf(obj.getState()));
             ps.setTimestamp(6, obj.getTimestamp());
 
-            auxListGroup = obj.getGroups();
-            auxListDataSet = obj.getPackages();
-
-            if (auxListGroup == null) {
-                auxListGroup = new ArrayList<>();
-            }
-            if (auxListDataSet == null) {
-                auxListDataSet = new ArrayList<>();
-            }
-
-            for (String string : auxListGroup) {
-                getActivityGroupBdDao().insert(obj.getId(), string);
-            }
-
-            for (CkanDataset ckanDataset : auxListDataSet) {
-                getActivityDataSetBdDao().insert(obj.getId(), ckanDataset.getId());
-            }
-
             return (ps.executeUpdate() != 0);
-        } catch (PSQLException ex) {
-            if (ex.getErrorCode() == 0) {
-                System.out.println("Error: Já existe uma Activity com o ID: " + obj.getId());
-            } else {
-                ex.printStackTrace();
-            }
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {
@@ -76,27 +51,34 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
         return false;
     }
 
-    public ActivityDataSetBdDao getActivityDataSetBdDao() {
-        if (activityDataSetBdDao == null) {
-            activityDataSetBdDao = new ActivityDataSetBdDao();
-        }
-        return activityDataSetBdDao;
-    }
-
-    public ActivityGroupBdDao getActivityGroupBdDao() {
-        if (activityGroupBdDao == null) {
-            activityGroupBdDao = new ActivityGroupBdDao();
-        }
-        return activityGroupBdDao;
-    }
-
     @Override
     public boolean update(CkanActivity obj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            conectar();
+            String sql = "UPDATE ACTIVITY SET APPROVED_TIMESTAMP = ?, AUTHOR = ?,"
+                    + " MESSAGE = ?, STATE = ?,"
+                    + " TIMESTAMP = ? WHERE ID = ?";
+
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+
+            ps.setTimestamp(1, obj.getApprovedTimestamp());
+            ps.setString(2, obj.getAuthor());
+            ps.setString(3, obj.getMessage());
+            ps.setString(4, String.valueOf(obj.getState()));
+            ps.setTimestamp(5, obj.getTimestamp());
+            ps.setString(6, obj.getId());
+
+            return (ps.executeUpdate() != 0);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
     }
 
     @Override
-    public boolean isExist(String id) {
+    public boolean exist(String id) {
         try {
             conectar();
 
@@ -117,12 +99,49 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
 
     @Override
     public void insertOrUpdate(CkanActivity obj) {
-        //        Falta comparar as datas de utimo update
-        if (isExist(obj.getId())) {
+        if (exist(obj.getId())) {
             update(obj);
         } else {
             insert(obj);
         }
-
+        insertOrUpdateAtributes(obj);
     }
+
+    @Override
+    public void insertOrUpdateAtributes(CkanActivity obj) {
+
+        auxListGroup = obj.getGroups();
+        auxListDataSet = obj.getPackages();
+
+        if (auxListGroup == null) {
+            auxListGroup = new ArrayList<>();
+        }
+        if (auxListDataSet == null) {
+            auxListDataSet = new ArrayList<>();
+        }
+
+        for (String string : auxListGroup) {
+            getActivityGroupBdDao().insert(obj.getId(), string);
+        }
+
+        for (CkanDataset ckanDataset : auxListDataSet) {
+//            TALVEZ AQUI PRECISE INSERIR NOVAMENTE DATASETs
+            getActivityDataSetBdDao().insert(obj.getId(), ckanDataset.getId());
+        }
+    }
+
+    public ActivityDataSetBdDao getActivityDataSetBdDao() {
+        if (activityDataSetBdDao == null) {
+            activityDataSetBdDao = new ActivityDataSetBdDao();
+        }
+        return activityDataSetBdDao;
+    }
+
+    public ActivityGroupBdDao getActivityGroupBdDao() {
+        if (activityGroupBdDao == null) {
+            activityGroupBdDao = new ActivityGroupBdDao();
+        }
+        return activityGroupBdDao;
+    }
+
 }
