@@ -19,6 +19,7 @@ import br.ifpb.simba.ourdata.main;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
 import eu.trentorise.opendata.jackan.model.CkanGroup;
+import eu.trentorise.opendata.jackan.model.CkanPair;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.jackan.model.CkanTag;
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.util.List;
 
 /**
  *
- * @author wensttay
+ * @author wensttay, Pedro Arthur
  */
 public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
@@ -58,6 +59,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     List<CkanDatasetRelationship> auxListDatasetRelationshipsAsObject;
     List<CkanDatasetRelationship> auxListDatasetRelationshipsAsSubject;
     List<CkanGroup> auxListGroup;
+    List<CkanPair> auxListExtra;
 
     Timestamp timestampModified;
 
@@ -254,10 +256,6 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             getDataSetOthersBdDao().insert(obj.getOthers(), obj.getId());
         }
 
-        if (obj.getExtras() != null) {
-            getDataSetExtraBdDao().insert(obj.getExtras(), obj.getId());
-        }
-
         if (obj.getOrganization() != null) {
             getCkanOrganizationBdDao().insertOrUpdate(obj.getOrganization());
             getDataSetOrganizationBdDao().insert(obj.getId(), obj.getOrganization().getId());
@@ -272,6 +270,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         auxListDatasetRelationshipsAsObject = obj.getRelationshipsAsObject();
         auxListDatasetRelationshipsAsSubject = obj.getRelationshipsAsSubject();
         auxListGroup = obj.getGroups();
+        auxListExtra = obj.getExtras();
 
         if (auxListTag == null) {
             auxListTag = new ArrayList<>();
@@ -291,6 +290,10 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
         if (auxListGroup == null) {
             auxListGroup = new ArrayList<>();
+        }
+        
+        if(auxListExtra == null){
+            auxListExtra = new ArrayList<>();
         }
 
         for (CkanTag ckanTag : auxListTag) {
@@ -316,6 +319,10 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         for (CkanGroup cg : auxListGroup) {
             getCkanGroupBdBao().insertOrUpdate(cg);
             getDataSetGroupBdDao().insert(obj.getId(), cg.getId());
+        }
+        
+        for (CkanPair cp : auxListExtra) {
+            getDataSetExtraBdDao().insertOrUpdate(cp, obj.getId());
         }
     }
 
