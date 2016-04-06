@@ -230,8 +230,11 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
     @Override
     public void insertOrUpdate(CkanDataset obj) {
-        if(obj.getTags() != null)
-         main.datasetTag = main.datasetTag + obj.getTags().size();
+
+        if (obj.getTags() != null) {
+            main.datasetTag = main.datasetTag + obj.getTags().size();
+        }
+        
         if (exist(obj.getId())) {
             timestampModified = getTimestampModified(obj.getId());
             if (timestampModified != null && obj.getMetadataModified().after(timestampModified)) {
@@ -289,7 +292,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         if (auxListGroup == null) {
             auxListGroup = new ArrayList<>();
         }
-        
+
         for (CkanTag ckanTag : auxListTag) {
             getCkanTagBdDao().insertOrUpdate(ckanTag);
             getDataSetTagBdDao().insert(obj.getId(), ckanTag.getId());

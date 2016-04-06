@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
+import br.ifpb.simba.ourdata.dao.DaoUpdatable;
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
 import eu.trentorise.opendata.jackan.model.CkanPair;
 import java.io.IOException;
@@ -16,7 +17,8 @@ import java.sql.SQLException;
  *
  * @author wensttay
  */
-public class OrganizationExtraBdDao extends GenericRelationBdDao<CkanPair, String>{
+public class OrganizationExtraBdDao extends GenericRelationBdDao<CkanPair, String>
+implements DaoUpdatable<CkanPair, String>{
 
     @Override
     public boolean insert(CkanPair obj, String id) {

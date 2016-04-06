@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
+import br.ifpb.simba.ourdata.dao.DaoUpdatable;
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,7 +17,8 @@ import java.util.Map;
  *
  * @author wensttay
  */
-public class ResourceOthersBdDao extends GenericRelationBdDao<Map<String,Object>, String>{
+public class ResourceOthersBdDao extends GenericRelationBdDao<Map<String,Object>, String>
+implements DaoUpdatable<Map<String,Object>, String>{
 
     @Override
     public boolean insert(Map<String, Object> obj, String id) {

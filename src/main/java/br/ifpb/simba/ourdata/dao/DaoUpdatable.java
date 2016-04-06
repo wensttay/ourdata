@@ -12,4 +12,5 @@ package br.ifpb.simba.ourdata.dao;
 public interface DaoUpdatable <T,I> {
     boolean update(T obj, I id);
     void insertOrUpdate(T obj, I id);
+    boolean exist(T obj, I id);
 }

@@ -15,10 +15,11 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class main {
-        public static int datasetTag = 0;
-        
-    public static void main(String[] args) {
+public class main extends Thread {
+
+    public static int datasetTag = 0;
+
+    public void run() {
         String url = "http://dados.gov.br/";
         CkanClient cc = new CkanClient(url);
         CkanDataSetBdDao cdsbd = new CkanDataSetBdDao();
@@ -35,5 +36,9 @@ public class main {
         }
         System.out.println("DATASET TAG |O| : " + datasetTag);
 
+    }
+
+    public static void main(String[] args) {
+        (new Thread(new main())).start();
     }
 }
