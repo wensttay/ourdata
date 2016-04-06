@@ -163,7 +163,7 @@ public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, 
             getOrganizationUserBdDao().insert(obj.getId(), cuser.getId());
         }
         for (CkanPair cp : auxListExtras) {
-            getOrganizationExtraBdDao().insert(cp, obj.getId());
+            getOrganizationExtraBdDao().insertOrUpdate(cp, obj.getId());
         }
     }
 

@@ -15,7 +15,7 @@ import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetRelationshipAsSubjectBdDao
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetResourcesBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetTagBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetTrackingSummaryBdDao;
-import br.ifpb.simba.ourdata.main;
+import br.ifpb.simba.ourdata.Main;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
 import eu.trentorise.opendata.jackan.model.CkanGroup;
@@ -29,7 +29,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -60,7 +62,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     List<CkanDatasetRelationship> auxListDatasetRelationshipsAsSubject;
     List<CkanGroup> auxListGroup;
     List<CkanPair> auxListExtra;
-
+    Map<String, Object> auxMapOthers;
+    
     Timestamp timestampModified;
 
     @Override
@@ -178,7 +181,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
                 ps.setBoolean(25, true);
             }
             ps.setString(26, obj.getId());
-
+            
             return (ps.executeUpdate() != 0);
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
@@ -234,7 +237,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     public void insertOrUpdate(CkanDataset obj) {
 
         if (obj.getTags() != null) {
-            main.datasetTag = main.datasetTag + obj.getTags().size();
+            Main.datasetTag = Main.datasetTag + obj.getTags().size();
         }
         
         if (exist(obj.getId())) {
@@ -252,9 +255,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
     @Override
     public void insertOrUpdateAtributes(CkanDataset obj) {
-        if (obj.getOthers() != null) {
-            getDataSetOthersBdDao().insert(obj.getOthers(), obj.getId());
-        }
+        
 
         if (obj.getOrganization() != null) {
             getCkanOrganizationBdDao().insertOrUpdate(obj.getOrganization());
@@ -262,7 +263,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         }
 
         if (obj.getTrackingSummary() != null) {
-            getDataSetTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());;
+            getDataSetTrackingSummaryBdDao().insertOrUpdate(obj.getTrackingSummary(), obj.getId());;
         }
 
         auxListTag = obj.getTags();
@@ -271,6 +272,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         auxListDatasetRelationshipsAsSubject = obj.getRelationshipsAsSubject();
         auxListGroup = obj.getGroups();
         auxListExtra = obj.getExtras();
+        auxMapOthers = obj.getOthers();
 
         if (auxListTag == null) {
             auxListTag = new ArrayList<>();
@@ -294,6 +296,10 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         
         if(auxListExtra == null){
             auxListExtra = new ArrayList<>();
+        }
+        
+        if(auxMapOthers == null){
+            auxMapOthers = (Map<String, Object>) Collections.EMPTY_MAP;
         }
 
         for (CkanTag ckanTag : auxListTag) {
@@ -324,6 +330,12 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         for (CkanPair cp : auxListExtra) {
             getDataSetExtraBdDao().insertOrUpdate(cp, obj.getId());
         }
+        
+        for (Map.Entry<String, Object> entry : auxMapOthers.entrySet()) {
+            CkanPair auxCkanPair = new CkanPair(entry.getKey(), String.valueOf(entry.getValue()));
+            getDataSetOthersBdDao().insertOrUpdate(auxCkanPair, obj.getId());
+        }
+        
     }
 
     public CkanOrganizationBdDao getCkanOrganizationBdDao() {

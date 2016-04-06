@@ -18,11 +18,11 @@ import java.sql.SQLException;
  * @author wensttay
  */
 public class ResourceTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrackingSummary, String>
-implements DaoUpdatable<CkanTrackingSummary, String>{
+        implements DaoUpdatable<CkanTrackingSummary, String> {
 
     @Override
     public boolean insert(CkanTrackingSummary obj, String id) {
-        
+
         try {
             conectar();
             String sql = "INSERT INTO RESOURCE_TRACKING_SUMMARY values (?, ?, ?)";
@@ -32,14 +32,63 @@ implements DaoUpdatable<CkanTrackingSummary, String>{
             ps.setInt(2, obj.getTotal());
             ps.setString(3, id);
 
-            ps.executeUpdate();
-
-            return true;
+            return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {
             desconectar();
         }
         return false;
-    } 
+    }
+
+    @Override
+    public boolean update(CkanTrackingSummary obj, String id) {
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            sql = "UPDATE RESOURCE_TRACKING_SUMMARY SET RECENTE = ?, TOTAL = ? WHERE ID_DATASET = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, obj.getRecent());
+            ps.setInt(2, obj.getTotal());
+            ps.setString(3, id);
+            return (ps.executeUpdate() != 0);
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanTrackingSummary obj, String id) {
+        if (exist(obj, id)) {
+            update(obj, id);
+        } else {
+            insert(obj, id);
+        }
+    }
+
+    @Override
+    public boolean exist(CkanTrackingSummary obj, String id) {
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            sql = "SELECT * FROM DATASET_TRACKING_SUMMARY WHERE ID_DATASET = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+            return ps.executeQuery().next();
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
 }

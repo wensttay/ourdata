@@ -8,11 +8,14 @@ package br.ifpb.simba.ourdata.dao.ckan;
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.ResourceOthersBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.ResourceTrackingSummaryBdDao;
+import eu.trentorise.opendata.jackan.model.CkanPair;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *
@@ -22,7 +25,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
 
     ResourceOthersBdDao resourceOthersBdDao;
     ResourceTrackingSummaryBdDao resourceTrackingSummaryBdDao;
-
+    
+    Map<String,Object> auxMapOthers;
+    
     @Override
     public boolean insert(CkanResource obj) {
         try {
@@ -153,12 +158,20 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
 
     @Override
     public void insertOrUpdateAtributes(CkanResource obj) {
-        if (obj.getOthers() != null) {
-            getResourceOthersBdDao().insert(obj.getOthers(), obj.getId());
+        
+        auxMapOthers = obj.getOthers();
+        
+        if(auxMapOthers == null){
+            auxMapOthers = (Map<String, Object>) Collections.EMPTY_MAP;
+        }
+        
+        for (Map.Entry<String, Object> entry : auxMapOthers.entrySet()) {
+            CkanPair auxCkanPair = new CkanPair(entry.getKey(), String.valueOf(entry.getValue()));
+            getResourceOthersBdDao().insertOrUpdate(auxCkanPair, obj.getId());
         }
 
         if (obj.getTrackingSummary() != null) {
-            getResourceTrackingSummaryBdDao().insert(obj.getTrackingSummary(), obj.getId());
+            getResourceTrackingSummaryBdDao().insertOrUpdate(obj.getTrackingSummary(), obj.getId());
         }
     }
 

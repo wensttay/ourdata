@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * @author wensttay
  */
 public class GrupoExtraBdDao extends GenericRelationBdDao<CkanPair, String>
-implements DaoUpdatable<CkanPair, String>{
+        implements DaoUpdatable<CkanPair, String> {
 
     @Override
     public boolean insert(CkanPair obj, String id) {
@@ -31,6 +31,58 @@ implements DaoUpdatable<CkanPair, String>{
             pstm.setString(3, id);
 
             return (pstm.executeUpdate() != 0);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(CkanPair obj, String id) {
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            sql = "UPDATE GRUPO_EXTRA SET KEY = ?, VALUE = ? WHERE ID_GRUPO = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, obj.getKey());
+            ps.setString(2, obj.getValue());
+            ps.setString(3, id);
+            
+            return (ps.executeUpdate() != 0);
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } finally {
+            desconectar();
+        }
+        return false;
+    }
+
+    @Override
+    public void insertOrUpdate(CkanPair obj, String id) {
+        if (exist(obj, id)) {
+            update(obj, id);
+        } else {
+            insert(obj, id);
+        }
+    }
+
+    @Override
+    public boolean exist(CkanPair obj, String id) {
+        try {
+            conectar();
+            String sql;
+            PreparedStatement ps;
+
+            sql = "SELECT * FROM GRUPO_EXTRA WHERE ID_GRUPO = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+            return ps.executeQuery().next();
+
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         } finally {

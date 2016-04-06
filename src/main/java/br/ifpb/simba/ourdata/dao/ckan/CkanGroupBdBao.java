@@ -162,7 +162,7 @@ public class CkanGroupBdBao extends GenericObjectBdDao<CkanGroup, String> {
         }
 
         for (CkanPair cp : auxListExtras) {
-            getGrupoExtraBdDao().insert(cp, obj.getId());
+            getGrupoExtraBdDao().insertOrUpdate(cp, obj.getId());
 
         }
     }

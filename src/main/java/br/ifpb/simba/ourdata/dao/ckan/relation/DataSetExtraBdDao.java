@@ -19,14 +19,11 @@ import java.sql.SQLException;
  * @author wensttay, Pedro Arthur
  */
 public class DataSetExtraBdDao extends GenericRelationBdDao<CkanPair, String>
-        implements DaoUpdatable<CkanPair, String>
-{
+        implements DaoUpdatable<CkanPair, String> {
 
     @Override
-    public boolean insert(CkanPair obj, String id)
-    {
-        try
-        {
+    public boolean insert(CkanPair obj, String id) {
+        try {
             conectar();
             String sql;
             PreparedStatement ps;
@@ -34,28 +31,21 @@ public class DataSetExtraBdDao extends GenericRelationBdDao<CkanPair, String>
             sql = "INSERT INTO DATASET_EXTRA values (?, ?, ?)";
             ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getKey());
-            ps.setString(2, obj.getValue().toString());
+            ps.setString(2, obj.getValue());
             ps.setString(3, id);
-            ps.executeUpdate();
-            return true;
+            return (ps.executeUpdate() != 0);
 
-        }
-        catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             desconectar();
         }
         return false;
     }
 
     @Override
-    public boolean update(CkanPair obj, String id)
-    {
-        try
-        {
+    public boolean update(CkanPair obj, String id) {
+        try {
             conectar();
             String sql;
             PreparedStatement ps;
@@ -63,57 +53,42 @@ public class DataSetExtraBdDao extends GenericRelationBdDao<CkanPair, String>
             sql = "UPDATE DATASET_EXTRA SET KEY = ?, VALUE = ? WHERE ID_DATASET = ?";
             ps = getConnection().prepareStatement(sql);
             ps.setString(1, obj.getKey());
-            ps.setString(2, obj.getValue().toString());
+            ps.setString(2, obj.getValue());
             ps.setString(3, id);
-            ps.executeUpdate();
-            return true;
+            return (ps.executeUpdate() != 0);
 
-        }
-        catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             desconectar();
         }
         return false;
     }
 
     @Override
-    public void insertOrUpdate(CkanPair obj, String id)
-    {
-        if (exist(obj, id))
-        {
+    public void insertOrUpdate(CkanPair obj, String id) {
+        if (exist(obj, id)) {
             update(obj, id);
-        }
-        else
-        {
+        } else {
             insert(obj, id);
         }
     }
 
     @Override
-    public boolean exist(CkanPair obj, String id)
-    {
-        try
-        {
+    public boolean exist(CkanPair obj, String id) {
+        try {
             conectar();
             String sql;
             PreparedStatement ps;
 
-            sql = "SELECT * FROM DATASET_EXTRA WHERE ID_DATASET=?";
-            ps = getConnection().prepareCall(sql);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            sql = "SELECT * FROM DATASET_EXTRA WHERE ID_DATASET = ?";
+            ps = getConnection().prepareStatement(sql);
+            ps.setString(1, id);
+            return ps.executeQuery().next();
 
-        }
-        catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             desconectar();
         }
         return false;
