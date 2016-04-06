@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author wensttay
+ * @author wensttay, Pedro Arthur
  */
 public class CkanGroupBdBao extends GenericObjectBdDao<CkanGroup, String> {
 

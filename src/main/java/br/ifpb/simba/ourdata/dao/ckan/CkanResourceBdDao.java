@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author wensttay
+ * @author wensttay, Pedro Arthur
  */
 public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> {
 
