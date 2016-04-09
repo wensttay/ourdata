@@ -3,18 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata;
+package br.ifpb.simba.ourdata.test;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import br.ifpb.simba.ourdata.dao.thread.AtualizadorDeBanco;
 
 /**
  *
  * @author wensttay
  */
 public class TesteMultiTread {
+    final static String url = "http://dados.gov.br/";
+    
     public static void main(String[] args) {
-        (new Thread(new Main())).start();
+        (new Thread(new AtualizadorDeBanco(url))).start();
         
         int i = 0;
         while(true){

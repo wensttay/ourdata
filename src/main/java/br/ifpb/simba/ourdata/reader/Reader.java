@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata.dao;
+package br.ifpb.simba.ourdata.reader;
 
 /**
  *
  * @author wensttay
  */
-public interface DaoUpdatable <T,I> {
-    boolean update(T obj, I id);
-    void insertOrUpdate(T obj, I id);
-    boolean exist(T obj, I id);
+public interface Reader <T,I> {
+    T build (I url);
+    void print (I url);
+    void printChildrenNames(I url);
 }

@@ -5,7 +5,6 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
-import br.ifpb.simba.ourdata.dao.DaoUpdatable;
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
 import eu.trentorise.opendata.jackan.model.CkanPair;
 import java.io.IOException;
@@ -13,13 +12,14 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import br.ifpb.simba.ourdata.dao.DaoRelationUpdatable;
 
 /**
  *
  * @author wensttay
  */
 public class OrganizationExtraBdDao extends GenericRelationBdDao<CkanPair, String>
-implements DaoUpdatable<CkanPair, String>{
+implements DaoRelationUpdatable<CkanPair, String>{
 
     @Override
     public boolean insert(CkanPair obj, String id) {

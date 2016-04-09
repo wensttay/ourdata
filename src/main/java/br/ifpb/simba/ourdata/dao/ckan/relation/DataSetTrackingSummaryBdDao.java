@@ -5,20 +5,20 @@
  */
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
-import br.ifpb.simba.ourdata.dao.DaoUpdatable;
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
 import eu.trentorise.opendata.jackan.model.CkanTrackingSummary;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import br.ifpb.simba.ourdata.dao.DaoRelationUpdatable;
 
 /**
  *
  * @author wensttay
  */
 public class DataSetTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrackingSummary, String>
-implements DaoUpdatable<CkanTrackingSummary, String>{
+implements DaoRelationUpdatable<CkanTrackingSummary, String>{
 
     @Override
     public boolean insert(CkanTrackingSummary obj, String id) {
