@@ -7,7 +7,7 @@ package br.ifpb.simba.ourdata.dao;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public interface DaoRelationUpdatable <T,I> {
     boolean update(T obj, I id);

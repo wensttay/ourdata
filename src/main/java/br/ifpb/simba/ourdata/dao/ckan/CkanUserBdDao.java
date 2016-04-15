@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class CkanUserBdDao extends GenericObjectBdDao<CkanUser, String> {
 

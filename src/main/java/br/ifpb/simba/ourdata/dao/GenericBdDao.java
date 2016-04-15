@@ -15,7 +15,7 @@ import java.util.Properties;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  * @param <T>
  * @param <I>
  */

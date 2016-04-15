@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> {
 
@@ -60,7 +60,7 @@ public class CkanActivityBdDao extends GenericObjectBdDao<CkanActivity, String> 
                     + " TIMESTAMP = ? WHERE ID = ?";
 
             PreparedStatement ps = getConnection().prepareStatement(sql);
-
+            
             ps.setTimestamp(1, obj.getApprovedTimestamp());
             ps.setString(2, obj.getAuthor());
             ps.setString(3, obj.getMessage());

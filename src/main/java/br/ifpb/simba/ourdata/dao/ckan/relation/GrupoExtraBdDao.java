@@ -15,7 +15,7 @@ import br.ifpb.simba.ourdata.dao.DaoRelationUpdatable;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class GrupoExtraBdDao extends GenericRelationBdDao<CkanPair, String>
         implements DaoRelationUpdatable<CkanPair, String> {

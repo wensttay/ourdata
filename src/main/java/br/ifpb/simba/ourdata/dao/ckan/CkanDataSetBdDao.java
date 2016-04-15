@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  *
- * @author wensttay, Pedro Arthur
+ * @author Wensttay, Pedro Arthur
  */
 public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 

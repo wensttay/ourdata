@@ -7,10 +7,9 @@ package br.ifpb.simba.ourdata.reader;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public interface Reader <T,I> {
     T build (I url);
     void print (I url);
-    void printChildrenNames(I url);
 }

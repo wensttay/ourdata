@@ -5,74 +5,85 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
-import java.io.File;
+import br.ifpb.simba.ourdata.test.TesteJsomPrintAll;
+import com.sun.org.apache.xerces.internal.impl.io.MalformedByteSequenceException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.UnknownHostException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.Namespace;
+import org.jdom.input.JDOMParseException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.w3c.dom.CharacterData;
-import org.w3c.dom.Node;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class JdomReader implements Reader<Element, String> {
 
     @Override
     public Element build(String url) {
-        SAXBuilder builder;
-        Document document;
         try {
-            builder = new SAXBuilder();
-            document = (Document) builder.build(url);
-
+            Document document = new SAXBuilder().build(url);
             Element rootNode = document.getRootElement();
 
             if (rootNode != null) {
                 return rootNode;
-            }
+            }        
+        } catch (JDOMParseException ex) {
+            System.out.println("Error: Url: " + url + " (Arquivo Migrado para outro Site)\n\n");
+        } catch (UnknownHostException ex) {
+            System.out.println("Error: Url: " + url + " (Conecção interrompida)\n\n");
+        } catch (OutOfMemoryError ex) {
+            System.out.println("Error: Url: " + url + " (Arquivo excedeu o limite de memoria)\n\n");
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error: Url: " + url + " (Acesso Negado à página XML)\n\n");
         } catch (JDOMException | IOException ex) {
-            Logger.getLogger(JdomReader.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error: Url: " + url + " ("+ ex.getMessage() +")\n\n");
         }
         return null;
     }
 
     @Override
     public void print(String url) {
-        Element aux;
-        aux = build(url);
-        if (aux != null) {
-            XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-            String xmlString = outputter.outputString(aux);
-            System.out.println(xmlString);
+        Element auxElement = build(url);
+        XMLOutputter outputter;
+
+        if (auxElement != null) {
+            System.out.println(String.format("Carregando URL: %s ...", url));
+            outputter = new XMLOutputter(Format.getPrettyFormat());
+            TesteJsomPrintAll.funcionou++;
+            System.out.println("Carregou Com Sucesso! ( " + TesteJsomPrintAll.funcionou + " )");
+//            String xmlString = outputter.outputString(auxElement);
+//            System.out.println(xmlString);
         }
+//        outputter = null;
+//        auxElement = null;
     }
 
-    @Override
-    public void printChildrenNames(String url) {
-        Element aux;
-        aux = build(url);
-        if (aux != null) {
-            printChildrenNames(aux, "");
-        }
-    }
-
-    private void printChildrenNames(Element aux, String espace) {
-        List<Element> rootNodeList = aux.getChildren();
-
-        if (rootNodeList != null && !rootNodeList.isEmpty()) {
-            for (int i = 0; i < rootNodeList.size(); i++) {
-                System.out.println(espace + rootNodeList.get(i).getName());
-//                printChildrenNames(rootNodeList.get(i), espace + "    ");
-            }
-        }
-    }
+//    @Override
+//    public void printChildren(String url) {
+//        Element auxElement = build(url);
+//        if (auxElement != null) {
+//            printChildren(auxElement, "");
+//        }
+//    }
+//
+//    private void printChildren(Element auxElement, String espace) {
+//
+//        List<Element> rootNodeList = auxElement.getChildren();
+//
+//        if (rootNodeList != null && !rootNodeList.isEmpty()) {
+//            for (int i = 0; i < rootNodeList.size(); i++) {
+//                System.out.print(espace + rootNodeList.get(i).getName() + " = "
+//                        + rootNodeList.get(i).getText());
+//                printChildren(rootNodeList.get(i), espace + "    ");
+//            }
+//            rootNodeList.clear();
+//        }
+//
+//    }
 }

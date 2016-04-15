@@ -10,13 +10,12 @@ import eu.trentorise.opendata.jackan.model.CkanPair;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import br.ifpb.simba.ourdata.dao.DaoRelationUpdatable;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class OrganizationExtraBdDao extends GenericRelationBdDao<CkanPair, String>
 implements DaoRelationUpdatable<CkanPair, String>{

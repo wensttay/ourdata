@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  *
- * @author wensttay, Pedro Arthur
+ * @author Wensttay, Pedro Arthur
  */
 public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> {
 

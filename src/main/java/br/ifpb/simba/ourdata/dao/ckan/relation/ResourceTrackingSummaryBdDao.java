@@ -15,7 +15,7 @@ import br.ifpb.simba.ourdata.dao.DaoRelationUpdatable;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class ResourceTrackingSummaryBdDao extends GenericRelationBdDao<CkanTrackingSummary, String>
         implements DaoRelationUpdatable<CkanTrackingSummary, String> {

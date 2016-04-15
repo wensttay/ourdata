@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public class DataSetOrganizationBdDao extends GenericRelationBdDao<String, String>{
 

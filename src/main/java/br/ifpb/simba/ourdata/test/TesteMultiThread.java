@@ -9,22 +9,22 @@ import br.ifpb.simba.ourdata.dao.thread.AtualizadorDeBanco;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
-public class TesteMultiTread {
+public class TesteMultiThread {
     final static String url = "http://dados.gov.br/";
     
     public static void main(String[] args) {
         (new Thread(new AtualizadorDeBanco(url))).start();
         
-        int i = 0;
-        while(true){
-            System.out.println(++i);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
+//        int i = 0;
+//        while(true){
+//            System.out.println(++i);
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     }
 }
