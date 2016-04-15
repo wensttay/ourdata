@@ -60,30 +60,7 @@ public class JdomReader implements Reader<Element, String> {
 //            String xmlString = outputter.outputString(auxElement);
 //            System.out.println(xmlString);
         }
-//        outputter = null;
-//        auxElement = null;
+        outputter = null;
+        auxElement = null;
     }
-
-//    @Override
-//    public void printChildren(String url) {
-//        Element auxElement = build(url);
-//        if (auxElement != null) {
-//            printChildren(auxElement, "");
-//        }
-//    }
-//
-//    private void printChildren(Element auxElement, String espace) {
-//
-//        List<Element> rootNodeList = auxElement.getChildren();
-//
-//        if (rootNodeList != null && !rootNodeList.isEmpty()) {
-//            for (int i = 0; i < rootNodeList.size(); i++) {
-//                System.out.print(espace + rootNodeList.get(i).getName() + " = "
-//                        + rootNodeList.get(i).getText());
-//                printChildren(rootNodeList.get(i), espace + "    ");
-//            }
-//            rootNodeList.clear();
-//        }
-//
-//    }
 }
