@@ -24,7 +24,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class TesteXMLPrint {
 
-    public final static int NUMERO_DE_TENTATIVAS = 0;
+    public final static int NUMERO_DE_TENTATIVAS = 10;
     public static int total = 0;
     public static int funcionou = 0;
 
@@ -80,7 +80,7 @@ public class TesteXMLPrint {
             
             String resut =  "\n Total de Recursos (XML) Funcionando: " + funcionou+
                     "\n Total de Recursos (XML): " + total +
-                    "\n Porcentagem de Acerto Funcional: " + formatter.format(porcentFound) + "%\n";
+                    "\n Porcentagem de Acerto Funcional: " + formatter.format(porcentFound) + " %\n";
             saveLog(resut);
         }
     }
