@@ -50,7 +50,6 @@ public class AtualizadorDeBanco extends Thread {
                     System.out.println("Acesso negado.");
                 }
             }
-
             try {
                 Thread.sleep(intervalTime);
             } catch (InterruptedException ex) {

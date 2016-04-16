@@ -24,9 +24,9 @@ import java.util.logging.SimpleFormatter;
  */
 public class TesteXMLPrint {
 
-    public final static int NUMERO_DE_TENTATIVAS = 10;
-    public static int total = 1083;
-    public static int funcionou = 692;
+    public final static int NUMERO_DE_TENTATIVAS = 0;
+    public static int total = 0;
+    public static int funcionou = 0;
 
     public static void main(String[] args) {
         String urlString = "http://dados.gov.br/";
