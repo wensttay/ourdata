@@ -10,6 +10,6 @@ package br.ifpb.simba.ourdata.reader;
  * @author Wensttay
  */
 public interface Reader <T,I> {
-    T build (I url);
-    void print (I url);
+    T build (I urlString);
+    void print (I urlString);
 }

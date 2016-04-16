@@ -10,22 +10,27 @@ import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.exceptions.CkanException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  *
  * @author wensttay
  */
 public class TesteXMLPrint {
-    
+
     public final static int NUMERO_DE_TENTATIVAS = 10;
-    public static int total = 0;
-    public static int funcionou = 0;
-    
-    
+    public static int total = 1083;
+    public static int funcionou = 692;
+
     public static void main(String[] args) {
-        String url = "http://dados.gov.br/";
-        CkanClient cc = new CkanClient(url);
+        String urlString = "http://dados.gov.br/";
+        CkanClient cc = new CkanClient(urlString);
         XMLReader jdomReader = new XMLReader();
 
         List<String> datasetlist = null;
@@ -35,7 +40,7 @@ public class TesteXMLPrint {
         try {
             datasetlist = cc.getDatasetList();
         } catch (CkanException ex) {
-            System.out.println("Error: Url: " + url + " (Acesso Negado à lista de DataSets)\n\n");
+            System.out.println("Error: Url: " + urlString + " (Acesso Negado à lista de DataSets)\n\n");
         }
 
         if (datasetlist != null && !datasetlist.isEmpty()) {
@@ -47,7 +52,7 @@ public class TesteXMLPrint {
                         System.out.println("Index DataSet: " + i + " (" + datasetlist.get(i) + ")");
                         dataset = cc.getDataset(datasetlist.get(i));
                     } catch (CkanException ex) {
-                        System.out.println("Error: Url: " + url + "api/3/action/package_show?id=" + datasetlist.get(i) + " (Acesso Negado ao DataSet)\n\n");
+                        System.out.println("Error: Url: " + urlString + "api/3/action/package_show?id=" + datasetlist.get(i) + " (Acesso Negado ao DataSet)\n\n");
                         ++tentativas;
                     }
                 }
@@ -56,24 +61,45 @@ public class TesteXMLPrint {
                         auxResources = dataset.getResources();
                     }
                     if (auxResources != null && !auxResources.isEmpty()) {
-                        total += auxResources.size();
                         for (int j = 0; j < auxResources.size(); j++) {
                             if (auxResources.get(j).getFormat().equals("XML")) {
+                                total++;
                                 jdomReader.print((auxResources.get(j).getUrl()));
                             }
                         }
                     }
                 } catch (CkanException ex) {
-                    System.out.println("Error: Url: " + url + "api/3/action/package_show?id=" + datasetlist.get(i) + " (Não foram encontrado Resources)\n\n");
+                    System.out.println("Error: Url: " + urlString + "api/3/action/package_show?id=" + datasetlist.get(i) + " (Não foram encontrado Resources)\n\n");
                 }
-                
+
                 auxResources = null;
                 dataset = null;
             }
+            NumberFormat formatter = new DecimalFormat("#0.00");
+            float porcentFound = (((float) funcionou * 100) / (float) total);
+            
+            String resut =  "\n Total de Recursos (XML) Funcionando: " + funcionou+
+                    "\n Total de Recursos (XML): " + total +
+                    "\n Porcentagem de Acerto Funcional: " + formatter.format(porcentFound) + "%\n";
+            saveLog(resut);
+        }
+    }
 
-            System.out.println("Funcionaram: " + funcionou);
-            System.out.println("Total de Recursos: " + total);
-            System.out.println("Porcentagem de acerto: " + ((funcionou * 100) / total));
+    public static void saveLog(String text) {
+        Logger logger = Logger.getLogger("XML-PrintLog");
+        FileHandler fh;
+        try {
+            // This block configure the logger with handler and formatter  
+            fh = new FileHandler(System.getProperty("user.dir") + "\\src\\main\\resources\\log\\LogPrintXML.log"); 
+            logger.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+
+            // the following statement is used to log any messages  
+            logger.info(text);
+
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
         }
     }
 }
