@@ -5,7 +5,6 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
-import au.com.bytecode.opencsv.CSVReader;
 import br.ifpb.simba.ourdata.test.TestCSV;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
@@ -18,18 +17,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author kieckegard
  */
-public class CSVUtils implements Reader<List<String[]>, String> {
+public class CSVReader implements Reader<List<String[]>, String> {
 
-    public CSVReader getCSVReader(String url) throws IOException {
+    public au.com.bytecode.opencsv.CSVReader getCSVReaderBuild(String url) throws IOException {
         char separator, quote = 34;
         URL stackURL = new URL(url);
         stackURL.openConnection().setReadTimeout(120000);
@@ -39,12 +36,12 @@ public class CSVUtils implements Reader<List<String[]>, String> {
         String first_line = lines.get(0);
         separator = getSeparator(first_line);
         BufferedReader br = byteArreyToBufferedReader(bytes);
-        au.com.bytecode.opencsv.CSVReader reader = new CSVReader(br, separator, quote);
+        au.com.bytecode.opencsv.CSVReader reader = new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
         return reader;
     }
 
     private BufferedReader byteArreyToBufferedReader(byte[] bytes) {
-        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes),StandardCharsets.ISO_8859_1));
     }
 
     private List<String> getLines(BufferedReader br) throws IOException {
@@ -90,7 +87,7 @@ public class CSVUtils implements Reader<List<String[]>, String> {
     public List<String[]> build(String url) {
         try {
             List<String[]> lines = new ArrayList<>();
-            CSVReader reader = getCSVReader(url);
+            au.com.bytecode.opencsv.CSVReader reader = getCSVReaderBuild(url);
             return reader.readAll();
         } catch (IOException ex) {
             TestCSV.error_count++;

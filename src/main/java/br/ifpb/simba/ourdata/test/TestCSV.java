@@ -5,7 +5,7 @@
  */
 package br.ifpb.simba.ourdata.test;
 
-import br.ifpb.simba.ourdata.reader.CSVUtils;
+import br.ifpb.simba.ourdata.reader.CSVReader;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
@@ -34,7 +34,7 @@ public class TestCSV {
     public static int success_count = 0;
 
     public static void main(String[] args) {
-        CSVUtils csv = new CSVUtils();
+        CSVReader csv = new CSVReader();
         //String url = "http://dadosabertos.dataprev.gov.br/opendata/act10/formato=csv";
         CkanClient cc = new CkanClient("http://dados.gov.br/");
         List<String> dataset_names = cc.getDatasetList();
