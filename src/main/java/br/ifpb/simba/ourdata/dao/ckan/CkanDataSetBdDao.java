@@ -243,6 +243,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         if (exist(obj.getId())) {
             timestampModified = getTimestampModified(obj.getId());
             if (timestampModified != null && obj.getMetadataModified().after(timestampModified)) {
+                System.out.println("Houve modificação no dataset "+obj.getId());
                 update(obj);
                 insertOrUpdateAtributes(obj);
             }
