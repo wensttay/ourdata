@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata;
+package br.ifpb.simba.ourdata.test;
 
 
+import br.ifpb.simba.ourdata.reader.CSVUtils;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
@@ -80,21 +81,6 @@ public class TestCSV
                 }
             }
         }
-        
-        
-        /*try{
-            CSVUtils util = new CSVUtils();
-        String url = "http://repositorio.dados.gov.br/trabalho/MTE_rela%c3%a7%c3%a3o%20de%20unidades%20e%20endere%c3%a7os.csv";
-        List<String[]> list = util.getAllFromUrl(url);
-        for(String[] line : list){
-            for(String column : line){
-                System.out.print(column+"---");
-            }
-            System.out.println();
-        }
-        }catch(Exception ex){
-            
-        }*/
         
     }
 }

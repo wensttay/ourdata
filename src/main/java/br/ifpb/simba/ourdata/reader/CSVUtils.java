@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata;
+package br.ifpb.simba.ourdata.reader;
 
 import au.com.bytecode.opencsv.CSVReader;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
@@ -22,12 +22,6 @@ import java.util.List;
  */
 public class CSVUtils
 {
-
-    public CSVUtils()
-    {
-
-    }
-
     public CSVReader getCSVReader(String url) throws IOException{
        char separator,quote=34;
        URL stackURL = new URL(url);
@@ -82,7 +76,6 @@ public class CSVUtils
                     }
             }
         }
-        System.out.println("LOG[separator]: tab = " + tab + " | ; = " + semicolon + " | , = " + comma);
         if (tab >= semicolon && tab >= comma)
             return '\t';
         else if (semicolon >= tab && semicolon >= comma)

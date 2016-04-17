@@ -3,48 +3,55 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata;
+package br.ifpb.simba.ourdata.dao.thread;
 
 import br.ifpb.simba.ourdata.dao.ckan.CkanDataSetBdDao;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.exceptions.CkanException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author kieckegard
+ * @author Wensttay
  */
-public class Main extends Thread {
+public class AtualizadorDeBanco extends Thread {
 
-    public static int datasetTag = 0;
-    String url = "http://dados.gov.br/";
+    String url;
     CkanClient cc;
     CkanDataSetBdDao cdsbd;
     List<String> datasetlist;
+    long intervalTime = 5000;
+
+    public AtualizadorDeBanco(String url) {
+        this.url = url;
+        cc = new CkanClient(this.url);
+        cdsbd = new CkanDataSetBdDao();
+        datasetlist = cc.getDatasetList();
+    }
     
+    public AtualizadorDeBanco(String url, Long intervalTime) {
+        this.url = url;
+        this.intervalTime = intervalTime;
+        cc = new CkanClient(this.url);
+        cdsbd = new CkanDataSetBdDao();
+        datasetlist = cc.getDatasetList();
+    }
+
     public void run() {
         while (true) {
-            cc = new CkanClient(url);
-            cdsbd = new CkanDataSetBdDao();
-            datasetlist = cc.getDatasetList();
-            
             for (int i = 0; i < datasetlist.size(); i++) {
                 try {
                     System.out.println("Index DataSet: " + i);
                     CkanDataset dataset = cc.getDataset(datasetlist.get(i));
                     cdsbd.insertOrUpdate(dataset);
+
                 } catch (CkanException ex) {
                     System.out.println("Acesso negado.");
                 }
             }
-            
-            System.out.println("DATASET TAG |O| : " + datasetTag);
-            
             try {
-                Thread.sleep(5000);
+                Thread.sleep(intervalTime);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }

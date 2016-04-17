@@ -7,7 +7,7 @@ package br.ifpb.simba.ourdata.dao;
 
 /**
  *
- * @author wensttay
+ * @author Wensttay
  */
 public interface DaoRelation<T, I> {
 

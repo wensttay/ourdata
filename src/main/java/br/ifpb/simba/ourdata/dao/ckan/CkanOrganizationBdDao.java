@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  *
- * @author wensttay, Pedro Arthur
+ * @author Wensttay, Pedro Arthur
  */
 public class CkanOrganizationBdDao extends GenericObjectBdDao<CkanOrganization, String> {
 

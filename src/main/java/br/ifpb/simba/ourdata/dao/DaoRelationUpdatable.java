@@ -9,6 +9,8 @@ package br.ifpb.simba.ourdata.dao;
  *
  * @author Wensttay
  */
-public abstract class GenericRelationBdDao <T, I> extends GenericBdDao implements DaoRelation<T, I>{
-
+public interface DaoRelationUpdatable <T,I> {
+    boolean update(T obj, I id);
+    void insertOrUpdate(T obj, I id);
+    boolean exist(T obj, I id);
 }

@@ -15,7 +15,6 @@ import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetRelationshipAsSubjectBdDao
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetResourcesBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetTagBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetTrackingSummaryBdDao;
-import br.ifpb.simba.ourdata.Main;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanDatasetRelationship;
 import eu.trentorise.opendata.jackan.model.CkanGroup;
@@ -35,7 +34,7 @@ import java.util.Map;
 
 /**
  *
- * @author wensttay, Pedro Arthur
+ * @author Wensttay, Pedro Arthur
  */
 public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
@@ -235,10 +234,6 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
 
     @Override
     public void insertOrUpdate(CkanDataset obj) {
-
-        if (obj.getTags() != null) {
-            Main.datasetTag = Main.datasetTag + obj.getTags().size();
-        }
         
         if (exist(obj.getId())) {
             timestampModified = getTimestampModified(obj.getId());
