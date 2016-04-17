@@ -6,6 +6,11 @@
 package br.ifpb.simba.ourdata.reader;
 
 import au.com.bytecode.opencsv.CSVReader;
+import br.ifpb.simba.ourdata.test.TestCSV;
+import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
+import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
+import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_GREEN;
+import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_RED;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -15,72 +20,113 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author kieckegard
  */
-public class CSVUtils
-{
-    public CSVReader getCSVReader(String url) throws IOException{
-       char separator,quote=34;
-       URL stackURL = new URL(url);
-       stackURL.openConnection().setReadTimeout(120000);
-       InputStream is = stackURL.openStream();
-       byte[] bytes = IOUtils.toByteArray(is);
-       List<String> lines = getLines(byteArreyToBufferedReader(bytes));
-       String first_line = lines.get(0);
-       separator = getSeparator(first_line);
-       BufferedReader br = byteArreyToBufferedReader(bytes);
-       CSVReader reader = new CSVReader(br,separator,quote);
-       return reader;
-    }
-    
-    private BufferedReader byteArreyToBufferedReader(byte[] bytes){
-        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
-    }
-    
-    private List<String> getLines(BufferedReader br) throws IOException{
-        List<String> lines = new ArrayList<>();
-        String nextLine;
-        while((nextLine = br.readLine()) != null)
-            lines.add(nextLine);
-        return lines; 
-    }
-    
-    public List<String[]> getAll(String url) throws IOException
-    {
-        List<String[]> lines = new ArrayList<>();
-        CSVReader reader = getCSVReader(url);
-        return reader.readAll();
+public class CSVUtils implements Reader<List<String[]>, String> {
+
+    public CSVReader getCSVReader(String url) throws IOException {
+        char separator, quote = 34;
+        URL stackURL = new URL(url);
+        stackURL.openConnection().setReadTimeout(120000);
+        InputStream is = stackURL.openStream();
+        byte[] bytes = IOUtils.toByteArray(is);
+        List<String> lines = getLines(byteArreyToBufferedReader(bytes));
+        String first_line = lines.get(0);
+        separator = getSeparator(first_line);
+        BufferedReader br = byteArreyToBufferedReader(bytes);
+        au.com.bytecode.opencsv.CSVReader reader = new CSVReader(br, separator, quote);
+        return reader;
     }
 
-    private char getSeparator(String line) throws IOException{
+    private BufferedReader byteArreyToBufferedReader(byte[] bytes) {
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
+    }
+
+    private List<String> getLines(BufferedReader br) throws IOException {
+        List<String> lines = new ArrayList<>();
+        String nextLine;
+        while ((nextLine = br.readLine()) != null) {
+            lines.add(nextLine);
+        }
+        return lines;
+    }
+
+    private char getSeparator(String line) throws IOException {
         char[] charLine;
         int comma = 0;
         int tab = 0;
         int semicolon = 0;
-        if (line != null){          
-            charLine = line.toCharArray();      
-            for (int i = 1; i < charLine.length; i++){
-                    switch (charLine[i]){
-                        case '\t':
-                            tab++;
-                            break;
-                        case ';':
-                            semicolon++;
-                            break;
-                        case ',':
-                            comma++;
-                            break;
-                    }
+        if (line != null) {
+            charLine = line.toCharArray();
+            for (int i = 1; i < charLine.length; i++) {
+                switch (charLine[i]) {
+                    case '\t':
+                        tab++;
+                        break;
+                    case ';':
+                        semicolon++;
+                        break;
+                    case ',':
+                        comma++;
+                        break;
+                }
             }
         }
-        if (tab >= semicolon && tab >= comma)
+        if (tab >= semicolon && tab >= comma) {
             return '\t';
-        else if (semicolon >= tab && semicolon >= comma)
+        } else if (semicolon >= tab && semicolon >= comma) {
             return ';';
-        else
+        } else {
             return ',';
+        }
+    }
+
+    @Override
+    public List<String[]> build(String url) {
+        try {
+            List<String[]> lines = new ArrayList<>();
+            CSVReader reader = getCSVReader(url);
+            return reader.readAll();
+        } catch (IOException ex) {
+            TestCSV.error_count++;
+            System.out.println(ANSI_RED + "Error: Couldn't open the URL [" + TestCSV.error_count + "]" + ANSI_BLACK);
+        }
+        return null;
+    }
+
+    @Override
+    public void print(String urlString) {
+        int count_row;
+        try {
+            List<String[]> allcsv = build(urlString);
+            count_row = 0;
+            if (allcsv != null) {
+                for (String[] row : allcsv) {
+                    count_row++;
+                    if (count_row == 1) {
+                        System.out.println(ANSI_BLUE);
+                    } else {
+                        System.out.println(ANSI_BLACK);
+                    }
+                    for (String r : row) {
+                        System.out.print(r + " | ");
+                    }
+                    System.out.println();
+                    if (count_row == 3) {
+                        break;
+                    }
+                }
+                TestCSV.success_count++;
+                System.out.println(ANSI_GREEN + "!Success! " + ANSI_BLACK);
+            }
+        } catch (OutOfMemoryError ex) {
+            TestCSV.error_count++;
+            System.out.println(ANSI_RED + "Error: Couldn't open the URL [" + TestCSV.error_count + "]" + ANSI_BLACK);
+        }
     }
 }

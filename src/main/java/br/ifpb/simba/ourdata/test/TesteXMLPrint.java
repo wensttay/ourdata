@@ -76,11 +76,11 @@ public class TesteXMLPrint {
                 dataset = null;
             }
             NumberFormat formatter = new DecimalFormat("#0.00");
-            float porcentFound = (((float) funcionou * 100) / (float) total);
+            float percentSucess = (((float) funcionou * 100) / (float) total);
             
-            String resut =  "\n Total de Recursos (XML) Funcionando: " + funcionou+
+            String resut =  "\n Total de Recursos (XML) Funcionando: " + funcionou +
                     "\n Total de Recursos (XML): " + total +
-                    "\n Porcentagem de Acerto Funcional: " + formatter.format(porcentFound) + " %\n";
+                    "\n Porcentagem de Acerto Funcional: " + formatter.format(percentSucess) + " %\n";
             saveLog(resut);
         }
     }

@@ -5,19 +5,21 @@
  */
 package br.ifpb.simba.ourdata.test;
 
-
 import br.ifpb.simba.ourdata.reader.CSVUtils;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+
 /**
  *
  * @author kieckegard
  */
-public class TestCSV
-{
+public class TestCSV {
+
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -27,60 +29,42 @@ public class TestCSV
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
-    
-    public static void main(String[] args)
-    {
+
+    public static int error_count = 0;
+    public static int success_count = 0;
+
+    public static void main(String[] args) {
         CSVUtils csv = new CSVUtils();
         //String url = "http://dadosabertos.dataprev.gov.br/opendata/act10/formato=csv";
         CkanClient cc = new CkanClient("http://dados.gov.br/");
         List<String> dataset_names = cc.getDatasetList();
         List<CkanResource> resources;
         String url;
-        int success_count=0;
-        int error_count=0;
-        int dataset_count=0;
-        int csv_count=0;
-        int count_row;
+        int dataset_count = 0;
+        int csv_count = 0;
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        
         //Iterating datasets
-        for(String name : dataset_names){
+        for (String name : dataset_names) {
             CkanDataset dataset = cc.getDataset(name);
             dataset_count++;
             resources = dataset.getResources();
             //Iterating resources
-            for(CkanResource resource : resources){
-                if(resource.getFormat().equals("CSV")){
+            for (CkanResource resource : resources) {
+                if (resource.getFormat().equals("CSV")) {
                     System.out.println("=====================================================================================");
-                    System.out.println("Dataset_URL: "+dataset.getUrl());
-                    System.out.println("Resource_URL: "+resource.getUrl());
+                    System.out.println("Dataset_URL: " + dataset.getUrl());
+                    System.out.println("Resource_URL: " + resource.getUrl());
                     url = resource.getUrl();
                     csv_count++;
-                    try
-                    {
-                        List<String[]> allcsv = csv.getAll(url);
-                        count_row=0;
-                        for(String[] row : allcsv){
-                            count_row++;
-                            if(count_row==1) System.out.println(ANSI_BLUE);
-                            else System.out.println(ANSI_BLACK);
-                            for (String r : row)
-                                System.out.print(r+" | ");                 
-                            System.out.println();
-                            if(count_row == 3) break;
-                        }
-                        success_count++;
-                        System.out.println(ANSI_GREEN+"!Success! "+ANSI_BLACK);
-                    }
-                    catch (OutOfMemoryError | IOException ex)
-                    {
-                        error_count++;
-                        System.out.println(ANSI_RED+"Error: Couldn't open the URL ["+error_count+"]"+ANSI_BLACK);
-                    }
+                    csv.print(url);
                     
-                    System.out.println("\nLOG: Dataset["+dataset_count+"], Resource_csv["+csv_count+"]"+ANSI_GREEN+" SUCCESS["+success_count+"], "+ANSI_RED+" ERROR["+error_count+"]."+ANSI_BLUE+" "
-                            + "percent_sucess: ["+((success_count*100)/csv_count)+"%]"+ANSI_BLACK+"\n");
+                    float percentSucess = (((float) success_count * 100) / (float) csv_count);
+                    System.out.println("\nLOG: Dataset[" + dataset_count + "], Resource_csv[" + csv_count + "]" + ANSI_GREEN + " SUCCESS[" + success_count + "], " + ANSI_RED + " ERROR[" + error_count + "]." + ANSI_BLUE + " "
+                            + "percent_sucess: [" + formatter.format(percentSucess) + " %]" + ANSI_BLACK + "\n");
                 }
             }
         }
-        
+
     }
 }
