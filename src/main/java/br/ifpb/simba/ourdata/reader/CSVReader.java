@@ -5,14 +5,18 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
+import br.ifpb.simba.ourdata.geonomes.Geonames;
 import br.ifpb.simba.ourdata.test.TestCSV;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_GREEN;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_RED;
+import eu.trentorise.opendata.commons.internal.org.apache.commons.lang3.StringUtils;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +24,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.geonames.Style;
 /**
  *
  * @author kieckegard
@@ -27,21 +32,38 @@ import java.util.List;
 public class CSVReader implements Reader<List<String[]>, String> {
 
     public au.com.bytecode.opencsv.CSVReader getCSVReaderBuild(String url) throws IOException {
-        char separator, quote = 34;
         URL stackURL = new URL(url);
         stackURL.openConnection().setReadTimeout(120000);
         InputStream is = stackURL.openStream();
+        return getCSVReader(is);
+    }
+    
+    private au.com.bytecode.opencsv.CSVReader getCSVReader(InputStream is) throws IOException{
+        char separator, quote=34; 
         byte[] bytes = IOUtils.toByteArray(is);
-        List<String> lines = getLines(byteArreyToBufferedReader(bytes));
+        List<String> lines = getLines(byteArrayToBufferedReader(bytes));
         String first_line = lines.get(0);
         separator = getSeparator(first_line);
-        BufferedReader br = byteArreyToBufferedReader(bytes);
+        BufferedReader br = byteArrayToBufferedReader(bytes);
         au.com.bytecode.opencsv.CSVReader reader = new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
         return reader;
     }
+    
+    private au.com.bytecode.opencsv.CSVReader getCSVReader(BufferedReader br) throws IOException{
+        char separator, quote=34;
+        String first_line;
+        List<String> lines = getLines(br);
+        if(!lines.isEmpty()){
+            first_line = lines.get(0);
+            separator = getSeparator(first_line);
+            au.com.bytecode.opencsv.CSVReader reader = new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
+            return reader;
+        }
+        return null;
+    }
 
-    private BufferedReader byteArreyToBufferedReader(byte[] bytes) {
-        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes),StandardCharsets.ISO_8859_1));
+    private BufferedReader byteArrayToBufferedReader(byte[] bytes) {
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes),StandardCharsets.UTF_8));
     }
 
     private List<String> getLines(BufferedReader br) throws IOException {
@@ -86,7 +108,6 @@ public class CSVReader implements Reader<List<String[]>, String> {
     @Override
     public List<String[]> build(String url) {
         try {
-            List<String[]> lines = new ArrayList<>();
             au.com.bytecode.opencsv.CSVReader reader = getCSVReaderBuild(url);
             return reader.readAll();
         } catch (IOException ex) {
@@ -95,10 +116,27 @@ public class CSVReader implements Reader<List<String[]>, String> {
         }
         return null;
     }
+    
+    public List<String[]> build(InputStream is){
+        try{
+            return getCSVReader(is).readAll();
+        }catch(IOException ex){
+            TestCSV.error_count++;
+            System.out.println(ANSI_RED + "Error: Couldn't open the URL [" + TestCSV.error_count + "]" + ANSI_BLACK);
+        }
+        return null;
+    }
+    
+    public List<String[]> build(BufferedReader br) throws IOException{
+        au.com.bytecode.opencsv.CSVReader reader = getCSVReader(br);
+        if(reader != null) return reader.readAll();
+        return new ArrayList<>();
+    }
 
     @Override
     public void print(String urlString) {
         int count_row;
+        Geonames g = new Geonames("kieckegard",Style.LONG);
         try {
             List<String[]> allcsv = build(urlString);
             count_row = 0;
@@ -109,11 +147,23 @@ public class CSVReader implements Reader<List<String[]>, String> {
                         System.out.println(ANSI_BLUE);
                     } else {
                         System.out.println(ANSI_BLACK);
-                    }
-                    for (String r : row) {
-                        System.out.print(r + " | ");
+                        for (String r : row) {
+                        if(StringUtils.isAlphanumeric(r)){
+                            System.out.print(r + " | ");
+                            try
+                            {
+                                System.out.println(ANSI_BLUE+"SEARCHING FOR "+r+"...");
+                                g.search(r);
+                                System.out.println("DONE!"+ANSI_BLACK);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.out.println(ANSI_RED+ex.getMessage()+ANSI_BLACK);
+                            }
+                        }
                     }
                     System.out.println();
+                    }
                     if (count_row == 3) {
                         break;
                     }
