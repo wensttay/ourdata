@@ -6,8 +6,8 @@
 package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.dao.ckan.CkanResourceBdDao;
-import br.ifpb.simba.ourdata.geonomes.Coordinate;
-import br.ifpb.simba.ourdata.geonomes.Geonames;
+import br.ifpb.simba.ourdata.geonames.Coordinate;
+import br.ifpb.simba.ourdata.geonames.Geonames;
 import br.ifpb.simba.ourdata.reader.CSVReader;
 import br.ifpb.simba.ourdata.reader.ExcelReader;
 import br.ifpb.simba.ourdata.reader.XLSReader;

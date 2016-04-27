@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata.geonomes;
+package br.ifpb.simba.ourdata.geonames;
 
+import java.util.List;
 import org.geonames.Style;
 import org.geonames.Toponym;
 import org.geonames.ToponymSearchCriteria;
@@ -34,12 +35,11 @@ public class Geonames
         searchCriteria.setMaxRows(1);
         ToponymSearchResult searchResult = WebService.search(searchCriteria);
         Coordinate c;
-        Toponym toponym = null;
-        for(Toponym t : searchResult.getToponyms()){
-            toponym = t;
-        }
-        if(toponym != null){
-            c = new Coordinate(toponym.getLatitude(), toponym.getLongitude());
+        Toponym t;
+        List<Toponym> toponyms = searchResult.getToponyms();
+        if(!toponyms.isEmpty()){
+            t = toponyms.get(0);
+            c = new Coordinate(t.getLatitude(), t.getLongitude());
             System.out.println(c);
             return c;
         }

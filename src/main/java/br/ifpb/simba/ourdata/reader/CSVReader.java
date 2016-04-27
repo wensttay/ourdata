@@ -5,7 +5,7 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
-import br.ifpb.simba.ourdata.geonomes.Geonames;
+import br.ifpb.simba.ourdata.geonames.Geonames;
 import br.ifpb.simba.ourdata.test.TestCSV;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
@@ -148,20 +148,8 @@ public class CSVReader implements Reader<List<String[]>, String> {
                     } else {
                         System.out.println(ANSI_BLACK);
                         for (String r : row) {
-                        if(StringUtils.isAlphanumeric(r)){
-                            System.out.print(r + " | ");
-                            try
-                            {
-                                System.out.println(ANSI_BLUE+"SEARCHING FOR "+r+"...");
-                                g.search(r);
-                                System.out.println("DONE!"+ANSI_BLACK);
-                            }
-                            catch (Exception ex)
-                            {
-                                System.out.println(ANSI_RED+ex.getMessage()+ANSI_BLACK);
-                            }
+                            System.out.println(row+" | ");
                         }
-                    }
                     System.out.println();
                     }
                     if (count_row == 3) {
