@@ -50,7 +50,7 @@ public class GeonamesTest
             System.out.println("current format: "+format);
             switch (format)
             {
-                case "CSVasdasd":
+                case "CSV":
                     System.out.println("\n!!CSV file!!\n");
                     List<String[]> csv_files = csv.build(resource.getUrl());
                     if(csv_files == null) csv_files = new ArrayList<>();
@@ -62,7 +62,7 @@ public class GeonamesTest
                         if(i==4)break;
                     }
                     break;
-                case "XLSasd":
+                case "XLS":
                     System.out.println("\n!!XLS file!!\n");
                     excel = new XLSReader();
                     System.out.println("Building Excel file...");
