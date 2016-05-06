@@ -5,19 +5,19 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
-import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
-import java.io.BufferedReader;
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.GZIPInputStream;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+
 
 /**
  *
@@ -26,22 +26,32 @@ import java.util.zip.ZipInputStream;
 public class ZIPReader
 {
     public InputStream unzipUrlFile(String url) throws IOException{
-        /*byte[] buffer;
         InputStream in = getInputStream(url);
-        //ZipInputStream zin = new ZipInputStream(in);
-        ZipInputStream zin = new ZipInputStream(in);
-        ZipEntry ze = zin.getNextEntry();
-        if(ze != null){
-            buffer = IOUtils.toByteArray(zin);
-        }*/
+        try (ZipInputStream zin = new ZipInputStream(in))
+        {
+            ZipEntry ze;
+            
+            while((ze = zin.getNextEntry()) != null){
+                if(!ze.isDirectory()){
+                    System.out.println("Reading: "+ze.getName());
+                    System.out.println("Size: "+(int)ze.getSize());
+                    byte[] buffer = new byte[(int)ze.getSize()];
+                    int len;
+                    while((len = zin.read(buffer)) > 0){
+                    }
+                    zin.close();
+                    ByteArrayInputStream bin = new ByteArrayInputStream(buffer);
+                    return bin;
+                }
+            }
+            zin.closeEntry();            
+        }
         return null;
     } 
     
     private InputStream getInputStream(String url) throws MalformedURLException, IOException{
-        URL stackUrl = new URL(url);
-        return stackUrl.openStream();
+        URL stackurl = new URL(url);
+        URLConnection conn = stackurl.openConnection();
+        return conn.getInputStream();
     }
-    
-   
-    
 }

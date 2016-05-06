@@ -12,6 +12,7 @@ import br.ifpb.simba.ourdata.reader.CSVReader;
 import br.ifpb.simba.ourdata.reader.ExcelReader;
 import br.ifpb.simba.ourdata.reader.XLSReader;
 import br.ifpb.simba.ourdata.reader.XLSXReader;
+import eu.trentorise.opendata.commons.internal.org.apache.commons.lang3.StringUtils;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.traceprov.geojson.Point;
 import java.util.ArrayList;
@@ -43,27 +44,30 @@ public class GeonamesTest
         Cell cell;
         Iterator<Row> rowIterator;
         Iterator<Cell> cellIterator;
+        int resource_count=0;
         int i;
         for (CkanResource resource : resources)
         {
+            resource_count++;
             format = resource.getFormat().toUpperCase();
-            System.out.println("current format: "+format);
             switch (format)
             {
                 case "CSV":
-                    System.out.println("\n!!CSV file!!\n");
                     List<String[]> csv_files = csv.build(resource.getUrl());
                     if(csv_files == null) csv_files = new ArrayList<>();
                     i=0;
+                    System.out.println("["+resource_count+"] Resource_url: "+resource.getUrl());
                     for (String[] linha : csv_files){
                         i++;
-                        for (String celula : linha)
-                            search(celula);
-                        if(i==4)break;
+                        for (String celula : linha){
+                            if(validate(celula)){
+                                search(celula);
+                            }
+                        }
+                        if(i == 5) break;
                     }
                     break;
                 case "XLS":
-                    System.out.println("\n!!XLS file!!\n");
                     excel = new XLSReader();
                     System.out.println("Building Excel file...");
                     sheets = excel.build(resource.getUrl());
@@ -90,7 +94,6 @@ public class GeonamesTest
                     }
                     break;
                 case "XLSX":
-                    System.out.println("\n!!XLSX file!!\n");
                     excel = new XLSXReader();
                     sheets = excel.build(resource.getUrl());
                     if(sheets == null) sheets = new ArrayList<>();
@@ -113,19 +116,25 @@ public class GeonamesTest
             }
         }
     }
+    
+    public static boolean validate(String city){
+        if(StringUtils.isBlank(city))
+            return false;
+        else if(!StringUtils.isAlphanumeric(city))
+            return false;
+        return true;
+    }
 
     public static void search(String city)
     {
+        String ANSI_BLACK = "\u001B[30m";
+        String ANSI_BLUE = "\u001B[34m";
         Geonames g = new Geonames("kieckegard", Style.MEDIUM);
         try
         {
-            System.out.println("Searching for " + city + "... ");
             Coordinate c = g.search(city);            
             if (c != null){
-                System.out.println("Found! Latidude: " + c.getLatitude() + " | Longitude: " + c.getLongitude());
-            }
-            else{
-                System.out.println("City not found!");
+                System.out.println("Geoname "+ANSI_BLUE+city+ANSI_BLACK+" Found! Latidude: " + c.getLatitude() + " | Longitude: " + c.getLongitude());
             }
         }
         catch (Exception ex)

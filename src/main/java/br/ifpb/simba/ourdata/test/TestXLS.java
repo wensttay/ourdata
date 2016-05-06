@@ -7,6 +7,7 @@ package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.reader.ExcelReader;
 import br.ifpb.simba.ourdata.reader.XLSReader;
+import br.ifpb.simba.ourdata.reader.XLSXReader;
 /**
  *
  * @author kieckegard
@@ -15,8 +16,8 @@ public class TestXLS
 {
     public static void main(String[] args)
     {
-        String url = "http://www.capes.gov.br/images/stories/download/avaliacaotrienal/planilhascomparativastrienal2007/Artes_Musica.xls";
-        ExcelReader er = new XLSReader();
+        String url = "http://repositorio.dados.gov.br/governo-politica/administracao-publica/pac/PAC_2015_06.xlsx";
+        ExcelReader er = new XLSXReader();
         er.print(url);
     }
 }

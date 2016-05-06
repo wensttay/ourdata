@@ -24,6 +24,7 @@ public abstract class ExcelReader implements Reader<List<Sheet>, String>
 {   
     @Override
     public void print(String url){
+        int i=0;
         List<Sheet> sheets = build(url);
         Row row;
         Cell cell;
@@ -31,23 +32,31 @@ public abstract class ExcelReader implements Reader<List<Sheet>, String>
         Iterator<Cell> cellIterator;
         for(Sheet s : sheets){
             rowIterator = s.iterator();
+            i=0;
             while(rowIterator.hasNext()){
+                i++;
                 row = rowIterator.next();
                 cellIterator = row.iterator();
                 while(cellIterator.hasNext()){
                     cell = cellIterator.next();
                     switch(cell.getCellType()){
                         case Cell.CELL_TYPE_STRING:
-                            System.out.println(cell.getStringCellValue()+" | ");
+                            System.out.print(cell.getStringCellValue()+" | ");
                             break;
                         case Cell.CELL_TYPE_NUMERIC:
-                            System.out.println(cell.getNumericCellValue()+" | ");
+                            System.out.print(cell.getNumericCellValue()+" | ");
                             break;
                         case Cell.CELL_TYPE_BOOLEAN:
-                            System.out.println(cell.getBooleanCellValue()+" | ");
+                            System.out.print(cell.getBooleanCellValue()+" | ");
                             break;
+                        //Cell.CELL_TYPE_FORMULA
+                        //Cell.CELL_TYPE_ERROR
+                        //Cell.CELL_TYPE_BLANK
+                       
                     }
                 }
+                if(i == 6) break;
+                System.out.println();
             }
         }
     }
