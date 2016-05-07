@@ -15,35 +15,35 @@ import java.util.Properties;
 
 /**
  *
- * @author Wensttay
+ * @author wensttay
  * @param <T>
  * @param <I>
  */
-public abstract class GenericBdDao{
-    
-    String user;
-    String url;
-    String password;
-    String driver;
+public abstract class GenericGeometricBdDao<T, I> implements Dao<T, I> {
+
     Connection connection;
+    protected String properties_path;
 
     public void conectar() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
         if (getConnection() != null && !getConnection().isClosed()) {
             return;
         }
         Properties prop = new Properties();
-        prop.load(new FileInputStream(getClass().getResource("/banco/banco.properties").toURI().getPath()));
+        prop.load(new FileInputStream(getClass().getResource(properties_path).toURI().getPath()));
 
-        user = prop.getProperty("user");
-        url = prop.getProperty("url");
-        password = prop.getProperty("password");
-        driver = prop.getProperty("driver");
+        String nome = prop.getProperty("nome");
+        String user = prop.getProperty("user");
+        String url = prop.getProperty("url");
+        String password = prop.getProperty("password");
+        String driver = prop.getProperty("driver");
 
         Class.forName(driver);
         connection = DriverManager.getConnection(url, user, password);
+        ((org.postgresql.PGConnection)connection).addDataType("geometry",Class.forName("org.postgis.PGgeometry"));
+        ((org.postgresql.PGConnection)connection).addDataType("box3d",Class.forName("org.postgis.PGbox3d"));
     }
 
-    public void desconectar() {
+    public void desconectar(){
         try {
             if (getConnection() != null && !getConnection().isClosed()) {
                 connection.close();
