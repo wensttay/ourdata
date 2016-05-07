@@ -12,4 +12,8 @@ package br.ifpb.simba.ourdata.dao;
  */
 public abstract class GenericObjectBdDao <T, I> extends GenericBdDao implements Dao<T, I>{
     
+    public GenericObjectBdDao() {
+        super("/banco/banco.properties");
+    }
+    
 }

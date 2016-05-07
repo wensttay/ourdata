@@ -21,9 +21,17 @@ import java.util.Properties;
  */
 public abstract class GenericGeometricBdDao<T, I> implements Dao<T, I> {
 
-    Connection connection;
-    protected String properties_path;
+    private String properties_path;
+    private String user;
+    private String url;
+    private String password;
+    private String driver;
+    private Connection connection;
 
+    public GenericGeometricBdDao(String properties_path) {
+        this.properties_path = properties_path;
+    }
+    
     public void conectar() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
         if (getConnection() != null && !getConnection().isClosed()) {
             return;
@@ -31,11 +39,10 @@ public abstract class GenericGeometricBdDao<T, I> implements Dao<T, I> {
         Properties prop = new Properties();
         prop.load(new FileInputStream(getClass().getResource(properties_path).toURI().getPath()));
 
-        String nome = prop.getProperty("nome");
-        String user = prop.getProperty("user");
-        String url = prop.getProperty("url");
-        String password = prop.getProperty("password");
-        String driver = prop.getProperty("driver");
+        user = prop.getProperty("user");
+        url = prop.getProperty("url");
+        password = prop.getProperty("password");
+        driver = prop.getProperty("driver");
 
         Class.forName(driver);
         connection = DriverManager.getConnection(url, user, password);

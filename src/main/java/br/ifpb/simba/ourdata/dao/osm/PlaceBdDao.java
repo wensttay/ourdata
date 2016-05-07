@@ -24,8 +24,9 @@ import org.postgis.PGgeometry;
  */
 public class PlaceBdDao extends GenericGeometricBdDao<Place, Integer>
 {
-    public PlaceBdDao(String path_properties){
-        super.properties_path = path_properties;
+
+    public PlaceBdDao(String properties_path) {
+        super(properties_path);
     }
 
     @Override

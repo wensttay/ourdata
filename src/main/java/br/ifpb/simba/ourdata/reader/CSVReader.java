@@ -137,11 +137,11 @@ public class CSVReader implements Reader<List<String[]>, String> {
             count_row = 0;
             for (String[] row : allcsv) {
                 count_row++;
-                if(count_row == 1) System.out.println(ANSI_BLUE);
-                else System.out.println(ANSI_BLACK);
+                if(count_row == 1) System.out.print(ANSI_BLUE);
+                else System.out.print(ANSI_BLACK);
                 
                 for (String cell : row){
-                    System.out.println(cell+" | ");
+                    System.out.print(cell+" | ");
                 }
                 System.out.println();
                 

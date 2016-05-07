@@ -21,18 +21,23 @@ import java.util.Properties;
  */
 public abstract class GenericBdDao{
     
-    String user;
-    String url;
-    String password;
-    String driver;
-    Connection connection;
+    private String properties_path;
+    private String user;
+    private String url;
+    private String password;
+    private String driver;
+    private Connection connection;
 
+    public GenericBdDao(String properties_path) {
+        this.properties_path = properties_path;
+    }
+    
     public void conectar() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
         if (getConnection() != null && !getConnection().isClosed()) {
             return;
         }
         Properties prop = new Properties();
-        prop.load(new FileInputStream(getClass().getResource("/banco/banco.properties").toURI().getPath()));
+        prop.load(new FileInputStream(getClass().getResource(properties_path).toURI().getPath()));
 
         user = prop.getProperty("user");
         url = prop.getProperty("url");
