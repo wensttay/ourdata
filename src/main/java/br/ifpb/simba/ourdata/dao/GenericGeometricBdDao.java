@@ -19,7 +19,7 @@ import java.util.Properties;
  * @param <T>
  * @param <I>
  */
-public abstract class GenericGeometricBdDao<T, I> implements Dao<T, I> {
+public abstract class GenericGeometricBdDao<T, I> implements DaoGeometric<T, I> {
 
     private String properties_path;
     private String user;
@@ -27,7 +27,7 @@ public abstract class GenericGeometricBdDao<T, I> implements Dao<T, I> {
     private String password;
     private String driver;
     private Connection connection;
-
+    
     public GenericGeometricBdDao(String properties_path) {
         this.properties_path = properties_path;
     }

@@ -5,6 +5,8 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
+import br.ifpb.simba.ourdata.geo.KeyWord;
+import br.ifpb.simba.ourdata.geo.Place;
 import br.ifpb.simba.ourdata.test.TesteXMLPrint;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -13,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,5 +76,10 @@ public class XMLReader implements Reader<Document, String> {
                 System.out.println("Error: Url: " + urlString + " (" + ex.getClass() + ")\n\n");
             }
         }
+    }
+
+    @Override
+    public List<KeyWord> filterKeyWord(String resourceId, String urlString, List<Place> PlaceList) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

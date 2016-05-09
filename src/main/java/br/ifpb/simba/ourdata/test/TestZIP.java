@@ -7,12 +7,7 @@ package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.reader.CSVReader;
 import br.ifpb.simba.ourdata.reader.ZIPReader;
-import eu.trentorise.opendata.commons.internal.org.apache.commons.lang3.StringUtils;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;

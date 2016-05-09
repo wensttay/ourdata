@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
+import br.ifpb.simba.ourdata.geo.KeyWord;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
