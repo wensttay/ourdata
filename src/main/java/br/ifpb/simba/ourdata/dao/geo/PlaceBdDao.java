@@ -7,6 +7,7 @@ package br.ifpb.simba.ourdata.dao.geo;
 
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import br.ifpb.simba.ourdata.geo.Place;
+import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.postgis.PGgeometry;
+import org.postgis.PGboxbase;
 
 /**
  *
@@ -95,6 +97,36 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
             desconectar();
         }
         return null;
+    }
+    
+    public List<CkanResource> buscarPorBbox(PGboxbase boxBase){     
+       List<CkanResource> resources = new ArrayList<>();
+       try{
+           conectar();
+           String sql = "SELECT descricao, url, format FROM resource r JOIN resource_places rp ON r.id = rp.id_resource"
+                   + "WHERE rp.way INTERSECTS ?";
+           PreparedStatement pstm = getConnection().prepareStatement(sql);
+           pstm.setObject(1, boxBase);
+           ResultSet rs = pstm.executeQuery();
+           
+           CkanResource resource = new CkanResource();
+           while(rs.next()){
+               String descricao = rs.getString("descricao");
+               String url = rs.getString("url");
+               String format = rs.getString("format");
+               resource.setDescription(descricao);
+               resource.setUrl(url);
+               resource.setFormat(format);
+               resources.add(resource);
+           }
+           return resources;
+       }
+       catch(URISyntaxException | IOException | SQLException | ClassNotFoundException ex){
+           ex.printStackTrace();        
+           return resources;
+       }finally{
+           desconectar();
+       }
     }
 
     public boolean stContains(Place bigPlace, Place smallPlace) {

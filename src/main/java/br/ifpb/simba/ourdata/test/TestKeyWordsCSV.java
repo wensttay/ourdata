@@ -89,6 +89,7 @@ public class TestKeyWordsCSV {
 
 //                        Instancie a comparator usign a Name's KeyWord
                         Comparator<KeyWord> comparador = new Comparator<KeyWord>() {
+                            @Override
                             public int compare(KeyWord s1, KeyWord s2) {
                                 return s1.getPlace().getNome().compareTo(s2.getPlace().getNome());
                             }
