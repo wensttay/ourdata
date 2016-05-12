@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,8 @@ import java.util.List;
  * @author Wensttay, Pedro Arthur
  */
 public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
-
+    
+    DataSetResourcesBdDao dataSetResourcesBdDao;
     /*
     CkanTagBdDao ckanTagBdDao;
     CkanDatasetRelationshipObjectBdDao ckanDatasetRelationshipObjectBdDao;
@@ -271,7 +273,17 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
     @Override
     public void insertOrUpdateAtributes(CkanDataset obj) {
         
-
+        auxListResource = obj.getResources();
+        if (auxListResource == null) {
+            auxListResource = new ArrayList<>();
+        }
+        
+        for (CkanResource ckanResource : auxListResource) {
+            getCkanResourceBdDao().insertOrUpdate(ckanResource);
+            getDataSetResourcesBdDao().insert(obj.getId(), ckanResource.getId());
+        }
+        
+        
         /*if (obj.getOrganization() != null) {
             getCkanOrganizationBdDao().insertOrUpdate(obj.getOrganization());
             getDataSetOrganizationBdDao().insert(obj.getId(), obj.getOrganization().getId());
@@ -351,13 +363,6 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
             getDataSetOthersBdDao().insertOrUpdate(auxCkanPair, obj.getId());
         }*/
         
-        auxListResource = obj.getResources();
-        
-        for (CkanResource ckanResource : auxListResource) {
-            getCkanResourceBdDao().insertOrUpdate(ckanResource);
-            //getDataSetResourcesBdDao().insert(obj.getId(), ckanResource.getId());
-        }
-        
     }
     
     public CkanResourceBdDao getCkanResourceBdDao() {
@@ -367,7 +372,12 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String> {
         return this.ckanResourceBdDao;
     }
 
-    
+    public DataSetResourcesBdDao getDataSetResourcesBdDao() {
+        if (dataSetResourcesBdDao == null) {
+            dataSetResourcesBdDao = new DataSetResourcesBdDao();
+        }
+        return dataSetResourcesBdDao;
+    }
 
     /*
     

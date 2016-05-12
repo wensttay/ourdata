@@ -16,5 +16,5 @@ import java.util.List;
 public interface Reader <T,I> {
     T build (I urlString);
     void print (I urlString);
-    List<KeyWord> filterKeyWord(String resourceId, I urlString, List<Place> PlaceList);
+//    List<KeyWord> filterKeyWord(String resourceId, I urlString, List<Place> PlaceList);
 }

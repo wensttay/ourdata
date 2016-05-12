@@ -13,7 +13,6 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.postgis.PGgeometry;
@@ -32,11 +31,11 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
     public boolean insert(KeyWord obj) {
         try {
             conectar();
-            String sql = "INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE, REPEAT_NUMBER,"
+            String sql = "INSERT INTO resource_place(COLUM_NAME, COLUM_VALUE, REPEAT_NUMBER,"
                     + "ROWS_NUMBER, WAY, METADATA_CREATED, ID_RESOURCE) VALUES(?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             int i = 1;
-            ps.setInt(i++, obj.getColumNumber());
+            ps.setString(i++, obj.getColumName());
             ps.setString(i++, obj.getColumValue());
             ps.setInt(i++, obj.getRepeatNumber());
             ps.setInt(i++, obj.getRowsNumber());
@@ -56,7 +55,7 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
     @Override
     public List<KeyWord> getAll() {
         List<KeyWord> places = new ArrayList<>();
-        
+
         try {
             conectar();
             String sql = "SELECT * FROM resource_place";
@@ -64,28 +63,28 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
 //            getConnection().setAutoCommit(false);
 //            ps.setFetchSize(100);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 KeyWord p = preencherObjeto(rs);
                 if (p != null) {
                     places.add(p);
                 }
             }
-            
+
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        }finally{
+        } finally {
             desconectar();
         }
         return places;
 
     }
-    
+
     @Override
     public KeyWord preencherObjeto(ResultSet rs) {
         try {
             KeyWord kw = new KeyWord();
-            kw.setColumNumber(rs.getInt("COLUM_NUMBER"));
+            kw.setColumName(rs.getString("COLUM_NAME"));
             kw.setColumValue(rs.getString("COLUM_VALUE"));
             kw.setIdResource(rs.getString("ID_RESOURCE"));
             kw.setMetadataCreated(rs.getTimestamp("METADATA_CREATED"));
@@ -94,12 +93,48 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
             Place p = new Place();
             p.setWay((PGgeometry) rs.getObject("WAY"));
             kw.setPlace(p);
-            
+
             return kw;
         } catch (SQLException ex) {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public boolean insertAll(List<KeyWord> liteVersion) {
+        try {
+            if (liteVersion.isEmpty()) {
+                return false;
+            }
+            conectar();
+            StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NAME, COLUM_VALUE, REPEAT_NUMBER, ROWS_NUMBER, WAY, METADATA_CREATED, ID_RESOURCE) VALUES");
+            for (int i = 0; i < liteVersion.size(); i++) {
+                if (i == liteVersion.size() - 1) {
+                    sql.append("(?, ?, ?, ?, ?, ?, ?)");
+                }else{
+                    sql.append("(?, ?, ?, ?, ?, ?, ?), ");
+                }
+            }
+            PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+            int i = 1;
+            for (KeyWord obj : liteVersion) {
+                ps.setString(i++, obj.getColumName());
+                ps.setString(i++, obj.getColumValue());
+                ps.setInt(i++, obj.getRepeatNumber());
+                ps.setInt(i++, obj.getRowsNumber());
+                ps.setObject(i++, obj.getPlace().getWay());
+                ps.setTimestamp(i++, obj.getMetadataCreated());
+                ps.setString(i++, obj.getIdResource());
+            }
+//            System.out.println(ps.toString());
+            return (ps.executeUpdate() != 0);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+            return false;
+        } finally {
+            desconectar();
+        }
+
     }
 
 }

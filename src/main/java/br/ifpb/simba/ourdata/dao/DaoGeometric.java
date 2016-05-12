@@ -5,7 +5,6 @@
  */
 package br.ifpb.simba.ourdata.dao;
 
-import br.ifpb.simba.ourdata.geo.KeyWord;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -17,4 +16,5 @@ public interface DaoGeometric<T,I> {
     boolean insert(T obj);
     List<T> getAll();
     T preencherObjeto(ResultSet rs);
+    
 }

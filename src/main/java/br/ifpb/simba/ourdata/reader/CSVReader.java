@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.reader;
 
+import br.ifpb.simba.ourdata.dao.geo.PlaceBdDao;
 import br.ifpb.simba.ourdata.geo.KeyWord;
 import br.ifpb.simba.ourdata.geo.Place;
 import br.ifpb.simba.ourdata.test.TestCSV;
@@ -12,6 +13,7 @@ import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_GREEN;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_RED;
+import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -169,48 +171,155 @@ public class CSVReader implements Reader<List<String[]>, String> {
         }
     }
 
-    @Override
-    public List<KeyWord> filterKeyWord(String resourceId, String urlString, List<Place> PlaceList) {
-
+    public List<KeyWord> getKeyWords(CkanResource ckanResource, String urlString) {
+//        Conectando ao Banco que contem o Gazetteer (lista de nomes com Geoposição)
+        PlaceBdDao placeBdDao = new PlaceBdDao("/banco/banco.gazetteer.properties");
+//        Instanciando lista que será retornada como resultado
         List<KeyWord> keyWordResultList = new ArrayList<>();
-
-        List<String[]> allcsv = build(urlString);
-        if (allcsv == null) {
-            allcsv = new ArrayList<>();
-        }
-
-//          Interate of Rows
-        for (String[] row : allcsv) {
-//              Interate of Colum
-            for (int i = 0; i < row.length; i++) {
-//                  Text into Colum
-                String wordOfColum = row[i].replace("\n", " ");
-                for (Place place : PlaceList) {
-                    
-//                      Checking if the text contains a some keyword
-                    boolean nameValid = (place.getNome() != null 
-                            && !place.getNome().equals("") 
-//                            && wordOfColum.contains(place.getNome())
-                            && wordOfColum.equals(place.getNome()));
-//                    boolean siglaValid = place.getSigla() != null 
-//                            && !place.getSigla().equals("") 
-//                            && wordOfColum.contains(place.getSigla());
-                    if (nameValid) {
-//                            || siglaValid
-                        KeyWord kw = new KeyWord();
-                        kw.setColumNumber(i);
-                        kw.setColumValue(wordOfColum);
-                        kw.setIdResource(resourceId);
-                        kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
-                        kw.setPlace(place);
-                        kw.setRepeatNumber(kw.getRepeatNumber() + 1);
-                        kw.setRowsNumber(allcsv.size());
-                        keyWordResultList.add(kw);
-                    }
-                }
-            }
+        
+//        Instancionando o número que é usado para definir o numero de linhas (a partir da primeira)
+//        que serão usadas para avaliar quais colunas devem ser verificadas
+        final int NUM_ROWS_CHECK_COLUMN_NAME = 10;
+        
+//        Instanciando a lista que contem todas as linhas(rows) de um CSV 
+        List<String[]> rowListOfCsv = build(urlString);
+        if (rowListOfCsv == null) {
+            rowListOfCsv = new ArrayList<>();
         }
         
+//        Instanciando a lista com os nomes das colunas (primeira linha do CSV)
+        List<String> columNames = new ArrayList<>();
+        if (!rowListOfCsv.isEmpty()) {
+            for (String str : rowListOfCsv.get(0)) {
+                columNames.add(str);
+            }
+        }
+
+//      Iterate of Rows
+        for (String[] row : rowListOfCsv) {
+            List<KeyWord> rowKeyWordsOfRow = new ArrayList<>();
+            
+//          Iterate of Columns
+            for (int i = 0; i < row.length; i++) {
+                
+//                Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
+//                resutados encontrados na pesquisa no Gazetteer
+                if (keyWordResultList.size() > NUM_ROWS_CHECK_COLUMN_NAME) {
+                    for (int j = 0; j < NUM_ROWS_CHECK_COLUMN_NAME; j++) {
+                        while (i < row.length && !keyWordResultList.get(j).getColumName().equals(columNames.get(i))) {
+                            i++;
+                        }
+                    }
+                    if (i >= row.length) {
+                        break;
+                    }
+                }
+                
+//                Fix text into Columns
+                String columValue = row[i].replace("\n", " ");
+
+//                Checking if the colum Value is valid and Search a Place
+                Place newPlace = null;
+                if (columValue != null && !columValue.equals("")) {
+                    newPlace = placeBdDao.burcarPorTitulos(columValue);
+                }
+                
+//                Checking if has some KeyWords with a place that contains a new place
+                if (newPlace != null && !rowKeyWordsOfRow.isEmpty()) {
+                    List<KeyWord> aux = new ArrayList<>();
+                    aux.addAll(rowKeyWordsOfRow);
+                    for (KeyWord kw : rowKeyWordsOfRow) {
+                        if (placeBdDao.stContains(kw.getPlace(), newPlace)) {
+                            aux.remove(kw);
+                        }
+                    }
+                    rowKeyWordsOfRow = aux;
+                }
+                
+//                Instancie and increment the list of row's results with the new KeyWord
+                if (newPlace != null) {
+                    KeyWord kw = new KeyWord();
+                    kw.setColumName(columNames.get(i));
+                    kw.setColumValue(columValue);
+                    kw.setIdResource(ckanResource.getId());
+                    kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
+                    kw.setPlace(newPlace);
+                    kw.setRepeatNumber(kw.getRepeatNumber() + 1);
+                    kw.setRowsNumber(rowListOfCsv.size());
+                    rowKeyWordsOfRow.add(kw);
+                }
+            }
+            
+//            Increment the resultList with all news KeyWords of this row
+            keyWordResultList.addAll(rowKeyWordsOfRow);
+        }
+       
         return keyWordResultList;
     }
+
+//    public List<KeyWord> getKeyWords(CkanResource ckanResource, String urlString, List<Place> PlaceList) {
+//        final int NUM_ROWS_CHECK = 5;
+//        List<KeyWord> keyWordReturnList = new ArrayList<>();
+//
+//        List<String[]> allcsv = build(urlString);
+//
+//        if (allcsv == null) {
+//            allcsv = new ArrayList<>();
+//        }
+//
+////        Criando lista com os nomes das colunas
+//        List<String> columNames = new ArrayList<>();
+//        if (!allcsv.isEmpty()) {
+//            for (String str : allcsv.get(0)) {
+//                columNames.add(str);
+//            }
+//        }
+//
+////        Iterate of Rows
+//        for (String[] row : allcsv) {
+////            Iterate of Columns
+//            for (int i = 0; i < row.length; i++) {
+//
+////                Verifica se a coluna atual apresenteou algum keyValue()
+//                if (keyWordReturnList.size() > NUM_ROWS_CHECK) {
+//                    for (int j = 0; j < NUM_ROWS_CHECK; j++) {
+//                        while (i < row.length && !keyWordReturnList.get(j).getColumName().equals(columNames.get(i))) {
+//                            i++;
+//                        }
+//                    }
+//                    if (i >= row.length) {
+//                        break;
+//                    }
+//                }
+//
+////                Fix text into Columns
+//                String wordOfColum = row[i].replace("\n", " ");
+////                Iterate of Places
+//                for (Place place : PlaceList) {
+////                    Checking if the text contains a some keyword
+//                    boolean nameValid = (place.getNome() != null
+//                            && !place.getNome().equals("")
+//                            //                            && wordOfColum.contains(place.getNome())
+//                            && wordOfColum.equals(place.getNome()));
+////                    boolean siglaValid = place.getSigla() != null 
+////                            && !place.getSigla().equals("") 
+////                            && wordOfColum.contains(place.getSigla());
+//                    if (nameValid //                            || siglaValid
+//                            ) {
+//                        KeyWord kw = new KeyWord();
+//                        kw.setColumName(columNames.get(i));
+//                        kw.setColumValue(wordOfColum);
+//                        kw.setIdResource(ckanResource.getId());
+//                        kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
+//                        kw.setPlace(place);
+//                        kw.setRepeatNumber(kw.getRepeatNumber() + 1);
+//                        kw.setRowsNumber(allcsv.size());
+//                        keyWordReturnList.add(kw);
+//                    }
+//                }
+//            }
+//        }
+//
+//        return keyWordReturnList;
+//    }
 }

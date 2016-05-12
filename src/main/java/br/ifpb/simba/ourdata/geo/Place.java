@@ -12,6 +12,7 @@ import org.postgis.PGgeometry;
  * @author wensttay
  */
 public class Place {
+    private int id;
     private String nome;
     private String sigla;
     private String tipo;
@@ -25,9 +26,8 @@ public class Place {
 
     @Override
     public String toString() {
-        return "Place{" + "nome=" + nome + ", sigla=" + sigla + ", tipo=" + tipo + ", way=" + way.toString() + '}';
+        return "Place{" + "id=" + id + ", nome=" + nome + ", sigla=" + sigla + ", tipo=" + tipo + ", way=" + way + '}';
     }
-    
     
     public String getNome() {
         return nome;
@@ -59,6 +59,14 @@ public class Place {
 
     public void setWay(PGgeometry way) {
         this.way = way;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
     
     

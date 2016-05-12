@@ -56,9 +56,4 @@ public abstract class ExcelReader implements Reader<List<Sheet>, String> {
             }
         }
     }
-
-    @Override
-    public List<KeyWord> filterKeyWord(String resourceId, String urlString, List<Place> PlaceList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

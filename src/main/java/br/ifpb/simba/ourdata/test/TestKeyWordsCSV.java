@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.test;
 
+import br.ifpb.simba.ourdata.dao.geo.KeyWordBdDao;
 import br.ifpb.simba.ourdata.dao.geo.PlaceBdDao;
 import br.ifpb.simba.ourdata.geo.KeyWord;
 import br.ifpb.simba.ourdata.geo.Place;
@@ -41,55 +42,72 @@ public class TestKeyWordsCSV {
 //            if(cont == 100)
 //                break;
 //        }
+
         CSVReader csv = new CSVReader();
         CkanClient cc = new CkanClient("http://dados.gov.br/");
         List<String> dataset_names = cc.getDatasetList();
         List<CkanResource> resources;
+        CkanDataset dataset = null;
+        KeyWordBdDao keyWordBdDao = new KeyWordBdDao("/banco/banco.properties");
 
-        for (String name : dataset_names) {
-            CkanDataset dataset = cc.getDataset(name);
+        for (int i = 0; i < dataset_names.size(); i++) {
+
+            dataset = cc.getDataset(dataset_names.get(i));
             resources = dataset.getResources();
-            //Iterating resources
-            List<KeyWord> keyWordsResource = new ArrayList<>();
-            for (CkanResource resource : resources) {
-                if (resource.getFormat().equals("CSV")) {
-                    System.out.println("=====================================================================================");
-                    System.out.println("Dataset_URL: " + dataset.getUrl());
-                    System.out.println("Resource_URL: " + resource.getUrl());
-                    List<KeyWord> keyWords = csv.filterKeyWord(resource.getId(), resource.getUrl(), places);
 
-                    List<KeyWord> liteVersion = new ArrayList<>();
-                    if (!keyWords.isEmpty()) {
-                        for (KeyWord keyWord : keyWords) {
-                            boolean exist = false;
-                            for (KeyWord lvKeyWord : liteVersion) {
-                                if (lvKeyWord.equals(keyWord)) {
-                                    lvKeyWord.setRepeatNumber(keyWord.getRepeatNumber() + lvKeyWord.getRepeatNumber());
-                                    exist = true;
-                                    break;
+            //Iterating resources
+            for (int j = 0; j < resources.size(); j++) {
+                try {
+//                    Verify if the type of resource is a 'CSV'
+                    if (resources.get(j).getFormat().equals("CSV")) {
+                        System.out.println("=====================================================================================");
+                        System.out.println("Index DataSet: " + i + " (" + dataset_names.get(i) + ")");
+                        System.out.println("Resource_URL: " + resources.get(j).getUrl());
+
+//                        Instancie a list of KeyWord with the KeyWords of CSV resource
+                        List<KeyWord> keyWords = csv.getKeyWords(resources.get(j), resources.get(j).getUrl());
+
+//                        Instancie a list with a 'lite Version' of result seach KeyWords's resource.
+//                        This list has a same KeyWords of result search, but KeyWords with same place are
+//                        joined in one KeyWord
+                        List<KeyWord> liteVersion = new ArrayList<>();
+                        if (!keyWords.isEmpty()) {
+                            for (KeyWord keyWord : keyWords) {
+                                boolean exist = false;
+                                for (KeyWord liteVersionAux : liteVersion) {
+                                    if (liteVersionAux.equals(keyWord)) {
+                                        liteVersionAux.setRepeatNumber(keyWord.getRepeatNumber() + liteVersionAux.getRepeatNumber());
+                                        exist = true;
+                                        break;
+                                    }
+                                }
+                                if (!exist) {
+                                    liteVersion.add(keyWord);
                                 }
                             }
-                            if (!exist) {
-                                liteVersion.add(keyWord);
-                            }
                         }
-                    }
-                    
-                    Comparator<KeyWord> comparador = new Comparator<KeyWord>() {
-                        public int compare(KeyWord s1, KeyWord s2) {
-                            return s1.getPlace().getNome().compareTo(s2.getPlace().getNome());
-                        }
-                    };
-                    
-                    Collections.sort(liteVersion, comparador);
-                    
-                    for (KeyWord keyWord : liteVersion) {
-                        System.out.println(keyWord.getPlace().getNome() + " | Repetiu: "+ keyWord.getRepeatNumber() + " Vezes");
-                    }
 
-                    keyWordsResource.addAll(liteVersion);
+//                        Instancie a comparator usign a Name's KeyWord
+                        Comparator<KeyWord> comparador = new Comparator<KeyWord>() {
+                            public int compare(KeyWord s1, KeyWord s2) {
+                                return s1.getPlace().getNome().compareTo(s2.getPlace().getNome());
+                            }
+                        };
+                        Collections.sort(liteVersion, comparador);
+
+//                        Print a KeyWord name and Number of repeat cases with de same place
+                        for (KeyWord keyWord : liteVersion) {
+                            System.out.println(keyWord.getPlace().getNome() + " | Repetiu: " + keyWord.getRepeatNumber() + " Vezes");
+                        }
+
+//                        Insert all the CSV's KeyWord into DataBase
+                        keyWordBdDao.insertAll(liteVersion);
+                    }
+                } catch (OutOfMemoryError ex) {
+                    System.out.println(ex.getMessage());
                 }
             }
         }
+
     }
 }

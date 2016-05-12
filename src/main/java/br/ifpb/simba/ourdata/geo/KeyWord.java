@@ -17,7 +17,7 @@ public class KeyWord {
     
     private int repeatNumber = 0;
     private int rowsNumber;
-    private int columNumber;
+    private String columName;
     private String columValue;
     private Timestamp metadataCreated;
     private String idResource;
@@ -25,7 +25,10 @@ public class KeyWord {
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.columName);
+        hash = 29 * hash + Objects.hashCode(this.columValue);
+        hash = 29 * hash + Objects.hashCode(this.idResource);
         return hash;
     }
 
@@ -41,7 +44,7 @@ public class KeyWord {
             return false;
         }
         final KeyWord other = (KeyWord) obj;
-        if (this.columNumber != other.columNumber) {
+        if (!Objects.equals(this.columName, other.columName)) {
             return false;
         }
         if (!Objects.equals(this.columValue, other.columValue)) {
@@ -53,10 +56,9 @@ public class KeyWord {
         return true;
     }
     
-    
     @Override
     public String toString() {
-        return "KeyWord{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columNumber=" + columNumber + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=\n" + place.toString() + '}';
+        return "KeyWord{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columName=" + columName + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=" + place + '}';
     }
     
     public int getRepeatNumber() {
@@ -75,12 +77,12 @@ public class KeyWord {
         this.rowsNumber = rowsNumber;
     }
 
-    public int getColumNumber() {
-        return columNumber;
+    public String getColumName() {
+        return columName;
     }
 
-    public void setColumNumber(int columNumber) {
-        this.columNumber = columNumber;
+    public void setColumName(String columName) {
+        this.columName = columName;
     }
 
     public String getColumValue() {
