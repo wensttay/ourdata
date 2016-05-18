@@ -6,6 +6,7 @@
 package br.ifpb.simba.ourdata.geo;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.Objects;
 import org.postgis.PGgeometry;
 
@@ -14,7 +15,7 @@ import org.postgis.PGgeometry;
  * @author kieckegard
  */
 public class KeyWord {
-    
+
     private int repeatNumber = 0;
     private int rowsNumber;
     private String columName;
@@ -55,12 +56,12 @@ public class KeyWord {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
-        return "KeyWord{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columName=" + columName + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=" + place + '}';
+        return "KeyWord{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columName=" + columName + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + '}';
     }
-    
+
     public int getRepeatNumber() {
         return repeatNumber;
     }
@@ -116,6 +117,13 @@ public class KeyWord {
     public void setIdResource(String idResource) {
         this.idResource = idResource;
     }
-    
-    
+
+//    Instancie a comparator usign a Name's KeyWord
+    public static Comparator<KeyWord> comparadorByName = new Comparator<KeyWord>() {
+        @Override
+        public int compare(KeyWord s1, KeyWord s2) {
+            return s1.getPlace().getNome().compareTo(s2.getPlace().getNome());
+        }
+    };
+
 }

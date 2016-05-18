@@ -8,11 +8,14 @@ package br.ifpb.simba.ourdata.reader;
 import br.ifpb.simba.ourdata.dao.geo.PlaceBdDao;
 import br.ifpb.simba.ourdata.geo.KeyWord;
 import br.ifpb.simba.ourdata.geo.Place;
+import br.ifpb.simba.ourdata.test.KeyWordUtils;
 import br.ifpb.simba.ourdata.test.TestCSV;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_GREEN;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_RED;
+import static br.ifpb.simba.ourdata.test.TesteXMLPrint.funcionou;
+import static br.ifpb.simba.ourdata.test.TesteXMLPrint.total;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
 import java.io.BufferedReader;
@@ -23,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,37 +176,46 @@ public class CSVReader implements Reader<List<String[]>, String> {
         }
     }
 
-    public List<KeyWord> getKeyWords(CkanResource ckanResource, String urlString) {
-//        Conectando ao Banco que contem o Gazetteer (lista de nomes com Geoposição)
-        PlaceBdDao placeBdDao = new PlaceBdDao("/banco/banco.gazetteer.properties");
+    public List<KeyWord> getKeyWords(String ckanResourceId, String urlString, PlaceBdDao placeBdDao) {
+
+        System.out.println("Search for KeyWords into: " + urlString);
+        System.out.println("0 %");
 //        Instanciando lista que será retornada como resultado
         List<KeyWord> keyWordResultList = new ArrayList<>();
-        
+
 //        Instancionando o número que é usado para definir o numero de linhas (a partir da primeira)
 //        que serão usadas para avaliar quais colunas devem ser verificadas
         final int NUM_ROWS_CHECK_COLUMN_NAME = 10;
-        
+
 //        Instanciando a lista que contem todas as linhas(rows) de um CSV 
         List<String[]> rowListOfCsv = build(urlString);
         if (rowListOfCsv == null) {
             rowListOfCsv = new ArrayList<>();
         }
-        
+
 //        Instanciando a lista com os nomes das colunas (primeira linha do CSV)
         List<String> columNames = new ArrayList<>();
         if (!rowListOfCsv.isEmpty()) {
-            for (String str : rowListOfCsv.get(0)) {
+            String[] auxRow = rowListOfCsv.get(0);
+            for (String str : auxRow) {
                 columNames.add(str);
             }
         }
-
+        
+        
+        int percentReadAjust = 5;
+        int percentReadAjustFrequence = 5;
+        float percentRead = 0;
+        
 //      Iterate of Rows
-        for (String[] row : rowListOfCsv) {
+        int auxSizeOfCsv = rowListOfCsv.size();
+
+        for (int x = 0; x < auxSizeOfCsv; x++) {
+            String[] row = rowListOfCsv.get(x);
             List<KeyWord> rowKeyWordsOfRow = new ArrayList<>();
-            
+
 //          Iterate of Columns
             for (int i = 0; i < row.length; i++) {
-                
 //                Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
 //                resutados encontrados na pesquisa no Gazetteer
                 if (keyWordResultList.size() > NUM_ROWS_CHECK_COLUMN_NAME) {
@@ -214,7 +228,7 @@ public class CSVReader implements Reader<List<String[]>, String> {
                         break;
                     }
                 }
-                
+
 //                Fix text into Columns
                 String columValue = row[i].replace("\n", " ");
 
@@ -223,7 +237,7 @@ public class CSVReader implements Reader<List<String[]>, String> {
                 if (columValue != null && !columValue.equals("")) {
                     newPlace = placeBdDao.burcarPorTitulos(columValue);
                 }
-                
+
 //                Checking if has some KeyWords with a place that contains a new place
                 if (newPlace != null && !rowKeyWordsOfRow.isEmpty()) {
                     List<KeyWord> aux = new ArrayList<>();
@@ -235,25 +249,40 @@ public class CSVReader implements Reader<List<String[]>, String> {
                     }
                     rowKeyWordsOfRow = aux;
                 }
-                
+
 //                Instancie and increment the list of row's results with the new KeyWord
                 if (newPlace != null) {
                     KeyWord kw = new KeyWord();
                     kw.setColumName(columNames.get(i));
                     kw.setColumValue(columValue);
-                    kw.setIdResource(ckanResource.getId());
+                    kw.setIdResource(ckanResourceId);
                     kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
                     kw.setPlace(newPlace);
-                    kw.setRepeatNumber(kw.getRepeatNumber() + 1);
-                    kw.setRowsNumber(rowListOfCsv.size());
+                    kw.setRepeatNumber(1);
+                    kw.setRowsNumber(auxSizeOfCsv);
                     rowKeyWordsOfRow.add(kw);
                 }
             }
-            
+
 //            Increment the resultList with all news KeyWords of this row
             keyWordResultList.addAll(rowKeyWordsOfRow);
+
+            if (x >= NUM_ROWS_CHECK_COLUMN_NAME && keyWordResultList.isEmpty()) {
+                System.out.println("!! ATINGIU O NUMERO MAX DE " + NUM_ROWS_CHECK_COLUMN_NAME + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+                break;
+            }
+            
+            if (!rowKeyWordsOfRow.isEmpty()) {
+                NumberFormat formatter = new DecimalFormat("#0.00");
+                percentRead = (((float) x * 100) / (float) auxSizeOfCsv);
+                if(percentRead > percentReadAjust){
+                    percentReadAjust = (int) (percentRead + percentReadAjustFrequence);
+                    System.out.println(formatter.format(percentRead) + " %");
+                }
+            }
         }
-       
+        
+        System.out.println("100 %");
         return keyWordResultList;
     }
 
