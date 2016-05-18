@@ -17,14 +17,15 @@ import java.util.TreeSet;
  *
  * @author kieckegard
  */
-public class ResourceUtil
+public class ResourceUtilCsv implements IResourceHeader<ResourceHeader>
 {
     /**
      * Só funciona para arquivos CSV por enquanto!
      * @param url 
      * @return ResourceHeader, classe que contém informações sobre o arquivo.
      */
-    public static ResourceHeader getHeader(String url){
+    @Override
+    public ResourceHeader getHeader(String url){
         CSVReader reader = new CSVReader();
         List<String[]> rows = reader.build(url);
         Set<String> set;

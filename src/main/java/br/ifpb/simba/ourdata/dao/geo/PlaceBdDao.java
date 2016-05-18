@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.postgis.PGgeometry;
 import org.postgis.PGboxbase;
+import org.postgis.Polygon;
 
 /**
  *
@@ -99,14 +100,14 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
         return null;
     }
     
-    public List<CkanResource> buscarPorBbox(PGboxbase boxBase){     
+    public List<CkanResource> buscarPorBbox(Polygon polygon){     
        List<CkanResource> resources = new ArrayList<>();
        try{
            conectar();
            String sql = "SELECT descricao, url, format FROM resource r JOIN resource_places rp ON r.id = rp.id_resource"
-                   + "WHERE rp.way INTERSECTS ?";
+                   + "WHERE ST_Intersects(rp.way,?)";
            PreparedStatement pstm = getConnection().prepareStatement(sql);
-           pstm.setObject(1, boxBase);
+           pstm.setObject(1, polygon);
            ResultSet rs = pstm.executeQuery();
            
            CkanResource resource = new CkanResource();
