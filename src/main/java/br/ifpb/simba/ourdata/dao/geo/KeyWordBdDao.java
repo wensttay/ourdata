@@ -31,16 +31,17 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
     public boolean insert(KeyWord obj) {
         try {
             conectar();
-            String sql = "INSERT INTO resource_place(COLUM_NAME, COLUM_VALUE, REPEAT_NUMBER,"
-                    + "ROWS_NUMBER, WAY, METADATA_CREATED, ID_RESOURCE) VALUES(?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE, REPEAT_NUMBER,"
+                    + "ROWS_NUMBER, METADATA_CREATED, WAY, ID_PLACE, ID_RESOURCE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             int i = 1;
-            ps.setString(i++, obj.getColumName());
+            ps.setInt(i++, obj.getColumNumber());
             ps.setString(i++, obj.getColumValue());
             ps.setInt(i++, obj.getRepeatNumber());
             ps.setInt(i++, obj.getRowsNumber());
-            ps.setObject(i++, obj.getPlace().getWay());
             ps.setTimestamp(i++, obj.getMetadataCreated());
+            ps.setObject(i++, obj.getPlace().getWay());
+            ps.setInt(i++, obj.getPlace().getId());
             ps.setString(i++, obj.getIdResource());
 
             return (ps.executeUpdate() != 0);
@@ -60,8 +61,6 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
             conectar();
             String sql = "SELECT * FROM resource_place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
-//            getConnection().setAutoCommit(false);
-//            ps.setFetchSize(100);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -83,16 +82,17 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
     @Override
     public KeyWord preencherObjeto(ResultSet rs) {
         try {
+            Place place = new Place();
             KeyWord kw = new KeyWord();
-            kw.setColumName(rs.getString("COLUM_NAME"));
+            kw.setColumNumber(rs.getInt("COLUM_NUMBER"));
             kw.setColumValue(rs.getString("COLUM_VALUE"));
-            kw.setIdResource(rs.getString("ID_RESOURCE"));
-            kw.setMetadataCreated(rs.getTimestamp("METADATA_CREATED"));
             kw.setRepeatNumber(rs.getInt("REPEAT_NUMBER"));
             kw.setRowsNumber(rs.getInt("ROWS_NUMBER"));
-            Place p = new Place();
-            p.setWay((PGgeometry) rs.getObject("WAY"));
-            kw.setPlace(p);
+            kw.setMetadataCreated(rs.getTimestamp("METADATA_CREATED"));
+            place.setWay((PGgeometry) rs.getObject("WAY"));
+            place.setId(rs.getInt("ID_PLACE"));
+            kw.setIdResource(rs.getString("ID_RESOURCE"));
+            kw.setPlace(place);
 
             return kw;
         } catch (SQLException ex) {
@@ -101,40 +101,69 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
         }
     }
 
-    public boolean insertAll(List<KeyWord> liteVersion) {
+    public boolean insertAll(List<KeyWord> listKeyWords) {
         try {
-            if (liteVersion.isEmpty()) {
-                return false;
-            }
             conectar();
-            StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NAME, COLUM_VALUE, REPEAT_NUMBER, ROWS_NUMBER, WAY, METADATA_CREATED, ID_RESOURCE) VALUES");
-            for (int i = 0; i < liteVersion.size(); i++) {
-                if (i == liteVersion.size() - 1) {
-                    sql.append("(?, ?, ?, ?, ?, ?, ?)");
-                }else{
-                    sql.append("(?, ?, ?, ?, ?, ?, ?), ");
-                }
+            for (KeyWord keyWord : listKeyWords) {
+                String sql = "INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE, REPEAT_NUMBER,"
+                        + "ROWS_NUMBER, METADATA_CREATED, WAY, ID_PLACE, ID_RESOURCE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement ps = getConnection().prepareStatement(sql);
+
+                int i = 1;
+
+                ps.setInt(i++, keyWord.getColumNumber());
+                ps.setString(i++, keyWord.getColumValue());
+                ps.setInt(i++, keyWord.getRepeatNumber());
+                ps.setInt(i++, keyWord.getRowsNumber());
+                ps.setTimestamp(i++, keyWord.getMetadataCreated());
+                ps.setObject(i++, keyWord.getPlace().getWay());
+                ps.setInt(i++, keyWord.getPlace().getId());
+                ps.setString(i++, keyWord.getIdResource());
+                ps.executeUpdate();
             }
-            PreparedStatement ps = getConnection().prepareStatement(sql.toString());
-            int i = 1;
-            for (KeyWord obj : liteVersion) {
-                ps.setString(i++, obj.getColumName());
-                ps.setString(i++, obj.getColumValue());
-                ps.setInt(i++, obj.getRepeatNumber());
-                ps.setInt(i++, obj.getRowsNumber());
-                ps.setObject(i++, obj.getPlace().getWay());
-                ps.setTimestamp(i++, obj.getMetadataCreated());
-                ps.setString(i++, obj.getIdResource());
-            }
-//            System.out.println(ps.toString());
-            return (ps.executeUpdate() != 0);
+            return true;
+
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
             return false;
         } finally {
             desconectar();
         }
-
     }
 
+//    public boolean insertAll(List<KeyWord> liteVersion) {
+//        try {
+//            if (liteVersion.isEmpty()) {
+//                return false;
+//            }
+//            conectar();
+//            StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NAME, COLUM_VALUE, REPEAT_NUMBER, ROWS_NUMBER, WAY, METADATA_CREATED, ID_RESOURCE) VALUES");
+//            for (int i = 0; i < liteVersion.size(); i++) {
+//                if (i == liteVersion.size() - 1) {
+//                    sql.append("(?, ?, ?, ?, ?, ?, ?)");
+//                }else{
+//                    sql.append("(?, ?, ?, ?, ?, ?, ?), ");
+//                }
+//            }
+//            PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+//            int i = 1;
+//            for (KeyWord obj : liteVersion) {
+//                ps.setString(i++, obj.getColumName());
+//                ps.setString(i++, obj.getColumValue());
+//                ps.setInt(i++, obj.getRepeatNumber());
+//                ps.setInt(i++, obj.getRowsNumber());
+//                ps.setObject(i++, obj.getPlace().getWay());
+//                ps.setTimestamp(i++, obj.getMetadataCreated());
+//                ps.setString(i++, obj.getIdResource());
+//            }
+////            System.out.println(ps.toString());
+//            return (ps.executeUpdate() != 0);
+//        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+//            ex.printStackTrace();
+//            return false;
+//        } finally {
+//            desconectar();
+//        }
+//
+//    }
 }

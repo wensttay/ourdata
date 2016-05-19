@@ -21,6 +21,8 @@ import java.util.Properties;
  */
 public abstract class GenericBdDao{
     
+    public static final String PROPERTIES_PATH_DEFAULT = "/banco/banco.properties";
+    
     private String properties_path;
     private String user;
     private String url;
@@ -46,6 +48,8 @@ public abstract class GenericBdDao{
 
         Class.forName(driver);
         connection = DriverManager.getConnection(url, user, password);
+        ((org.postgresql.PGConnection)connection).addDataType("geometry",Class.forName("org.postgis.PGgeometry"));
+        ((org.postgresql.PGConnection)connection).addDataType("box3d",Class.forName("org.postgis.PGbox3d"));
     }
 
     public void desconectar() {

@@ -179,7 +179,6 @@ public class CSVReader implements Reader<List<String[]>, String> {
     public List<KeyWord> getKeyWords(String ckanResourceId, String urlString, PlaceBdDao placeBdDao) {
 
         System.out.println("Search for KeyWords into: " + urlString);
-        System.out.println("0 %");
 //        Instanciando lista que será retornada como resultado
         List<KeyWord> keyWordResultList = new ArrayList<>();
 
@@ -201,59 +200,58 @@ public class CSVReader implements Reader<List<String[]>, String> {
                 columNames.add(str);
             }
         }
-        
-        
-        int percentReadAjust = 5;
-        int percentReadAjustFrequence = 5;
-        float percentRead = 0;
-        
 //      Iterate of Rows
         int auxSizeOfCsv = rowListOfCsv.size();
 
-        for (int x = 0; x < auxSizeOfCsv; x++) {
-            String[] row = rowListOfCsv.get(x);
+        for (int indexOfRow = 0; indexOfRow < auxSizeOfCsv; indexOfRow++) {
+            String[] row = rowListOfCsv.get(indexOfRow);
             List<KeyWord> rowKeyWordsOfRow = new ArrayList<>();
 
 //          Iterate of Columns
-            for (int i = 0; i < row.length; i++) {
+            for (int indexOfColumn = 0; indexOfColumn < row.length; indexOfColumn++) {
 //                Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
 //                resutados encontrados na pesquisa no Gazetteer
                 if (keyWordResultList.size() > NUM_ROWS_CHECK_COLUMN_NAME) {
-                    for (int j = 0; j < NUM_ROWS_CHECK_COLUMN_NAME; j++) {
-                        while (i < row.length && !keyWordResultList.get(j).getColumName().equals(columNames.get(i))) {
-                            i++;
+                    for (int i = 0; i < NUM_ROWS_CHECK_COLUMN_NAME; i++) {
+                        while (indexOfColumn < row.length && keyWordResultList.get(i).getColumNumber() != indexOfColumn) {
+                            indexOfColumn++;
                         }
                     }
-                    if (i >= row.length) {
+                    if (indexOfColumn >= row.length) {
                         break;
                     }
                 }
 
 //                Fix text into Columns
-                String columValue = row[i].replace("\n", " ");
+                String columValue = row[indexOfColumn].replace("\n", " ");
 
 //                Checking if the colum Value is valid and Search a Place
-                Place newPlace = null;
+                List<Place> newPlaces = new ArrayList<>();
                 if (columValue != null && !columValue.equals("")) {
-                    newPlace = placeBdDao.burcarPorTitulos(columValue);
+                    newPlaces.addAll(placeBdDao.burcarPorTitulos(columValue));
                 }
 
 //                Checking if has some KeyWords with a place that contains a new place
-                if (newPlace != null && !rowKeyWordsOfRow.isEmpty()) {
+                if (!newPlaces.isEmpty() && !rowKeyWordsOfRow.isEmpty()) {
+
                     List<KeyWord> aux = new ArrayList<>();
                     aux.addAll(rowKeyWordsOfRow);
-                    for (KeyWord kw : rowKeyWordsOfRow) {
-                        if (placeBdDao.stContains(kw.getPlace(), newPlace)) {
-                            aux.remove(kw);
+
+                    for (Place newPlace : newPlaces) {
+                        for (KeyWord kw : rowKeyWordsOfRow) {
+                            if (placeBdDao.stContains(kw.getPlace(), newPlace)) {
+                                aux.remove(kw);
+                                break;
+                            }
                         }
                     }
                     rowKeyWordsOfRow = aux;
                 }
 
 //                Instancie and increment the list of row's results with the new KeyWord
-                if (newPlace != null) {
+                for (Place newPlace : newPlaces) {
                     KeyWord kw = new KeyWord();
-                    kw.setColumName(columNames.get(i));
+                    kw.setColumNumber(indexOfColumn);
                     kw.setColumValue(columValue);
                     kw.setIdResource(ckanResourceId);
                     kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
@@ -267,22 +265,22 @@ public class CSVReader implements Reader<List<String[]>, String> {
 //            Increment the resultList with all news KeyWords of this row
             keyWordResultList.addAll(rowKeyWordsOfRow);
 
-            if (x >= NUM_ROWS_CHECK_COLUMN_NAME && keyWordResultList.isEmpty()) {
+            if (indexOfRow >= NUM_ROWS_CHECK_COLUMN_NAME && keyWordResultList.isEmpty()) {
                 System.out.println("!! ATINGIU O NUMERO MAX DE " + NUM_ROWS_CHECK_COLUMN_NAME + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
-            
+
             if (!rowKeyWordsOfRow.isEmpty()) {
                 NumberFormat formatter = new DecimalFormat("#0.00");
-                percentRead = (((float) x * 100) / (float) auxSizeOfCsv);
-                if(percentRead > percentReadAjust){
-                    percentReadAjust = (int) (percentRead + percentReadAjustFrequence);
-                    System.out.println(formatter.format(percentRead) + " %");
-                }
+                float percentRead = (((float) indexOfRow * 100) / (float) auxSizeOfCsv);
+                System.out.println(formatter.format(percentRead) + " %");
             }
         }
         
-        System.out.println("100 %");
+        if(!keyWordResultList.isEmpty()){
+            System.out.println("100 %");
+        }
+
         return keyWordResultList;
     }
 

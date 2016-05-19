@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.postgis.PGgeometry;
-import org.postgis.PGboxbase;
 import org.postgis.Polygon;
 
 /**
@@ -24,7 +23,7 @@ import org.postgis.Polygon;
  * @author wensttay
  */
 public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
-
+    
     public PlaceBdDao(String properties_path) {
         super(properties_path);
     }
@@ -77,27 +76,28 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
 
     }
 
-    public Place burcarPorTitulos(String columValue) {
+    public List<Place> burcarPorTitulos(String columValue) {
+        List<Place> places = new ArrayList<>();
         try {
             conectar();
-            String sql = "SELECT *, st_area(the_geom) as size FROM gazetteer WHERE nome ILIKE ? OR sigla ILIKE ? ORDER BY size DESC LIMIT 1";
+            String sql = "SELECT * FROM gazetteer WHERE nome ILIKE ? OR sigla ILIKE ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, columValue);
             ps.setString(2, columValue);
             ResultSet rs = ps.executeQuery();
-            
-            Place p = null;
-            if (rs.next()) {
-                p = preencherObjeto(rs);
+            while(rs.next()){
+                Place p = preencherObjeto(rs);
+                if(p != null){
+                    places.add(p);
+                }
             }
-            
-            return p;
+            return places;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+            return new ArrayList<>();
         } finally {
             desconectar();
         }
-        return null;
     }
     
     public List<CkanResource> buscarPorBbox(Polygon polygon){     
@@ -133,7 +133,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
     public boolean stContains(Place bigPlace, Place smallPlace) {
         try {
             conectar();
-            String sql = "SELECT nome, ST_Contains((SELECT the_geom FROM gazetteer WHERE gid = ?), the_geom) as contains FROM gazetteer WHERE gid = ?";
+            String sql = "SELECT nome, ST_Intersects((SELECT the_geom FROM gazetteer WHERE gid = ?), the_geom) as contains FROM gazetteer WHERE gid = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, bigPlace.getId());
             ps.setInt(2, smallPlace.getId());
