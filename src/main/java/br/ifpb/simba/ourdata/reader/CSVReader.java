@@ -267,7 +267,6 @@ public class CSVReader implements Reader<List<String[]>, String> {
 
 //            Increment the resultList with all news KeyWords of this row
             keyWordResultList.addAll(rowKeyWordsOfRow);
-
             if (indexOfRow >= NUM_ROWS_CHECK && keyWordResultList.isEmpty()) {
                 System.out.println("!! ATINGIU O NUMERO MAX DE " + NUM_ROWS_CHECK + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
@@ -286,11 +285,10 @@ public class CSVReader implements Reader<List<String[]>, String> {
         if(!keyWordResultList.isEmpty()){
             System.out.println("100 %");
         }
-        
         rowListOfCsv = null;
         columNames = null;
         System.gc();
-        
+
         return keyWordResultList;
     }
 }

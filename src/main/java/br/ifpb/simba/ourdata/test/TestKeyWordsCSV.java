@@ -21,6 +21,8 @@ import java.util.List;
  *
  * @author wensttay
  */
+
+
 public class TestKeyWordsCSV {
 
     public static void main(String[] args) {
@@ -32,6 +34,7 @@ public class TestKeyWordsCSV {
         KeyWordBdDao keyWordBdDao = new KeyWordBdDao(GenericBdDao.PROPERTIES_PATH_DEFAULT);
         PlaceBdDao placeBdDao = new PlaceBdDao(GenericBdDao.PROPERTIES_PATH_DEFAULT);
         List<String> datasetNames = new ArrayList<>();
+        
         try {
             datasetNames.addAll(ckanClient.getDatasetList());
         } catch (JackanException ex) {
@@ -45,10 +48,10 @@ public class TestKeyWordsCSV {
 
 //        Iterating dataset's names
         int auxDatasetNamesSize = datasetNames.size();
-        for (int i = 24; i < auxDatasetNamesSize; i++) {
+
+        for (int i = 0; i < auxDatasetNamesSize; i++) {
             CkanDataset dataset = null;
             List<CkanResource> resources = new ArrayList<>();
-
             try {
                 dataset = ckanClient.getDataset(datasetNames.get(i));
                 if (dataset != null) {
@@ -63,6 +66,7 @@ public class TestKeyWordsCSV {
             for (int j = 0; j < auxResourceSize; j++) {
                 ++totalResources;
                 List<KeyWord> keyWords = null;
+
                 try {
 //                    Verify if the type of resource is a 'CSV'
                     if (resources.get(j).getFormat().equals("CSV")) {
@@ -93,7 +97,7 @@ public class TestKeyWordsCSV {
                     }
                 } catch (OutOfMemoryError ex) {
                     ex.printStackTrace();
-                }finally{
+                } finally {
                     keyWords = null;
                     System.gc();
                 }

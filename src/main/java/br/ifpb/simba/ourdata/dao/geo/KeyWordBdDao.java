@@ -102,6 +102,7 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
             place.setWay(geo);
             
             place.setWay((Geometry) rs.getObject("WAY"));
+
             place.setId(rs.getInt("ID_PLACE"));
             kw.setIdResource(rs.getString("ID_RESOURCE"));
             kw.setPlace(place);
@@ -128,7 +129,7 @@ public class KeyWordBdDao extends GenericGeometricBdDao<KeyWord, Integer> {
             desconectar();
         }
     }
-    
+
 //    public boolean insertAll(List<KeyWord> liteVersion) {
 //        try {
 //            if (liteVersion.isEmpty()) {

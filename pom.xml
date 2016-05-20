@@ -21,8 +21,7 @@
             <artifactId>jts</artifactId>
             <version>1.13</version>
         </dependency>
-
-
+        
         <dependency>
             <groupId>org.ancoron.postgresql</groupId>
             <artifactId>org.postgresql</artifactId>
