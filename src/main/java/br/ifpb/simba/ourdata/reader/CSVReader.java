@@ -8,15 +8,11 @@ package br.ifpb.simba.ourdata.reader;
 import br.ifpb.simba.ourdata.dao.geo.PlaceBdDao;
 import br.ifpb.simba.ourdata.geo.KeyWord;
 import br.ifpb.simba.ourdata.geo.Place;
-import br.ifpb.simba.ourdata.test.KeyWordUtils;
 import br.ifpb.simba.ourdata.test.TestCSV;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLACK;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_BLUE;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_GREEN;
 import static br.ifpb.simba.ourdata.test.TestCSV.ANSI_RED;
-import static br.ifpb.simba.ourdata.test.TesteXMLPrint.funcionou;
-import static br.ifpb.simba.ourdata.test.TesteXMLPrint.total;
-import eu.trentorise.opendata.jackan.model.CkanResource;
 import eu.trentorise.opendata.traceprov.internal.org.apache.commons.io.IOUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -36,7 +32,16 @@ import java.util.List;
  * @author kieckegard
  */
 public class CSVReader implements Reader<List<String[]>, String> {
+    
+    private int NUM_ROWS_CHECK = 10;
 
+    public CSVReader() {
+    }
+
+    public CSVReader(int num_rows_check) {
+        this.NUM_ROWS_CHECK = num_rows_check;
+    }
+    
     public au.com.bytecode.opencsv.CSVReader getCSVReaderBuild(String url) throws IOException {
         URL stackURL = new URL(url);
         stackURL.openConnection().setReadTimeout(120000);
@@ -177,15 +182,12 @@ public class CSVReader implements Reader<List<String[]>, String> {
     }
 
     public List<KeyWord> getKeyWords(String ckanResourceId, String urlString, PlaceBdDao placeBdDao) {
-
+        
+        float porcent = 0;
+        
         System.out.println("Search for KeyWords into: " + urlString);
-        System.out.println("0 %");
 //        Instanciando lista que será retornada como resultado
         List<KeyWord> keyWordResultList = new ArrayList<>();
-
-//        Instancionando o número que é usado para definir o numero de linhas (a partir da primeira)
-//        que serão usadas para avaliar quais colunas devem ser verificadas
-        final int NUM_ROWS_CHECK_COLUMN_NAME = 10;
 
 //        Instanciando a lista que contem todas as linhas(rows) de um CSV 
         List<String[]> rowListOfCsv = build(urlString);
@@ -201,59 +203,58 @@ public class CSVReader implements Reader<List<String[]>, String> {
                 columNames.add(str);
             }
         }
-        
-        
-        int percentReadAjust = 5;
-        int percentReadAjustFrequence = 5;
-        float percentRead = 0;
-        
 //      Iterate of Rows
         int auxSizeOfCsv = rowListOfCsv.size();
 
-        for (int x = 0; x < auxSizeOfCsv; x++) {
-            String[] row = rowListOfCsv.get(x);
+        for (int indexOfRow = 0; indexOfRow < auxSizeOfCsv; indexOfRow++) {
+            String[] row = rowListOfCsv.get(indexOfRow);
             List<KeyWord> rowKeyWordsOfRow = new ArrayList<>();
 
 //          Iterate of Columns
-            for (int i = 0; i < row.length; i++) {
+            for (int indexOfColumn = 0; indexOfColumn < row.length; indexOfColumn++) {
 //                Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
 //                resutados encontrados na pesquisa no Gazetteer
-                if (keyWordResultList.size() > NUM_ROWS_CHECK_COLUMN_NAME) {
-                    for (int j = 0; j < NUM_ROWS_CHECK_COLUMN_NAME; j++) {
-                        while (i < row.length && !keyWordResultList.get(j).getColumName().equals(columNames.get(i))) {
-                            i++;
+                if (keyWordResultList.size() > NUM_ROWS_CHECK) {
+                    for (int i = 0; i < NUM_ROWS_CHECK; i++) {
+                        while (indexOfColumn < row.length && keyWordResultList.get(i).getColumNumber() != indexOfColumn) {
+                            indexOfColumn++;
                         }
                     }
-                    if (i >= row.length) {
+                    if (indexOfColumn >= row.length) {
                         break;
                     }
                 }
 
 //                Fix text into Columns
-                String columValue = row[i].replace("\n", " ");
+                String columValue = row[indexOfColumn].replace("\n", " ");
 
 //                Checking if the colum Value is valid and Search a Place
-                Place newPlace = null;
+                List<Place> newPlaces = new ArrayList<>();
                 if (columValue != null && !columValue.equals("")) {
-                    newPlace = placeBdDao.burcarPorTitulos(columValue);
+                    newPlaces.addAll(placeBdDao.burcarPorTitulos(columValue));
                 }
 
 //                Checking if has some KeyWords with a place that contains a new place
-                if (newPlace != null && !rowKeyWordsOfRow.isEmpty()) {
+                if (!newPlaces.isEmpty() && !rowKeyWordsOfRow.isEmpty()) {
+
                     List<KeyWord> aux = new ArrayList<>();
                     aux.addAll(rowKeyWordsOfRow);
-                    for (KeyWord kw : rowKeyWordsOfRow) {
-                        if (placeBdDao.stContains(kw.getPlace(), newPlace)) {
-                            aux.remove(kw);
+
+                    for (Place newPlace : newPlaces) {
+                        for (KeyWord kw : rowKeyWordsOfRow) {
+                            if(kw.getPlace().getWay().intersects(newPlace.getWay())){
+                                aux.remove(kw);
+                                break;
+                            }
                         }
                     }
                     rowKeyWordsOfRow = aux;
                 }
 
 //                Instancie and increment the list of row's results with the new KeyWord
-                if (newPlace != null) {
+                for (Place newPlace : newPlaces) {
                     KeyWord kw = new KeyWord();
-                    kw.setColumName(columNames.get(i));
+                    kw.setColumNumber(indexOfColumn);
                     kw.setColumValue(columValue);
                     kw.setIdResource(ckanResourceId);
                     kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
@@ -267,88 +268,29 @@ public class CSVReader implements Reader<List<String[]>, String> {
 //            Increment the resultList with all news KeyWords of this row
             keyWordResultList.addAll(rowKeyWordsOfRow);
 
-            if (x >= NUM_ROWS_CHECK_COLUMN_NAME && keyWordResultList.isEmpty()) {
-                System.out.println("!! ATINGIU O NUMERO MAX DE " + NUM_ROWS_CHECK_COLUMN_NAME + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+            if (indexOfRow >= NUM_ROWS_CHECK && keyWordResultList.isEmpty()) {
+                System.out.println("!! ATINGIU O NUMERO MAX DE " + NUM_ROWS_CHECK + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
-            
+
             if (!rowKeyWordsOfRow.isEmpty()) {
                 NumberFormat formatter = new DecimalFormat("#0.00");
-                percentRead = (((float) x * 100) / (float) auxSizeOfCsv);
-                if(percentRead > percentReadAjust){
-                    percentReadAjust = (int) (percentRead + percentReadAjustFrequence);
+                float percentRead = (((float) indexOfRow * 100) / (float) auxSizeOfCsv);
+                if(porcent + 1 < percentRead){
                     System.out.println(formatter.format(percentRead) + " %");
+                    porcent = percentRead;
                 }
             }
         }
         
-        System.out.println("100 %");
+        if(!keyWordResultList.isEmpty()){
+            System.out.println("100 %");
+        }
+        
+        rowListOfCsv = null;
+        columNames = null;
+        System.gc();
+        
         return keyWordResultList;
     }
-
-//    public List<KeyWord> getKeyWords(CkanResource ckanResource, String urlString, List<Place> PlaceList) {
-//        final int NUM_ROWS_CHECK = 5;
-//        List<KeyWord> keyWordReturnList = new ArrayList<>();
-//
-//        List<String[]> allcsv = build(urlString);
-//
-//        if (allcsv == null) {
-//            allcsv = new ArrayList<>();
-//        }
-//
-////        Criando lista com os nomes das colunas
-//        List<String> columNames = new ArrayList<>();
-//        if (!allcsv.isEmpty()) {
-//            for (String str : allcsv.get(0)) {
-//                columNames.add(str);
-//            }
-//        }
-//
-////        Iterate of Rows
-//        for (String[] row : allcsv) {
-////            Iterate of Columns
-//            for (int i = 0; i < row.length; i++) {
-//
-////                Verifica se a coluna atual apresenteou algum keyValue()
-//                if (keyWordReturnList.size() > NUM_ROWS_CHECK) {
-//                    for (int j = 0; j < NUM_ROWS_CHECK; j++) {
-//                        while (i < row.length && !keyWordReturnList.get(j).getColumName().equals(columNames.get(i))) {
-//                            i++;
-//                        }
-//                    }
-//                    if (i >= row.length) {
-//                        break;
-//                    }
-//                }
-//
-////                Fix text into Columns
-//                String wordOfColum = row[i].replace("\n", " ");
-////                Iterate of Places
-//                for (Place place : PlaceList) {
-////                    Checking if the text contains a some keyword
-//                    boolean nameValid = (place.getNome() != null
-//                            && !place.getNome().equals("")
-//                            //                            && wordOfColum.contains(place.getNome())
-//                            && wordOfColum.equals(place.getNome()));
-////                    boolean siglaValid = place.getSigla() != null 
-////                            && !place.getSigla().equals("") 
-////                            && wordOfColum.contains(place.getSigla());
-//                    if (nameValid //                            || siglaValid
-//                            ) {
-//                        KeyWord kw = new KeyWord();
-//                        kw.setColumName(columNames.get(i));
-//                        kw.setColumValue(wordOfColum);
-//                        kw.setIdResource(ckanResource.getId());
-//                        kw.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
-//                        kw.setPlace(place);
-//                        kw.setRepeatNumber(kw.getRepeatNumber() + 1);
-//                        kw.setRowsNumber(allcsv.size());
-//                        keyWordReturnList.add(kw);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return keyWordReturnList;
-//    }
 }

@@ -11,7 +11,7 @@ import br.ifpb.simba.ourdata.dao.thread.AtualizadorDeBanco;
  *
  * @author Wensttay
  */
-public class TesteMultiThread {
+public class TesteInsertOrUpdate {
     final static String url = "http://dados.gov.br/";
     
     public static void main(String[] args) {

@@ -5,6 +5,7 @@
  */
 package br.ifpb.simba.ourdata.geo;
 
+import com.vividsolutions.jts.geom.Geometry;
 import org.postgis.PGgeometry;
 
 /**
@@ -16,9 +17,9 @@ public class Place {
     private String nome;
     private String sigla;
     private String tipo;
-    private PGgeometry way;
+    private Geometry way;
 
-    public Place(PGgeometry way) {
+    public Place(Geometry way) {
         this.way = way;
     }
 
@@ -53,11 +54,11 @@ public class Place {
         this.tipo = tipo;
     }
 
-    public PGgeometry getWay() {
+    public Geometry getWay() {
         return way;
     }
 
-    public void setWay(PGgeometry way) {
+    public void setWay(Geometry way) {
         this.way = way;
     }
 

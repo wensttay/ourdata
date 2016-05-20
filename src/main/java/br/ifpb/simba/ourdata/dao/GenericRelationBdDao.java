@@ -12,7 +12,7 @@ package br.ifpb.simba.ourdata.dao;
 public abstract class GenericRelationBdDao <T, I> extends GenericBdDao implements DaoRelation<T, I>{
 
     public GenericRelationBdDao() {
-        super("/banco/banco.properties");
+        super(PROPERTIES_PATH_DEFAULT);
     }
 
 }

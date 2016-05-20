@@ -19,48 +19,9 @@ import java.util.Properties;
  * @param <T>
  * @param <I>
  */
-public abstract class GenericGeometricBdDao<T, I> implements DaoGeometric<T, I> {
+public abstract class GenericGeometricBdDao<T, I> extends GenericBdDao implements DaoGeometric<T, I>{
 
-    private String properties_path;
-    private String user;
-    private String url;
-    private String password;
-    private String driver;
-    private Connection connection;
-    
     public GenericGeometricBdDao(String properties_path) {
-        this.properties_path = properties_path;
-    }
-    
-    public void conectar() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
-        if (getConnection() != null && !getConnection().isClosed()) {
-            return;
-        }
-        Properties prop = new Properties();
-        prop.load(new FileInputStream(getClass().getResource(properties_path).toURI().getPath()));
-
-        user = prop.getProperty("user");
-        url = prop.getProperty("url");
-        password = prop.getProperty("password");
-        driver = prop.getProperty("driver");
-
-        Class.forName(driver);
-        connection = DriverManager.getConnection(url, user, password);
-        ((org.postgresql.PGConnection)connection).addDataType("geometry",Class.forName("org.postgis.PGgeometry"));
-        ((org.postgresql.PGConnection)connection).addDataType("box3d",Class.forName("org.postgis.PGbox3d"));
-    }
-
-    public void desconectar(){
-        try {
-            if (getConnection() != null && !getConnection().isClosed()) {
-                connection.close();
-            }
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public Connection getConnection() throws URISyntaxException, IOException, SQLException, ClassNotFoundException {
-        return connection;
+        super(properties_path);
     }
 }
