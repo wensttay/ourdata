@@ -1,20 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package br.ifpb.simba.ourdata.reader;
 
-import br.ifpb.simba.ourdata.geo.KeyWord;
-import br.ifpb.simba.ourdata.geo.Place;
-import java.util.List;
-
 /**
- *
+ * Interface with methods to Readers files
+ * 
  * @author Wensttay
  */
 public interface Reader <T,I> {
+    /**
+     * Method to build (using a address url) something usable to print, read ... 
+     * 
+     * @param urlString The address URL 
+     * @return A type usable to print, read ...
+     */
     T build (I urlString);
+    
+    /**
+     * Method to print some file using a address url
+     * 
+     * @param urlString The address URL 
+     */
     void print (I urlString);
+    
 //    List<KeyWord> filterKeyWord(String resourceId, I urlString, List<Place> PlaceList);
 }

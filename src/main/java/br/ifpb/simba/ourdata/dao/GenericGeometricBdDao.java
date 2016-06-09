@@ -1,27 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package br.ifpb.simba.ourdata.dao;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
-
 /**
+ * This class is a abstrat GeneriBdDao with the DaoGeometric interface
  *
- * @author wensttay
- * @param <T>
- * @param <I>
+ * @author Wensttay
+ * @param <T> Type of Object
+ * @param <I> Type of T's ID
  */
-public abstract class GenericGeometricBdDao<T, I> extends GenericBdDao implements DaoGeometric<T, I>{
-
-    public GenericGeometricBdDao(String properties_path) {
-        super(properties_path);
-    }
+public abstract class GenericGeometricBdDao<T, I> extends GenericBdDao implements DaoGeometric<T, I>
+{
 }

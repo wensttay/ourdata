@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
@@ -12,31 +8,64 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
+ * Class that know how CRUD a relation between DataSet and Resource into a JDBC
  *
  * @author Wensttay
  */
-public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>{
+public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>
+{
+    /**
+     * This constructor create a DataSetResourcesBdDao using the default
+     * properties_path
+     * 'PROPERTIES_PATH_DEFAULT' to JDBC connection
+     */
+    public DataSetResourcesBdDao()
+    {
+    }
 
+    /**
+     * This constructor create a DataSetResourcesBdDao using the properties_path
+     * passed to JDBC connection
+     *
+     * @param properties_path The path will be used to JDBC connection
+     */
+    public DataSetResourcesBdDao(String properties_path)
+    {
+        super.setProperties_path(properties_path);
+    }
+
+    /**
+     * Method to insert a relation between DataSet and Resource type into a JDBC
+     *
+     * @param id Dataset ID
+     * @param otherId Resourse ID
+     *
+     * @return A boolean that means: true = inserted with sucess, false = not
+     * insert with sucess or inserssion is not possible.
+     */
     @Override
-    public boolean insert(String obj, String id) {
-        
-        try {
+    public boolean insert(String id, String otherId)
+    {
+        try
+        {
             conectar();
-            String sql = "INSERT INTO DATASET_RESOURCE values (?, ?)";
+            String sql = "INSERT INTO DATASET_RESOURCE(id_dataset, id_resource) values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
 
-            ps.setString(1, obj);
-            ps.setString(2, id);
+            int i = 1;
+            ps.setString(i++, id);
+            ps.setString(i++, otherId);
 
             ps.executeUpdate();
 
             return true;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
+        {
             ex.printStackTrace();
-        } finally {
+        } finally
+        {
             desconectar();
         }
         return false;
     }
-    
 }

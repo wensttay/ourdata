@@ -1,21 +1,44 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package br.ifpb.simba.ourdata.dao;
 
 /**
+ * Interface of methods to CRUD Ckan entities
  *
  * @author Wensttay
  */
-public interface Dao<T, I> {
+public interface Dao<T, I>
+{
+    /**
+     * Method to insert something on some secure repository
+     *
+     * @param obj Object to be inserted
+     *
+     * @return True = Sucess / False = Fail
+     */
+    public boolean insert(T obj);
 
-    boolean insert(T obj);
-    boolean update(T obj);
-    void insertOrUpdate(T obj);
-    void insertOrUpdateAtributes(T obj);
-    boolean exist(I id);
-    
-    
+    /**
+     * Method to update something on some secure repository
+     *
+     * @param obj Object to be updated
+     *
+     * @return True = Sucess / False = Fail
+     */
+    public boolean update(T obj);
+
+    /**
+     * Method to insert or update something on some secure repository
+     *
+     * @param obj Object to be inserted or updated
+     */
+    public void insertOrUpdate(T obj);
+
+    /**
+     * Method to verify if exist something on some secure repository
+     *
+     * @param id Id of Object to be verified
+     *
+     * @return True = Exits / False = No Exists
+     */
+    public boolean exist(I id);
 }
