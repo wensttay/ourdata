@@ -5,11 +5,13 @@
  */
 package br.ifpb.simba.ourdata.test;
 
-import br.ifpb.simba.ourdata.reader.XLSReader;
 import br.ifpb.simba.ourdata.resource.Column;
 import br.ifpb.simba.ourdata.resource.IResourceHeader;
 import br.ifpb.simba.ourdata.resource.ResourceHeader;
-import br.ifpb.simba.ourdata.resource.ResourceUtilExcel;
+import br.ifpb.simba.ourdata.resource.ResourceUtilCsv;
+import eu.trentorise.opendata.jackan.CkanClient;
+import eu.trentorise.opendata.jackan.model.CkanDataset;
+import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.util.List;
 
 /**
@@ -19,13 +21,29 @@ import java.util.List;
 public class TestResourceHeader
 {
     public static void main(String[] args){
-        String url = "http://www.capes.gov.br/images/stories/download/avaliacaotrienal/planilhascomparativastrienal2007/Odontologia.xls";
-        IResourceHeader<List<ResourceHeader>> util = new ResourceUtilExcel(new XLSReader());
-        List<ResourceHeader> headers = util.getHeader(url);
-        for(ResourceHeader header : headers){
-            for(Column column : header.getColumns())
-                System.out.println(column.getName()+" : "+column.getDistinctValues());
-            System.out.println("Total Rows: "+header.getQtdRows());
+        CkanClient cc = new CkanClient("http://dados.gov.br/");
+        List<String> dataset_names = cc.getDatasetList();
+        List<CkanResource> resources;
+        
+        for(String dataset_name : cc.getDatasetList()){
+            CkanDataset dataset = cc.getDataset(dataset_name);
+            for(CkanResource resource : dataset.getResources()){
+                if(resource.getFormat().equals("CSV")){
+                    String url = resource.getUrl();
+                    IResourceHeader<ResourceHeader> headerBuilder = new ResourceUtilCsv();
+                    ResourceHeader header = headerBuilder.getHeader(url);
+                    if(header != null){
+                        System.out.println("Quantidade de linhas: "+header.getQtdRows());
+                        System.out.println("Quantidade de Colunas: "+header.getColumns().size());
+                        System.out.println("---------Attributes---------");
+                        for(Column column : header.getColumns()){
+                            System.out.println("> "+column.getName()+" : "+column.getDistinctValues());
+                        }
+                    }else System.out.println("Couldn't open URL!");
+                    System.out.println("\n");
+                }
+                
+            }
         }
        
     }

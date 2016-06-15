@@ -8,6 +8,7 @@ package br.ifpb.simba.ourdata.resource;
 import br.ifpb.simba.ourdata.reader.CSVReader;
 import br.ifpb.simba.ourdata.resource.Column;
 import br.ifpb.simba.ourdata.resource.ResourceHeader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,13 +29,12 @@ public class ResourceUtilCsv implements IResourceHeader<ResourceHeader>
     public ResourceHeader getHeader(String url){
         CSVReader reader = new CSVReader();
         List<String[]> rows = reader.build(url);
+        if(rows == null) return null;
         Set<String> set;
         List<Column> columns = new ArrayList<>();
         String[] header = rows.get(0);
         int qtd_columns = header.length;
-        System.out.println("colunas: "+qtd_columns);
         int qtd_rows = rows.size()-1;
-        System.out.println("linhas: "+qtd_rows);
         
         for(int j=0;j<qtd_columns;j++){
             set = new TreeSet<>();

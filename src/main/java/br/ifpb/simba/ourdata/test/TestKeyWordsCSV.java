@@ -25,14 +25,15 @@ public class TestKeyWordsCSV {
     public static void main(String[] args) {
         
         final String CATALOG_URL = "http://dados.gov.br/";
-        final String PROPERTIES_PATH = "/banco/banco.gazetteer.properties";
+        final String PROPERTIES_PATH_GAZETTEER = "/banco/banco.gazetteer.properties";
+        final String PROPERTIES_PATH_OURDATA = "/banco/banco.properties";
         CSVReader csv = new CSVReader();
         CkanClient ckanClient = new CkanClient(CATALOG_URL); 
-        KeyWordBdDao keyWordBdDao = new KeyWordBdDao(PROPERTIES_PATH);
+        KeyWordBdDao keyWordBdDao = new KeyWordBdDao(PROPERTIES_PATH_OURDATA);
 
         List<String> datasetNames = ckanClient.getDatasetList();      
 //        Connecting to the database that has a 'Gazetter' (list of Geo poss)
-        PlaceBdDao placeBdDao = new PlaceBdDao(PROPERTIES_PATH);
+        PlaceBdDao placeBdDao = new PlaceBdDao(PROPERTIES_PATH_GAZETTEER);
 
 //        Iterating dataset's names
         int auxDatasetNamesSize = datasetNames.size();
@@ -66,7 +67,7 @@ public class TestKeyWordsCSV {
                         }
 
 //                        Insert all the CSV's KeyWord into DataBase
-//                        keyWordBdDao.insertAll(keyWords);
+                      keyWordBdDao.insertAll(keyWords);
                     }
                 } catch (OutOfMemoryError ex) {
                     System.out.println(ex.getMessage());
