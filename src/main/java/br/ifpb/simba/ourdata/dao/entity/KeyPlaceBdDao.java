@@ -4,9 +4,11 @@ package br.ifpb.simba.ourdata.dao.entity;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
+import br.ifpb.simba.ourdata.entity.Resource;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -14,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that know how CRUD a KeyPlace type into a JDBC
@@ -122,7 +126,32 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
             desconectar();
         }
         return places;
-
+    }
+    
+    public List<KeyPlace> getKeyPlacesFromResourceId(String id){
+        String sql = "SELECT * FROM Resource_Place WHERE id_resource = ?";
+        List<KeyPlace> keyPlaces = new ArrayList<>();
+        
+        try
+        {
+            PreparedStatement pstm = getConnection().prepareStatement(sql);
+            pstm.setString(1, id);
+            
+            ResultSet rs = pstm.executeQuery();
+            
+            
+            
+            while(rs.next()){
+                KeyPlace kp = preencherObjeto(rs);
+                keyPlaces.add(kp);
+            }
+            return keyPlaces;
+        }
+        catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
+        {
+            Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return keyPlaces;
     }
     
     /**
@@ -187,4 +216,6 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
             desconectar();
         }
     }
+    
+    
 }
