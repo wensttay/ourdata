@@ -23,6 +23,10 @@ public class Resource
     private List<KeyPlace> keyplaces;
     private String idDataset;
     private Geometry way;
+    private double minX;
+    private double maxX;
+    private double minY;
+    private double maxY;
     
     public Resource(){
         
@@ -97,6 +101,50 @@ public class Resource
     public void setWay(Geometry g){
         this.way = g;
     }
+
+    public void setMinx(double minx)
+    {
+        this.minX = minx;
+    }
+
+    public void setMaxx(double maxx)
+    {
+        this.maxX = maxx;
+    }
+
+    public void setMiny(double miny)
+    {
+        this.minY = miny;
+    }
+
+    public void setMaxy(double maxy)
+    {
+        this.maxY = maxy;
+    }
+
+    public double getMinX()
+    {
+        return minX;
+    }
+
+    public double getMaxX()
+    {
+        return maxX;
+    }
+
+    public double getMinY()
+    {
+        return minY;
+    }
+
+    public double getMaxY()
+    {
+        return maxY;
+    }
+    
+    
+    
+    
     
     
 }

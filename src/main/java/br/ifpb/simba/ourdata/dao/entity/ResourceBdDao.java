@@ -69,8 +69,25 @@ public class ResourceBdDao extends GenericBdDao {
         String url = rs.getString("url");
         String idDataset = rs.getString("id_Dataset");
         List<KeyPlace> keyplaces = new ArrayList<>();
-
+        
+        double maxx,maxy,minx,miny;
+        
+        maxx = rs.getDouble("maxx");
+        maxy = rs.getDouble("maxy");
+        minx = rs.getDouble("minx");
+        miny = rs.getDouble("miny");
+        
         while (rs.next() && id_resource.equals(rs.getString("id"))) {
+            
+            if(rs.getDouble("maxx") > maxx)
+                maxx = rs.getDouble("maxx");
+            if(rs.getDouble("maxy") > maxy)
+                maxy = rs.getDouble("maxy");
+            if(rs.getDouble("minx") < minx)
+                minx = rs.getDouble("minx");
+            if(rs.getDouble("miny") < miny)
+                miny = rs.getDouble("miny");
+            
             Place place = new Place();
             KeyPlace keyPlace = new KeyPlace();
             
@@ -92,6 +109,12 @@ public class ResourceBdDao extends GenericBdDao {
 
         rs.previous();
         Resource r = new Resource(id_resource, description, format, url, idDataset);
+        
+        r.setMaxx(maxx);
+        r.setMaxy(maxy);
+        r.setMinx(minx);
+        r.setMiny(miny);
+        
         for (KeyPlace kp : keyplaces) {
             r.addKeyPlace(kp);
         }
