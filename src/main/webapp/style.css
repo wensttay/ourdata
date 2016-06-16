@@ -7,3 +7,40 @@ and open the template in the editor.
     Created on : 02/04/2016, 22:33:26
     Author     : Wensttay
 */
+
+form{
+    display: table;
+    margin: 5px auto;
+}
+
+form-control{
+    width: 100px !important;
+}
+
+form input{
+    margin-right: 5px;
+}
+
+form input[type="submit"]{
+    float: right;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: lightgreen;
+    color: #fff;
+}
+
+form input[type="submit"]:active{
+    background-color: mediumseagreen;
+}
+
+form input[type="text"]{
+    padding: 8px 15px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    width: 400px;
+}
+
+select{
+    padding: 5px 10px;
+}
