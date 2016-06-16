@@ -17,14 +17,15 @@ public class testResourceBdDao
 {
     public static void main(String[] args)
     {
-        ResourceBdDao dao = new ResourceBdDao();
-        for(Resource r : dao.getResourcesIntersectedBy()){
-            System.out.println("[BBOX] Min X: "+r.getPlace().getMinX()+" Max X:"+r.getPlace().getMaxX()+" Min Y: "+r.getPlace().getMinY()+" Max Y:"+r.getPlace().getMaxY()+"\n\n");
-            for(KeyPlace kp : r.getKeyPlaces()){
-                Place p = kp.getPlace();
-                System.out.println("Min X: "+p.getMinX()+" Max X:"+p.getMaxX()+" Min Y: "+p.getMinY()+" Max Y:"+p.getMaxY());
-            }
-            System.out.println("====================================================");
-        }
+//        ResourceBdDao dao = new ResourceBdDao();
+//        for(Resource r : dao.getResourcesIntersectedBy()){
+//            System.out.println("[BBOX] Min X: "+r.getPlace().getMinX()+" Max X:"+r.getPlace().getMaxX()+" Min Y: "+r.getPlace().getMinY()+" Max Y:"+r.getPlace().getMaxY()+"\n\n");
+//            for(KeyPlace kp : r.getKeyPlaces()){
+//                Place p = kp.getPlace();
+//                System.out.println("Min X: "+p.getMinX()+" Max X:"+p.getMaxX()+" Min Y: "+p.getMinY()+" Max Y:"+p.getMaxY());
+//            }
+//            System.out.println("====================================================");
+//        }
+
     }
 }

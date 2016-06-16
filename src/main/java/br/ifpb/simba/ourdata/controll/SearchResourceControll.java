@@ -5,7 +5,9 @@
  */
 package br.ifpb.simba.ourdata.controll;
 
+import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
+import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,20 +40,26 @@ public class SearchResourceControll extends HttpServlet {
             throws ServletException, IOException {
         String nameOfPlace = request.getParameter("nameOfPlace");
         String typeOfPlace = request.getParameter("typeOfPlace");
-        
+
         System.out.println(nameOfPlace);
         System.out.println(typeOfPlace);
-        
+
         ResourceBdDao resourceBdDao = new ResourceBdDao();
         List<Resource> resources = new ArrayList<>();
-        resources.addAll(resourceBdDao.getResourcesIntersectedBy());
-        
+
+        PlaceBdDao placeBdDao = new PlaceBdDao();
+        List<Place> places = placeBdDao.burcarPorTitulos(nameOfPlace);
+
+        if (!places.isEmpty()) {
+            Place place = places.get(0);
+            resources.addAll(resourceBdDao.getResourcesIntersectedBy(place.getWay()));
+        }
         request.setAttribute("resourseList", resources);
-        
+
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher("/index.jsp");
         rd.forward(request, response);
-       
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
