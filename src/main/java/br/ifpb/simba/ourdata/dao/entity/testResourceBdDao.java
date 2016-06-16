@@ -6,6 +6,7 @@
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.entity.KeyPlace;
+import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 
 /**
@@ -18,12 +19,12 @@ public class testResourceBdDao
     {
         ResourceBdDao dao = new ResourceBdDao();
         for(Resource r : dao.getResourcesIntersectedBy()){
-            System.out.println("\n\nid resource: "+r.getId());
-            System.out.println("url: "+r.getUrl());
-            System.out.println("KeyPlaces: ");
+            System.out.println("[BBOX] Min X: "+r.getMinX()+" Max X:"+r.getMaxX()+" Min Y: "+r.getMinY()+" Max Y:"+r.getMaxY()+"\n\n");
             for(KeyPlace kp : r.getKeyPlaces()){
-                System.out.println("local: "+kp.getColumValue());
+                Place p = kp.getPlace();
+                System.out.println("Min X: "+p.getMinX()+" Max X:"+p.getMaxX()+" Min Y: "+p.getMinY()+" Max Y:"+p.getMaxY());
             }
+            System.out.println("====================================================");
         }
     }
 }
