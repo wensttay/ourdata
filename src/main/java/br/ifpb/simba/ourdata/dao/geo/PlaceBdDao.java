@@ -172,27 +172,33 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         String sql = "SELECT * FROM (SELECT DISTINCT ON (r.url) r.id_dataset, r.id, r.description, r.format, r.url, compare(?,rp.way) rank "
                 + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource "
                 + "ORDER BY r.url, rank DESC) a ORDER BY a.rank DESC LIMIT 20";
+        
+        String sql2 = "SELECT DISTINCT ON (inter.id_resource) inter.id_resource, inter.description, inter.format, inter.url, getEnvelopeIntersect(inter.way,inter.id_resource) bbox \n" +
+                    "FROM (SELECT rp.id,rp.way,rp.id_resource,r.description, r.format, r.url FROM resource_place rp JOIN Resource r ON r.id = rp.id_resource\n" +
+                    "WHERE ST_Intersects(rp.way, ?) ORDER BY rp.id_resource) \n" +
+                    "inter ORDER BY inter.id_resource";
 
         try
         {
             conectar();
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql2);
             ps.setObject(1, p.getWay());
 
             ResultSet rs = ps.executeQuery();
             while (rs.next())
             {
-                String id = rs.getString("id");
+                String id = rs.getString("id_resource");
                 String desc = rs.getString("description");
                 String format = rs.getString("format");
                 String url = rs.getString("url");
-                double rank = rs.getDouble("rank");
-                String id_dataset = rs.getString("id_dataset");
-                System.out.println("id_dataset = "+id_dataset);
+                //double rank = rs.getDouble("rank");
+                //String id_dataset = rs.getString("id_dataset");
+                //System.out.println("id_dataset = "+id_dataset);
                 System.out.println("id = "+id);
                 System.out.println("description = "+desc);
                 System.out.println("url = "+url);
-                System.out.println("rank = "+rank*100+"%");
+                System.out.println("format = "+format);
+                //System.out.println("rank = "+rank*100+"%");
                 System.out.println("============================");
                 CkanResource resource = new CkanResource();
                 resource.setId(id);
