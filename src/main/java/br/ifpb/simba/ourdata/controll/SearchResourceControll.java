@@ -10,6 +10,8 @@ import br.ifpb.simba.ourdata.entity.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,9 +44,13 @@ public class SearchResourceControll extends HttpServlet {
         
         ResourceBdDao resourceBdDao = new ResourceBdDao();
         List<Resource> resources = new ArrayList<>();
-        resources.addAll(resourceBdDao.getAll());
+        resources.addAll(resourceBdDao.getResourcesIntersectedBy());
         
         request.setAttribute("resourseList", resources);
+        
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher("/index.jsp");
+        rd.forward(request, response);
        
     }
 

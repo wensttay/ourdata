@@ -7,7 +7,7 @@ package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
 import br.ifpb.simba.ourdata.entity.Place;
-import br.ifpb.simba.ourdata.entity.utils.KeyPlaceUtils;
+import br.ifpb.simba.ourdata.entity.utils.PlaceUtils;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,14 @@ public class TestIntersectionArea {
         
         t1 = System.currentTimeMillis();
         System.out.println("T1: "+  t1);
-        System.out.println("Meu metodo: " + KeyPlaceUtils.getIntersectArea(sousa, paraiba));
+        System.out.println("Meu metodo: " + PlaceUtils.getIntersectArea(sousa, paraiba));
         t2 = System.currentTimeMillis();
         System.out.println("T2: "+  t2);
         System.out.println("Geometry method: " + area);
         t3 = System.currentTimeMillis();
         System.out.println("T3: "+  t3);
         
-        System.out.println(area -  KeyPlaceUtils.getIntersectArea(sousa, paraiba));
+        System.out.println(area -  PlaceUtils.getIntersectArea(sousa, paraiba));
         
 //        for (Place place : places) {
 //            System.out.println(place.toString());
