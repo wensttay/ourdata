@@ -142,7 +142,17 @@ public class Resource
         return maxY;
     }
     
-    
+    public float getRepeatPercent(float constante){
+        int sum_repeat=0;
+        int rows=0;
+        if(!keyplaces.isEmpty())
+            rows = keyplaces.get(0).getRowsNumber();
+        else
+            return 0;
+        for(KeyPlace kp : keyplaces)
+            sum_repeat += kp.getRepeatNumber();
+        return (sum_repeat/rows)*constante;
+    }
     
     
     
