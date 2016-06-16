@@ -5,7 +5,9 @@
  */
 package br.ifpb.simba.ourdata.controll;
 
+import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
+import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +46,13 @@ public class SearchResourceControll extends HttpServlet {
         
         ResourceBdDao resourceBdDao = new ResourceBdDao();
         List<Resource> resources = new ArrayList<>();
-        resources.addAll(resourceBdDao.getResourcesIntersectedBy());
+        
+        PlaceBdDao placeBdDao = new PlaceBdDao();
+        List<Place> places = placeBdDao.burcarPorTitulos(nameOfPlace);
+        
+        Place place = places.get(0);
+        
+        resources.addAll(resourceBdDao.getResourcesIntersectedBy(place.getWay()));
         
         request.setAttribute("resourseList", resources);
         

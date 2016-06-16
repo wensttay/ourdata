@@ -29,7 +29,7 @@ public class ResourceBdDao extends GenericBdDao {
 
     private PreparedStatement pstm;
 
-    public List<Resource> getResourcesIntersectedBy() {
+    public List<Resource> getResourcesIntersectedBy(Geometry g) {
         List<Resource> resources = new ArrayList<>();
 
         String sql1 = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
@@ -37,15 +37,15 @@ public class ResourceBdDao extends GenericBdDao {
                 + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource, (SELECT way FROM resource_place Where colum_value = 'Cajazeiras') c\n"
                 + "WHERE ST_Intersects(rp.way, c.way);";
 
-        String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_number, rp.colum_name,\n"
-                + "rp.metadataCreated, rp.id id_place, rp.nome, rp.sigla, rp.tipo, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
+        String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
+                + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
                 + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource\n"
                 + "WHERE ST_Intersects(rp.way, ?);";
         try {
             conectar();
             WKTWriter writer = new WKTWriter();
-            PreparedStatement pstm = getConnection().prepareCall(sql1, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            //pstm.setString(1,writer.write(g));
+            PreparedStatement pstm = getConnection().prepareCall(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pstm.setString(1,writer.write(g));
 
             ResultSet rs = pstm.executeQuery();
 
