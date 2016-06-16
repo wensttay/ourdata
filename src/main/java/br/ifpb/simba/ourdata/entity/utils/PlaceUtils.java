@@ -14,8 +14,7 @@ import br.ifpb.simba.ourdata.entity.Place;
 public class PlaceUtils {
 
     private double controlVariable = 0.5;
-    
-    
+   
     /**
      * Method to get the area of intesect two places
      *
@@ -43,7 +42,7 @@ public class PlaceUtils {
         }
     }
     
-    public double getOverlap(Place place, Place otherPlace){
+    public static double getOverlap(Place place, Place otherPlace, float controlVariable){
         double intersc = getIntersectArea(place, otherPlace);
         return intersc / 
                 (intersc + 

@@ -19,7 +19,7 @@ public class testResourceBdDao
     {
         ResourceBdDao dao = new ResourceBdDao();
         for(Resource r : dao.getResourcesIntersectedBy()){
-            System.out.println("[BBOX] Min X: "+r.getMinX()+" Max X:"+r.getMaxX()+" Min Y: "+r.getMinY()+" Max Y:"+r.getMaxY()+"\n\n");
+            System.out.println("[BBOX] Min X: "+r.getPlace().getMinX()+" Max X:"+r.getPlace().getMaxX()+" Min Y: "+r.getPlace().getMinY()+" Max Y:"+r.getPlace().getMaxY()+"\n\n");
             for(KeyPlace kp : r.getKeyPlaces()){
                 Place p = kp.getPlace();
                 System.out.println("Min X: "+p.getMinX()+" Max X:"+p.getMaxX()+" Min Y: "+p.getMinY()+" Max Y:"+p.getMaxY());
