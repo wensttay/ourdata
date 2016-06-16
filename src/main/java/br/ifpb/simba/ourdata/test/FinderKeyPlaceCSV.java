@@ -7,7 +7,6 @@ package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.entity.utils.KeyPlaceUtils;
 import br.ifpb.simba.ourdata.dao.entity.KeyPlaceBdDao;
-import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.reader.CSVReaderOD;
 import eu.trentorise.opendata.jackan.CkanClient;
@@ -22,7 +21,7 @@ import java.util.List;
  * @author Wensttay
  */
 
-public class FinderKeyPlacaCSV {
+public class FinderKeyPlaceCSV {
 
     public static void main(String[] args) {
 
@@ -31,7 +30,6 @@ public class FinderKeyPlacaCSV {
 
         CkanClient ckanClient = new CkanClient(CATALOG_URL);
         KeyPlaceBdDao keyWordBdDao = new KeyPlaceBdDao();
-        PlaceBdDao placeBdDao = new PlaceBdDao();
         List<String> datasetNames = new ArrayList<>();
         
         try {
@@ -80,7 +78,7 @@ public class FinderKeyPlacaCSV {
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place
-//                        Collections.sort(keyWords, KeyPlace.comparadorByName);
+//                        Collections.sort(keyWords, KeyPlace.getComparadorByName());
 //                        for (KeyPlace keyWord : keyWords) {
 //                            System.out.println(keyWord.getPlace().getNome() + " | Repetiu: " + keyWord.getRepeatNumber() + " Vezes");
 //                        }

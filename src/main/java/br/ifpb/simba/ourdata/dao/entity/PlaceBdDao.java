@@ -4,7 +4,7 @@ package br.ifpb.simba.ourdata.dao.entity;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -66,7 +66,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         try
         {
             conectar();
-            String sql = "SELECT *, ST_AsBinary(way) as geo FROM place";
+            String sql = "SELECT *, ST_AsText(way) as geo FROM place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -77,6 +77,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
                 if (p != null)
                 {
                     places.add(p);
+                    System.out.println(p.toString());
                 }
             }
 
@@ -103,16 +104,14 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         try
         {
             conectar();
-            StringBuilder sql = new StringBuilder("SELECT *, ST_AsBinary(way) as geo FROM place WHERE nome");
-            sql.append("ILIKE ? OR sigla ILIKE ?");
+            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE nome");
+            sql.append(" ILIKE ? OR sigla ILIKE ?");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
-
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
-
+            
             ResultSet rs = ps.executeQuery();
-
             List<Place> places = new ArrayList<>();
             while (rs.next())
             {
@@ -150,8 +149,11 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
             p.setNome(rs.getString("nome"));
             p.setSigla(rs.getString("sigla"));
             p.setTipo(rs.getString("tipo"));
-            p.setWay(new WKBReader().read(rs.getBytes("geo")));
-
+            p.setWay(new WKTReader().read(rs.getString("geo")));
+            p.setMaxX(rs.getDouble("maxx"));
+            p.setMaxY(rs.getDouble("maxy"));
+            p.setMinX(rs.getDouble("minx"));
+            p.setMinY(rs.getDouble("miny"));
             return p;
         } catch (SQLException | ParseException ex)
         {

@@ -6,7 +6,7 @@ import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
+import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.postgis.PGgeometry;
 
 /**
  * Class that know how CRUD a KeyPlace type into a JDBC
@@ -58,17 +57,22 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
         {
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE,");
-            sql.append("REPEAT_NUMBER, ROWS_NUMBER, METADATA_CREATED, WAY, ID_PLACE, ID_RESOURCE)");
-            sql.append("VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+            sql.append("REPEAT_NUMBER, ROWS_NUMBER, METADATA_CREATED, WAY, minX, minY, maxX, maxY, ID_PLACE, ID_RESOURCE)");
+            sql.append("VALUES(?, ?, ?, ?, ?, ST_GeomFromText(?), ?, ?, ?, ?, ?, ?)");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
-
+            
             int i = 1;
             ps.setInt(i++, obj.getColumNumber());
             ps.setString(i++, obj.getColumValue());
             ps.setInt(i++, obj.getRepeatNumber());
             ps.setInt(i++, obj.getRowsNumber());
             ps.setTimestamp(i++, obj.getMetadataCreated());
-            ps.setObject(i++, new PGgeometry(obj.getPlace().getWay().toString()));
+            ps.setObject(i++, obj.getPlace().getWay().toString());
+            ps.setDouble(i++, obj.getPlace().getMinX());
+            ps.setDouble(i++, obj.getPlace().getMinY());
+            ps.setDouble(i++, obj.getPlace().getMaxX());
+            ps.setDouble(i++, obj.getPlace().getMaxY());
+            
             ps.setInt(i++, obj.getPlace().getId());
             ps.setString(i++, obj.getIdResource());
 
@@ -97,7 +101,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
         try
         {
             conectar();
-            String sql = "SELECT *, ST_AsBinary(way) as geo FROM resource_place";
+            String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -140,9 +144,13 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
             kw.setIdResource(rs.getString("ID_RESOURCE"));
 
             Place place = new Place();
-            place.setWay(new WKBReader().read(rs.getBytes("geo")));
+            place.setWay(new WKTReader().read(rs.getString("geo")));
             place.setWay((Geometry) rs.getObject("WAY"));
             place.setId(rs.getInt("ID_PLACE"));
+            place.setMaxX(rs.getDouble("maxx"));
+            place.setMaxY(rs.getDouble("maxy"));
+            place.setMinX(rs.getDouble("minx"));
+            place.setMinY(rs.getDouble("miny"));
             kw.setPlace(place);
 
             return kw;

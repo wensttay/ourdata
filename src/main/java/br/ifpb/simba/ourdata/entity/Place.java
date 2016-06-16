@@ -15,7 +15,11 @@ public class Place
     private String      sigla;
     private String      tipo;
     private Geometry    way;
-
+    private double      minX;
+    private double      minY;
+    private double      maxX;
+    private double      maxY;
+    
     /**
      * Constructor passing Geometry Value
      *
@@ -39,11 +43,10 @@ public class Place
      * @return String with all values into this Place
      */
     @Override
-    public String toString()
-    {
-        return "Place{" + "id=" + getId() + ", nome=" + getNome() + ", sigla=" + getSigla() + ", tipo=" + getTipo() + ", way=" + getWay() + '}';
+    public String toString() {
+        return "Place{" + "id=" + id + ", nome=" + nome + ", sigla=" + sigla + ", tipo=" + tipo + ", minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY + '}';
     }
-
+    
     /**
      * @return the id
      */
@@ -123,5 +126,61 @@ public class Place
     {
         this.way = way;
     }
-    
+
+    /**
+     * @return the minX
+     */
+    public double getMinX() {
+        return minX;
+    }
+
+    /**
+     * @param minX the minX to set
+     */
+    public void setMinX(double minX) {
+        this.minX = minX;
+    }
+
+    /**
+     * @return the minY
+     */
+    public double getMinY() {
+        return minY;
+    }
+
+    /**
+     * @param minY the minY to set
+     */
+    public void setMinY(double minY) {
+        this.minY = minY;
+    }
+
+    /**
+     * @return the maxX
+     */
+    public double getMaxX() {
+        return maxX;
+    }
+
+    /**
+     * @param maxX the maxX to set
+     */
+    public void setMaxX(double maxX) {
+        this.maxX = maxX;
+    }
+
+    /**
+     * @return the maxY
+     */
+    public double getMaxY() {
+        return maxY;
+    }
+
+    /**
+     * @param maxY the maxY to set
+     */
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
+    }
+
 }

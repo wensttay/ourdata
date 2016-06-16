@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,8 +30,7 @@ import java.util.List;
  *
  * @author Wensttay, Pedro Arthur
  */
-public class CSVReaderOD implements Reader<List<String[]>, String>
-{
+public class CSVReaderOD implements Reader<List<String[]>, String> {
 
     private static final int NUM_ROWS_CHECK_DEFAULT = 10;
     private int numRowsCheck;
@@ -40,20 +40,18 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      * numRowsCheck.
      * <p>
      */
-    public CSVReaderOD()
-    {
+    public CSVReaderOD() {
         numRowsCheck = NUM_ROWS_CHECK_DEFAULT;
     }
 
     /**
-     * This constructor create a CSVReaderOD using the numRowsCheck
-     * passed into paramn
+     * This constructor create a CSVReaderOD using the numRowsCheck passed into
+     * paramn
      *
      * @param numRowsCheck Number of rows wants to check to define if this CSV
      * have or not a KeyPlaces
      */
-    public CSVReaderOD(int numRowsCheck)
-    {
+    public CSVReaderOD(int numRowsCheck) {
         this.numRowsCheck = numRowsCheck;
     }
 
@@ -67,8 +65,7 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @throws IOException
      */
-    public CSVReader getCSVReaderBuild(String url) throws IOException
-    {
+    public CSVReader getCSVReaderBuild(String url) throws IOException {
         URL stackURL = new URL(url);
         stackURL.openConnection().setReadTimeout(120000);
         InputStream is = stackURL.openStream();
@@ -85,20 +82,17 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @throws IOException
      */
-    private CSVReader getCSVReader(InputStream is) throws IOException
-    {
+    private CSVReader getCSVReader(InputStream is) throws IOException {
+
         char separator, quote = 34;
         byte[] bytes = IOUtils.toByteArray(is);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-                new ByteArrayInputStream(bytes), StandardCharsets.ISO_8859_1));
-
-        List<String> lines = getLines(bufferedReader);
+        List<String> lines = getLines(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.ISO_8859_1)));
         String first_line = lines.get(0);
         separator = getSeparator(first_line);
-
-        return new CSVReader(bufferedReader, separator, quote);
+        BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.ISO_8859_1));
+        
+        return new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
     }
-
     /**
      * Method used to get a CSVReader containing bytes of CSV file by a
      * BufferedReader
@@ -109,16 +103,14 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @throws IOException
      */
-    private CSVReader getCSVReader(BufferedReader br) throws IOException
-    {
+    private CSVReader getCSVReader(BufferedReader br) throws IOException {
         char separator, quote = 34;
         String first_line;
         List<String> lines = getLines(br);
-        if (!lines.isEmpty())
-        {
+        if (!lines.isEmpty()) {
             first_line = lines.get(0);
             separator = getSeparator(first_line);
-            au.com.bytecode.opencsv.CSVReader reader = new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
+            CSVReader reader = new au.com.bytecode.opencsv.CSVReader(br, separator, quote);
             return reader;
         }
         return null;
@@ -133,12 +125,10 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @throws IOException
      */
-    private List<String> getLines(BufferedReader br) throws IOException
-    {
+    private List<String> getLines(BufferedReader br) throws IOException {
         List<String> lines = new ArrayList<>();
         String nextLine;
-        while ((nextLine = br.readLine()) != null)
-        {
+        while ((nextLine = br.readLine()) != null) {
             lines.add(nextLine);
         }
         return lines;
@@ -153,19 +143,15 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @throws IOException
      */
-    private char getSeparator(String line) throws IOException
-    {
+    private char getSeparator(String line) throws IOException {
         char[] charLine;
         int comma = 0;
         int tab = 0;
         int semicolon = 0;
-        if (line != null)
-        {
+        if (line != null) {
             charLine = line.toCharArray();
-            for (int i = 1; i < charLine.length; i++)
-            {
-                switch (charLine[i])
-                {
+            for (int i = 1; i < charLine.length; i++) {
+                switch (charLine[i]) {
                     case '\t':
                         tab++;
                         break;
@@ -178,16 +164,11 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
                 }
             }
         }
-        if (tab >= semicolon && tab >= comma)
-        {
+        if (tab >= semicolon && tab >= comma) {
             return '\t';
-        }
-        else if (semicolon >= tab && semicolon >= comma)
-        {
+        } else if (semicolon >= tab && semicolon >= comma) {
             return ';';
-        }
-        else
-        {
+        } else {
             return ',';
         }
     }
@@ -200,14 +181,11 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      * @return List of each word for each line
      */
     @Override
-    public List<String[]> build(String url)
-    {
-        try
-        {
-            au.com.bytecode.opencsv.CSVReader reader = getCSVReaderBuild(url);
+    public List<String[]> build(String url) {
+        try {
+            CSVReader reader = getCSVReaderBuild(url);
             return reader.readAll();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             TestReaderCSV.error_count++;
             System.out.println(TextColor.ANSI_RED + "Error: Couldn't open the URL [" + TestReaderCSV.error_count + "]" + TextColor.ANSI_BLACK);
         }
@@ -221,13 +199,10 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @return List of each word for each line
      */
-    public List<String[]> build(InputStream is)
-    {
-        try
-        {
+    public List<String[]> build(InputStream is) {
+        try {
             return getCSVReader(is).readAll();
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             TestReaderCSV.error_count++;
             System.out.println(TextColor.ANSI_RED + "Error: Couldn't open the URL [" + TestReaderCSV.error_count + "]" + TextColor.ANSI_BLACK);
         }
@@ -241,11 +216,9 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @return List of each word for each line
      */
-    public List<String[]> build(BufferedReader br) throws IOException
-    {
+    public List<String[]> build(BufferedReader br) throws IOException {
         au.com.bytecode.opencsv.CSVReader reader = getCSVReader(br);
-        if (reader != null)
-        {
+        if (reader != null) {
             return reader.readAll();
         }
         return new ArrayList<>();
@@ -257,45 +230,35 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      * @param urlString String url of CSV file
      */
     @Override
-    public void print(String urlString)
-    {
+    public void print(String urlString) {
         int count_row;
-        try
-        {
+        try {
             List<String[]> allcsv = build(urlString);
-            if (allcsv == null)
-            {
+            if (allcsv == null) {
                 allcsv = new ArrayList<>();
             }
             count_row = 0;
-            for (String[] row : allcsv)
-            {
+            for (String[] row : allcsv) {
                 count_row++;
-                if (count_row == 1)
-                {
+                if (count_row == 1) {
                     System.out.print(TextColor.ANSI_BLUE);
-                }
-                else
-                {
+                } else {
                     System.out.print(TextColor.ANSI_BLACK);
                 }
 
-                for (String cell : row)
-                {
+                for (String cell : row) {
                     System.out.print(cell + " | ");
                 }
                 System.out.println();
 
-                if (count_row == 3)
-                {
+                if (count_row == 3) {
                     break;
                 }
             }
             TestReaderCSV.success_count++;
             System.out.println(TextColor.ANSI_GREEN + "!Success! " + TextColor.ANSI_BLACK);
 
-        } catch (OutOfMemoryError ex)
-        {
+        } catch (OutOfMemoryError ex) {
             TestReaderCSV.error_count++;
             System.out.println(TextColor.ANSI_RED + "Error: Couldn't open the URL [" + TestReaderCSV.error_count + "]" + TextColor.ANSI_BLACK);
         }
@@ -309,8 +272,7 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
      *
      * @return
      */
-    public List<KeyPlace> getKeyPlaces(String ckanResourceId, String urlString)
-    {
+    public List<KeyPlace> getKeyPlaces(String ckanResourceId, String urlString) {
         PlaceBdDao placeBdDao = new PlaceBdDao();
         float porcent = 0;
 
@@ -320,45 +282,35 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
 
 //        Instanciando a lista que contem todas as linhas(rows) de um CSV 
         List<String[]> rowListOfCsv = build(urlString);
-        if (rowListOfCsv == null)
-        {
+        if (rowListOfCsv == null) {
             rowListOfCsv = new ArrayList<>();
         }
 
 //        Instanciando a lista com os nomes das colunas (primeira linha do CSV)
         List<String> columNames = new ArrayList<>();
-        if (!rowListOfCsv.isEmpty())
-        {
+        if (!rowListOfCsv.isEmpty()) {
             String[] auxRow = rowListOfCsv.get(0);
-            for (String str : auxRow)
-            {
-                columNames.add(str);
-            }
+            columNames.addAll(Arrays.asList(auxRow));
         }
+
 //      Iterate of Rows
         int auxSizeOfCsv = rowListOfCsv.size();
 
-        for (int indexOfRow = 0; indexOfRow < auxSizeOfCsv; indexOfRow++)
-        {
+        for (int indexOfRow = 0; indexOfRow < auxSizeOfCsv; indexOfRow++) {
             String[] row = rowListOfCsv.get(indexOfRow);
             List<KeyPlace> rowKeyWordsOfRow = new ArrayList<>();
 
 //          Iterate of Columns
-            for (int indexOfColumn = 0; indexOfColumn < row.length; indexOfColumn++)
-            {
+            for (int indexOfColumn = 0; indexOfColumn < row.length; indexOfColumn++) {
 //                Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
 //                resutados encontrados na pesquisa no Gazetteer
-                if (keyWordResultList.size() > numRowsCheck)
-                {
-                    for (int i = 0; i < numRowsCheck; i++)
-                    {
-                        while (indexOfColumn < row.length && keyWordResultList.get(i).getColumNumber() != indexOfColumn)
-                        {
+                if (keyWordResultList.size() > numRowsCheck) {
+                    for (int i = 0; i < numRowsCheck; i++) {
+                        while (indexOfColumn < row.length && keyWordResultList.get(i).getColumNumber() != indexOfColumn) {
                             indexOfColumn++;
                         }
                     }
-                    if (indexOfColumn >= row.length)
-                    {
+                    if (indexOfColumn >= row.length) {
                         break;
                     }
                 }
@@ -368,24 +320,18 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
 
 //                Checking if the colum Value is valid and Search a Place
                 List<Place> newPlaces = new ArrayList<>();
-                if (columValue != null && !columValue.equals(""))
-                {
+                if (columValue != null && !columValue.equals("")) {
                     newPlaces.addAll(placeBdDao.burcarPorTitulos(columValue));
                 }
 
 //                Checking if has some KeyWords with a place that contains a new place
-                if (!newPlaces.isEmpty() && !rowKeyWordsOfRow.isEmpty())
-                {
-
+                if (!newPlaces.isEmpty() && !rowKeyWordsOfRow.isEmpty()) {
                     List<KeyPlace> aux = new ArrayList<>();
                     aux.addAll(rowKeyWordsOfRow);
 
-                    for (Place newPlace : newPlaces)
-                    {
-                        for (KeyPlace kw : rowKeyWordsOfRow)
-                        {
-                            if (kw.getPlace().getWay().intersects(newPlace.getWay()))
-                            {
+                    for (Place newPlace : newPlaces) {
+                        for (KeyPlace kw : rowKeyWordsOfRow) {
+                            if (kw.getPlace().getWay().intersects(newPlace.getWay())) {
                                 aux.remove(kw);
                                 break;
                             }
@@ -395,8 +341,7 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
                 }
 
 //                Instancie and increment the list of row's results with the new KeyPlace
-                for (Place newPlace : newPlaces)
-                {
+                for (Place newPlace : newPlaces) {
                     KeyPlace kw = new KeyPlace();
                     kw.setColumNumber(indexOfColumn);
                     kw.setColumValue(columValue);
@@ -411,26 +356,22 @@ public class CSVReaderOD implements Reader<List<String[]>, String>
 
 //            Increment the resultList with all news KeyWords of this row
             keyWordResultList.addAll(rowKeyWordsOfRow);
-            if (indexOfRow >= numRowsCheck && keyWordResultList.isEmpty())
-            {
+            if (indexOfRow >= numRowsCheck && keyWordResultList.isEmpty()) {
                 System.out.println("!! ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
 
-            if (!rowKeyWordsOfRow.isEmpty())
-            {
+            if (!rowKeyWordsOfRow.isEmpty()) {
                 NumberFormat formatter = new DecimalFormat("#0.00");
                 float percentRead = (((float) indexOfRow * 100) / (float) auxSizeOfCsv);
-                if (porcent + 1 < percentRead)
-                {
+                if (porcent + 1 < percentRead) {
                     System.out.println(formatter.format(percentRead) + " %");
                     porcent = percentRead;
                 }
             }
         }
 
-        if (!keyWordResultList.isEmpty())
-        {
+        if (!keyWordResultList.isEmpty()) {
             System.out.println("100 %");
         }
         rowListOfCsv = null;

@@ -13,6 +13,20 @@ import java.util.Objects;
  */
 public class KeyPlace
 {
+
+    /**
+     * @return the comparadorByName
+     */
+    public static Comparator<KeyPlace> getComparadorByName() {
+        return comparadorByName;
+    }
+
+    /**
+     * @param aComparadorByName the comparadorByName to set
+     */
+    public static void setComparadorByName(Comparator<KeyPlace> aComparadorByName) {
+        comparadorByName = aComparadorByName;
+    }
     private int         repeatNumber ;
     private int         rowsNumber;
     private int         columNumber;
@@ -82,7 +96,7 @@ public class KeyPlace
      * Instancie a comparator usign a Name's KeyPlace
      * <p>
      */
-    public static Comparator<KeyPlace> comparadorByName = new Comparator<KeyPlace>()
+    private static Comparator<KeyPlace> comparadorByName = new Comparator<KeyPlace>()
     {
         @Override
         public int compare(KeyPlace s1, KeyPlace s2)
@@ -201,5 +215,5 @@ public class KeyPlace
     public void setPlace(Place place)
     {
         this.place = place;
-    }
+    }  
 }
