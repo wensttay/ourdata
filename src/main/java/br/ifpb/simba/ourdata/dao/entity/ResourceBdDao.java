@@ -93,6 +93,43 @@ public class ResourceBdDao extends GenericBdDao
             r.addKeyPlace(kp);
         return r;
     }
+
+    public List<Resource> getAll() {
+        try
+        {
+            conectar();
+            List<Resource> resources = new ArrayList<>();
+            String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_number, rp.colum_name,\n" +
+                    "rp.metadataCreated, rp.id id_place, rp.nome, rp.sigla, rp.tipo, rp.minX, rp.minY, rp.maxX, rp.maxY\n" +
+                    "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource\n";
+            try
+            {
+                PreparedStatement pstm = getConnection().prepareStatement(sql);
+                ResultSet rs = pstm.executeQuery();
+                
+                Resource r;
+                
+                while(rs.next()){
+                    
+                    r = formaResource(rs);
+                    resources.add(r);
+                    
+                }
+                return resources;
+            }
+            catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
+            {
+                Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return resources;
+            
+        }
+        catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
         
     
 }
