@@ -52,8 +52,10 @@ public class SearchResourceControll extends HttpServlet {
 
         if (!places.isEmpty()) {
             Place place = places.get(0);
-            resources.addAll(resourceBdDao.getResourcesIntersectedBy(place.getWay()));
+            resources.addAll(resourceBdDao.getResourcesIntersectedBy(place));
         }
+        
+//        Collections.sort(resources);
         request.setAttribute("resourseList", resources);
 
         ServletContext sc = getServletContext();

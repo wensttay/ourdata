@@ -5,49 +5,84 @@
  */
 package br.ifpb.simba.ourdata.entity.utils;
 
+import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.entity.Place;
+import br.ifpb.simba.ourdata.entity.Resource;
 
 /**
  *
  * @author Wensttay
  */
-public class PlaceUtils {
+public class PlaceUtils
+{
 
     private double controlVariable = 0.5;
-   
+
     /**
      * Method to get the area of intesect two places
      *
      * @param place the first place
      * @param otherPlace the secound place
+     *
      * @return Area of intesect two places pass on params
      */
-    public static double getIntersectArea(Place place, Place otherPlace) {
+    public static double getIntersectArea(Place place, Place otherPlace)
+    {
         if (place.getMinX() <= otherPlace.getMinX()
                 && place.getMinY() <= otherPlace.getMinY()
                 && place.getMaxX() >= otherPlace.getMaxX()
-                && place.getMaxY() >= otherPlace.getMaxY()) {
+                && place.getMaxY() >= otherPlace.getMaxY())
+        {
 
             return otherPlace.getWay().getArea();
-        } else if (place.getMinX() >= otherPlace.getMinX()
+        }
+        else if (place.getMinX() >= otherPlace.getMinX()
                 && place.getMinY() >= otherPlace.getMinY()
                 && place.getMaxX() <= otherPlace.getMaxX()
-                && place.getMaxY() <= otherPlace.getMaxY()) {
+                && place.getMaxY() <= otherPlace.getMaxY())
+        {
             return place.getWay().getArea();
 
-        } else {
+        }
+        else
+        {
             double altura = Math.max(0, Math.min(place.getMaxY(), otherPlace.getMaxY()) - Math.max(place.getMinY(), otherPlace.getMinY()));
             double largura = Math.max(0, Math.min(place.getMaxX(), otherPlace.getMaxX()) - Math.max(place.getMinX(), otherPlace.getMinX()));
             return altura * largura;
         }
     }
-    
-    public static double getOverlap(Place place, Place otherPlace, float controlVariable){
+
+    public static float getRepeatPercent(Resource resource, float constante)
+    {
+        int sum_repeat = 0;
+        int rows = 0;
+        if (!resource.getKeyplaces().isEmpty())
+        {
+            rows = resource.getKeyplaces().get(0).getRowsNumber();
+        }
+        else
+        {
+            return 0;
+        }
+        for (KeyPlace kp : resource.getKeyplaces())
+        {
+            sum_repeat += kp.getRepeatNumber();
+        }
+        return (sum_repeat / rows) * constante;
+    }
+
+    public static double getOverlap(Place place, Place otherPlace, float controlVariable)
+    {
         double intersc = getIntersectArea(place, otherPlace);
-        return intersc / 
-                (intersc + 
-                    (controlVariable * (place.getWay().getArea() - otherPlace.getWay().getArea())) +
-                    ((1 - controlVariable) * (otherPlace.getWay().getArea() - place.getWay().getArea()))
-                );
+        return intersc
+                / (intersc
+                + (controlVariable * (place.getWay().getArea() 
+                - otherPlace.getWay().getArea()))
+                + ((1 - controlVariable) * (otherPlace.getWay().getArea() - place.getWay().getArea())));
+    }
+
+    public static double getScoreOfAprox(Resource resource, Place place, float constante)
+    {
+        return getRepeatPercent(resource, constante) + PlaceUtils.getOverlap(resource.getPlace(), place, constante);
     }
 }

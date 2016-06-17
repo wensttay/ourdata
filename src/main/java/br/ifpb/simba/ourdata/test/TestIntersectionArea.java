@@ -50,5 +50,9 @@ public class TestIntersectionArea {
 //        }
         System.out.println("");
         System.out.println("Fim");
+        
+//        RDF
+//        Sparkl
+//                      OWL
     }
 }
