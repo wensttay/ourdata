@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Class that know how CRUD a KeyPlace type into a JDBC
  *
- * @author Wensttay, Pedro Arthur
+ * @author Wensttay, kieckegard
  */
 public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>
 {

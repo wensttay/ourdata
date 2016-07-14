@@ -31,7 +31,7 @@ public class QueryResourceItemSearchBo
     
     public List<ResourceItemSearch> getResourceItemSearchSortedByRank(String placeName, String placeType){
         
-        List<Place> resultPlaces = queryPlaceBo.getPlacesByName(placeName);
+        List<Place> resultPlaces = queryPlaceBo.getPlacesByName(placeName, placeType);
         List<Resource> resources = new ArrayList<>();
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
         

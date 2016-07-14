@@ -22,7 +22,7 @@ public class QueryPlaceBo
         placeDao = new PlaceBdDao();
     }
     
-    public List<Place> getPlacesByName(String name){
-        return placeDao.burcarPorTitulos(name);
+    public List<Place> getPlacesByName(String name, String type){
+        return placeDao.burcarPorTitulos(name,type);
     }
 }

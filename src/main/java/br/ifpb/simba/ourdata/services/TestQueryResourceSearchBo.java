@@ -20,7 +20,7 @@ public class TestQueryResourceSearchBo
         
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
         
-        List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(placeName, "");
+        List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(placeName, "cidade");
         
         for(ResourceItemSearch item : itensSearch){
             System.out.println(item.getRanking()+" : "+item.getResource().getDescricao()+" | "+item.getResource().getUrl());

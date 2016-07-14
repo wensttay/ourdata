@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Class that know how CRUD a PlaceBdDao type into a JDBC
  *
- * @author Wensttay
+ * @author Wensttay, kieckegard
  */
 public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
 {
@@ -91,6 +91,51 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         return new ArrayList<>();
     }
 
+    /**
+     * Method to search Places with the atribute 'name' or 'sigla' equals to the
+     * param value into JDBC
+     *
+     * @param titulo String type that can be a name or a sigla of some Place
+     * @param tipo String that represents the type of place. Could be state, city, microregion, etc.
+     *
+     * @return A list with all Places with name or sigla equals(titulo)
+     */
+    public List<Place> burcarPorTitulos(String titulo, String tipo)
+    {
+        try
+        {
+            conectar();
+            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(the_geom) as geo FROM gazetteer WHERE (nome");
+            sql.append(" ILIKE ? OR sigla ILIKE ?) AND (tipo ILIKE ?)");
+            PreparedStatement ps = getConnection().prepareStatement(sql.toString());
+            int i = 1;
+            ps.setString(i++, titulo);
+            ps.setString(i++, titulo);
+            ps.setString(i++, tipo);
+            
+            ResultSet rs = ps.executeQuery();
+            List<Place> places = new ArrayList<>();
+            while (rs.next())
+            {
+                Place p = preencherObjeto(rs);
+                if (p != null)
+                {
+                    places.add(p);
+                }
+            }
+            
+            return places;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
+        {
+            ex.printStackTrace();
+        } finally
+        {
+            desconectar();
+        }
+
+        return new ArrayList<>();
+    }
+    
     /**
      * Method to search Places with the atribute 'name' or 'sigla' equals to the
      * param value into JDBC
