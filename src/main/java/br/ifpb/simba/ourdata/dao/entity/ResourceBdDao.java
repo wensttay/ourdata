@@ -39,9 +39,9 @@ public class ResourceBdDao extends GenericBdDao {
 //                + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource, (SELECT way FROM resource_place Where colum_value = 'Cajazeiras') c\n"
 //                + "WHERE ST_Intersects(rp.way, c.way);";
 
-        String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
+        String sql = "SELECT r.id, r.description, d.title dataset_title, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
                 + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way\n"
-                + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource\n"
+                + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource JOIN dataset d ON r.id_dataset = d.id\n"
                 + "WHERE ST_Intersects(rp.way, ?) ORDER BY id";
         try {
             conectar();
@@ -69,6 +69,8 @@ public class ResourceBdDao extends GenericBdDao {
     private Resource formaResource(ResultSet rs) throws SQLException, ParseException {
         String id_resource = rs.getString("id");
         String description = rs.getString("description");
+        if(description.equals(""))
+            description = rs.getString("dataset_title");
         String format = rs.getString("format");
         String url = rs.getString("url");
         String idDataset = rs.getString("id_Dataset");

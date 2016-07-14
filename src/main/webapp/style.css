@@ -15,6 +15,7 @@ form{
     padding: 20px;
     box-shadow: 0px 0px 5px -1px rgba(0,0,0,0.75);
     border-radius: 5px;
+    position: relative;
 }
 
 form input{
@@ -28,6 +29,7 @@ form input[type="submit"]{
     border-radius: 5px;
     background-color: lightgreen;
     color: #fff;
+    transition: 0.2s;
 }
 
 form input[type="submit"]:active{
@@ -38,9 +40,19 @@ form input[type="text"]{
     padding: 8px 15px;
     border: 1px solid lightgrey;
     border-radius: 5px;
-    width: 400px;
+    width: 450px;
+}
+
+form input[type="submit"]:hover{
+    background-color: darkseagreen;
 }
 
 select{
     padding: 5px 10px;
+    left: 30px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 5px;
+    border: 1px solid lightgrey;
 }

@@ -35,28 +35,42 @@
                 %>
             </select>
             <input style="float: right" type="submit" value="Pesquisar">
-            <input style="float: right" name="nameOfPlace" type="text" placeholder="Search" />
+            <input style="float: right" name="nameOfPlace" type="text" placeholder="Pesquise por lugares" />
             
         </form>
         <div class="panel panel-default">
             <div class="panel-heading"><p style="text-align: center; width: 100%; font-size: 20px">Resources encontrados</p></div>
             <table class="table table-hover" style="width: 100%" >
+                <thead>
+                    <tr style="font-weight: bold">
+                        <td>#</td>
+                        <td>Ranking</td>
+                        <td>Título</td>
+                        <td>Formato</td>
+                        <td>Download</td>
+                    </tr>
+                </thead>
+                <tbody>
                 <%
                     List<ResourceItemSearch> pageResources = (ArrayList) request.getAttribute("resourseList");
                     if (pageResources == null) {
                         pageResources = new ArrayList<>();
                     }
+                    int count = 0;
                     for (ResourceItemSearch resource : pageResources) {
+                        count++;
                 %>
-                <tr>
-                    <td><%="Ranking: " + resource.getRanking()*100+"%"%></td>
-                    <td><%="Titulo: " + resource.getResource().getDescricao()%></td>
-                    <td><%="Formato: " + resource.getResource().getFormato()%></td>  
+                <tr>    
+                    <td><%= count %></td>
+                    <td><%= String.format("%.2f",resource.getRanking()*100) + "%"%></td>
+                    <td><%= resource.getResource().getDescricao()%></td>
+                    <td><%=resource.getResource().getFormato()%></td>  
                     <td><a href="<%=resource.getResource().getUrl()%>">Link Para Download</a></td>
                 </tr>
                 <%
                     }
                 %>
+                </tbody>
             </table>
             <%
                 if (pageResources.isEmpty()) {
