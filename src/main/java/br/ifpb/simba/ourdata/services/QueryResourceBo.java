@@ -6,6 +6,7 @@
 package br.ifpb.simba.ourdata.services;
 
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
+import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
@@ -22,7 +23,7 @@ public class QueryResourceBo
         resourceDao = new ResourceBdDao();
     }
     
-    public List<Resource> listResourcesIntersectedBy(Geometry geometry){
-        return resourceDao.getResourcesIntersectedBy(geometry);
+    public List<Resource> listResourcesIntersectedBy(Place place){
+        return resourceDao.getResourcesIntersectedBy(place);
     }
 }

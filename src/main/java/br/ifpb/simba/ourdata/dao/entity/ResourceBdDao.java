@@ -31,13 +31,13 @@ public class ResourceBdDao extends GenericBdDao {
 
     private PreparedStatement pstm;
 
-    public List<Resource> getResourcesIntersectedBy(Geometry g) {
+    public List<Resource> getResourcesIntersectedBy(Place placeToSearch) {
         List<Resource> resources = new ArrayList<>();
 
-        String sql1 = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
-                + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
-                + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource, (SELECT way FROM resource_place Where colum_value = 'Cajazeiras') c\n"
-                + "WHERE ST_Intersects(rp.way, c.way);";
+//        String sql1 = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value, \n"
+//                + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
+//                + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource, (SELECT way FROM resource_place Where colum_value = 'Cajazeiras') c\n"
+//                + "WHERE ST_Intersects(rp.way, c.way);";
 
         String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
                 + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way\n"
@@ -47,7 +47,7 @@ public class ResourceBdDao extends GenericBdDao {
             conectar();
             WKTWriter writer = new WKTWriter();
             PreparedStatement pstm = getConnection().prepareCall(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pstm.setString(1,writer.write(g));
+            pstm.setString(1,writer.write(placeToSearch.getWay()));
 
             ResultSet rs = pstm.executeQuery();
 
@@ -55,6 +55,7 @@ public class ResourceBdDao extends GenericBdDao {
 
             while (rs.next()) {
                 r = formaResource(rs);
+//                r.setPrecisionScore(PlaceUtils.getScoreOfAprox(r, placeToSearch, new Float(0.5)));
                 resources.add(r);
             }
             
@@ -126,11 +127,13 @@ public class ResourceBdDao extends GenericBdDao {
         p.setMaxY(maxy);
         p.setMinX(minx);
         p.setMinY(miny);
+//        p.setWay(new WKTReader().read("POLYGON((" +minx +" "+ miny +", " + maxx +" " + maxy + "))"));
         r.setPlace(p);
         
         for (KeyPlace kp : keyplaces) {
             r.addKeyPlace(kp);
         }
+        
         return r;
     }
 }

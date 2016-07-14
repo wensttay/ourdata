@@ -39,7 +39,7 @@ public class QueryResourceItemSearchBo
             Place place = resultPlaces.get(0);
             
             //Todos os recursos cuja geometria intersectou com o lugar passado por parâmetro são adicionados nessa lista.
-            resources.addAll(queryResourceBo.listResourcesIntersectedBy(place.getWay()));
+            resources.addAll(queryResourceBo.listResourcesIntersectedBy(place));
             
             for(Resource r : resources){
                 System.out.println(r.getPlace().getMaxX()+" | "+r.getPlace().getMaxY());
