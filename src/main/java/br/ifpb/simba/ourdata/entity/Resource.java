@@ -49,7 +49,7 @@ public class Resource
     
     public float getRepeatPercent(float constante){
         int sum_repeat=0;
-        int rows=0;
+        int rows;
         if(!keyplaces.isEmpty())
             rows = getKeyplaces().get(0).getRowsNumber();
         else
@@ -66,10 +66,6 @@ public class Resource
 //        double otherScore = o.getRepeatPercent(constante) + PlaceUtils.getOverlap(o.getPlace(), this.getPlace(), constante);
 //        return 
 //    }
-    
-    public double getScoreOfAprox(Place p, float constante){
-        return this.getRepeatPercent(constante) + PlaceUtils.getOverlap(this.getPlace(), p, constante);
-    }
     /**
      * @return the id
      */

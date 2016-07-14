@@ -135,7 +135,7 @@ public class CSVReaderOD implements Reader<List<String[]>, String> {
     }
 
     /**
-     * Ger which of separators are used in this line of file
+     * Get which separators are used in this line of file
      *
      * @param line
      *

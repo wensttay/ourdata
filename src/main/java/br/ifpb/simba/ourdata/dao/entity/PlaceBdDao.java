@@ -104,7 +104,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         try
         {
             conectar();
-            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE nome");
+            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(the_geom) as geo FROM gazetteer WHERE nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
             int i = 1;
@@ -145,10 +145,11 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         try
         {
             Place p = new Place();
-            p.setId(rs.getInt("id"));
+            p.setId(rs.getInt("gid"));
             p.setNome(rs.getString("nome"));
             p.setSigla(rs.getString("sigla"));
             p.setTipo(rs.getString("tipo"));
+            System.out.println("\n\nGEOMETRIA CARAI : "+rs.getString("geo")+" \n\n");
             p.setWay(new WKTReader().read(rs.getString("geo")));
             p.setMaxX(rs.getDouble("maxx"));
             p.setMaxY(rs.getDouble("maxy"));

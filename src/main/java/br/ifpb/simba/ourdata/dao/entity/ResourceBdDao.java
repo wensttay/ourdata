@@ -10,6 +10,8 @@ import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -38,9 +40,9 @@ public class ResourceBdDao extends GenericBdDao {
                 + "WHERE ST_Intersects(rp.way, c.way);";
 
         String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_value,\n"
-                + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
+                + "rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way\n"
                 + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource\n"
-                + "WHERE ST_Intersects(rp.way, ?);";
+                + "WHERE ST_Intersects(rp.way, ?) ORDER BY id";
         try {
             conectar();
             WKTWriter writer = new WKTWriter();
@@ -55,14 +57,15 @@ public class ResourceBdDao extends GenericBdDao {
                 r = formaResource(rs);
                 resources.add(r);
             }
+            
             return resources;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex) {
             Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resources;
     }
 
-    private Resource formaResource(ResultSet rs) throws SQLException {
+    private Resource formaResource(ResultSet rs) throws SQLException, ParseException {
         String id_resource = rs.getString("id");
         String description = rs.getString("description");
         String format = rs.getString("format");
@@ -77,8 +80,9 @@ public class ResourceBdDao extends GenericBdDao {
         minx = rs.getDouble("minx");
         miny = rs.getDouble("miny");
         
-        while (rs.next() && id_resource.equals(rs.getString("id"))) {
-            
+       // System.out.println("ID ["+rs.getString("id")+"]");
+        
+        do{ 
             if(rs.getDouble("maxx") > maxx)
                 maxx = rs.getDouble("maxx");
             if(rs.getDouble("maxy") > maxy)
@@ -90,11 +94,20 @@ public class ResourceBdDao extends GenericBdDao {
             
             Place place = new Place();
             KeyPlace keyPlace = new KeyPlace();
+            WKTReader reader = new WKTReader();
+            
+            /*System.out.println("minX: "+rs.getDouble("minx"));
+            System.out.println("minY: "+rs.getDouble("miny"));
+            System.out.println("maxX: "+rs.getDouble("maxx"));
+            System.out.println("maxY: "+rs.getDouble("maxy"));*/
+            
+            System.out.println("\n\n");
             
             place.setMaxX(rs.getDouble("maxx"));
             place.setMaxY(rs.getDouble("maxy"));
             place.setMinX(rs.getDouble("minx"));
             place.setMinY(rs.getDouble("miny"));
+            place.setWay(reader.read(rs.getString("way")));
 
             keyPlace.setIdResource(id_resource);
             keyPlace.setPlace(place);
@@ -104,8 +117,7 @@ public class ResourceBdDao extends GenericBdDao {
             keyPlace.setRepeatNumber(rs.getInt("repeat_number"));
             keyplaces.add(keyPlace);
             
-            if(rs.isLast()) break;
-        }
+        } while(rs.next() && id_resource.equals(rs.getString("id")));
 
         rs.previous();
         Resource r = new Resource(id_resource, description, format, url, idDataset);
@@ -121,36 +133,4 @@ public class ResourceBdDao extends GenericBdDao {
         }
         return r;
     }
-
-//    public List<Resource> getAll() {
-//        try {
-//            conectar();
-//            List<Resource> resources = new ArrayList<>();
-//            String sql = "SELECT r.id, r.description, r.format, r.url, r.id_dataset, rp.repeat_number, rp.rows_number, rp.colum_number, rp.colum_name,\n"
-//                    + "rp.metadataCreated, rp.id id_place, rp.nome, rp.sigla, rp.tipo, rp.minX, rp.minY, rp.maxX, rp.maxY\n"
-//                    + "FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource\n";
-//            try {
-//                PreparedStatement pstm = getConnection().prepareStatement(sql);
-//                ResultSet rs = pstm.executeQuery();
-//
-//                Resource r;
-//
-//                while (rs.next()) {
-//
-//                    r = formaResource(rs);
-//                    resources.add(r);
-//
-//                }
-//                return resources;
-//            } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//                Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            return resources;
-//
-//        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//            ex.printStackTrace();
-//        }
-//        return new ArrayList<>();
-//    }
-
 }

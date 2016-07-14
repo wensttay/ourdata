@@ -27,14 +27,12 @@ public class PlaceUtils {
                 && place.getMinY() <= otherPlace.getMinY()
                 && place.getMaxX() >= otherPlace.getMaxX()
                 && place.getMaxY() >= otherPlace.getMaxY()) {
-
-            return otherPlace.getWay().getArea();
+            return getArea(otherPlace);
         } else if (place.getMinX() >= otherPlace.getMinX()
                 && place.getMinY() >= otherPlace.getMinY()
                 && place.getMaxX() <= otherPlace.getMaxX()
                 && place.getMaxY() <= otherPlace.getMaxY()) {
-            return place.getWay().getArea();
-
+            return getArea(place);
         } else {
             double altura = Math.max(0, Math.min(place.getMaxY(), otherPlace.getMaxY()) - Math.max(place.getMinY(), otherPlace.getMinY()));
             double largura = Math.max(0, Math.min(place.getMaxX(), otherPlace.getMaxX()) - Math.max(place.getMinX(), otherPlace.getMinX()));
@@ -46,8 +44,31 @@ public class PlaceUtils {
         double intersc = getIntersectArea(place, otherPlace);
         return intersc / 
                 (intersc + 
-                    (controlVariable * (place.getWay().getArea() - otherPlace.getWay().getArea())) +
-                    ((1 - controlVariable) * (otherPlace.getWay().getArea() - place.getWay().getArea()))
+                    (controlVariable * (getArea(place) - getArea(otherPlace))) +
+                    ((1 - controlVariable) * (getArea(otherPlace) - getArea(place)))
                 );
+    }
+    
+    public static double getOverlap2(Place place, Place otherPlace){
+        double si = calculateIntersectionArea(place, otherPlace);
+        double su = getArea(place) + getArea(otherPlace) - si;
+        return si/su;
+    }
+    
+    private static double calculateIntersectionArea(Place place, Place otherPlace){
+        double dx = Math.min(place.getMaxX(), otherPlace.getMaxX()) - Math.min(place.getMinX(),otherPlace.getMinX());
+        double dy = Math.min(place.getMaxY(), otherPlace.getMaxY()) - Math.min(place.getMinY(),otherPlace.getMinY());
+        if((dx >= 0) && (dy >= 0))
+                return dx*dy;
+        return 0;
+    }
+    
+    private static double getArea(Place place){
+        double maxX = place.getMaxX();
+        double minX = place.getMinX();
+        double maxY = place.getMaxY();
+        double minY = place.getMinY();
+        double area = (maxX - minX) * (maxY - minY);
+        return area;
     }
 }

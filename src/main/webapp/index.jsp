@@ -1,3 +1,4 @@
+<%@page import="br.ifpb.simba.ourdata.entity.ResourceItemSearch"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="br.ifpb.simba.ourdata.entity.Resource"%>
 <%@page import="java.util.List"%>
@@ -19,7 +20,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <script type="text/javascript" src="js/script.js"></script>
     </head>
-    <body style="width: 800px; margin: 100px auto 0; ">
+    <body>
+    
+    <div style="width: 800px; margin: 50px auto 0; ">
 
         <form action="SearchResources" method="GET" style="width: 100%; margin-bottom: 50px">
             <select style="float: left" name="typeOfPlace">
@@ -39,16 +42,17 @@
             <div class="panel-heading"><p style="text-align: center; width: 100%; font-size: 20px">Resources encontrados</p></div>
             <table class="table table-hover" style="width: 100%" >
                 <%
-                    List<Resource> pageResources = (ArrayList) request.getAttribute("resourseList");
+                    List<ResourceItemSearch> pageResources = (ArrayList) request.getAttribute("resourseList");
                     if (pageResources == null) {
                         pageResources = new ArrayList<>();
                     }
-                    for (Resource resource : pageResources) {
+                    for (ResourceItemSearch resource : pageResources) {
                 %>
                 <tr>
-                    <td><%="Titulo: " + resource.getDescricao()%></td>
-                    <td><%="Formato: " + resource.getFormato()%></td>  
-                    <td><a href="<%=resource.getUrl()%>">Link Para Download</a></td>
+                    <td><%="Ranking: " + resource.getRanking()*100+"%"%></td>
+                    <td><%="Titulo: " + resource.getResource().getDescricao()%></td>
+                    <td><%="Formato: " + resource.getResource().getFormato()%></td>  
+                    <td><a href="<%=resource.getResource().getUrl()%>">Link Para Download</a></td>
                 </tr>
                 <%
                     }
@@ -62,5 +66,6 @@
                 }
             %>
         </div>
+    </div>
     </body>
 </html>

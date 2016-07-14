@@ -29,6 +29,16 @@ public class AtualizadorDBThread extends Thread
         intervalTimeRepeat = INTERNAL_TIME_REPEAT_DEFAULT;
         repeatNumber = 1;
     }
+    
+    public AtualizadorDBThread(String url, String dbProp)
+    {
+        this.url = url;
+        cc = new CkanClient(this.url);
+        cdsbd = new CkanDataSetBdDao(dbProp);
+        datasetlist = cc.getDatasetList();
+        intervalTimeRepeat = INTERNAL_TIME_REPEAT_DEFAULT;
+        repeatNumber = 1;
+    }
 
     public AtualizadorDBThread(String url, Long intervalTime)
     {
