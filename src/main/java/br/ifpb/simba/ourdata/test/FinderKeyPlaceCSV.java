@@ -9,6 +9,7 @@ import br.ifpb.simba.ourdata.entity.utils.KeyPlaceUtils;
 import br.ifpb.simba.ourdata.dao.entity.KeyPlaceBdDao;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.reader.CSVReaderOD;
+import br.ifpb.simba.ourdata.reader.KeyPlacesBo;
 import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.exceptions.JackanException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
@@ -24,9 +25,11 @@ import java.util.List;
 public class FinderKeyPlaceCSV {
 
     public static void main(String[] args) {
-
+        
+        KeyPlacesBo keyPlacesBo = new KeyPlacesBo(KeyPlacesBo.NUM_ROWS_CHECK_DEFAULT);
+        System.out.println("carregou gazetteer");
         final String CATALOG_URL = "http://dados.gov.br/";
-        CSVReaderOD csv = new CSVReaderOD();
+        //CSVReaderOD csv = new CSVReaderOD();
 
         CkanClient ckanClient = new CkanClient(CATALOG_URL);
         KeyPlaceBdDao keyWordBdDao = new KeyPlaceBdDao();
@@ -61,6 +64,7 @@ public class FinderKeyPlaceCSV {
 //            Iterating resources
             int auxResourceSize = resources.size();
             for (int j = 0; j < auxResourceSize; j++) {
+                CkanResource currentResource = resources.get(j);
                 ++totalResources;
                 List<KeyPlace> keyWords = null;
 
@@ -74,8 +78,12 @@ public class FinderKeyPlaceCSV {
                         System.out.println("Resource_URL: " + resources.get(j).getUrl());
 
 //                        Instancie a list of KeyPlace with the KeyWords of CSV resource
-                        keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
+                        //keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
+                        
+                        keyWords = keyPlacesBo.getKeyPlaces(currentResource);
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
+                        
+                        
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place
 //                        Collections.sort(keyWords, KeyPlace.getComparadorByName());

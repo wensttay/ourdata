@@ -63,23 +63,24 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
     @Override
     public List<Place> getAll()
     {
+        List<Place> places = new ArrayList<>();
         try
         {
             conectar();
-            String sql = "SELECT *, ST_AsText(way) as geo FROM place";
+            String sql = "SELECT *, ST_AsText(the_geom) as geo FROM gazetteer";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
-            List<Place> places = new ArrayList<>();
+            
             while (rs.next())
             {
                 Place p = preencherObjeto(rs);
                 if (p != null)
                 {
                     places.add(p);
-                    System.out.println(p.toString());
                 }
             }
+            return places;
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
         {
@@ -88,7 +89,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         {
             desconectar();
         }
-        return new ArrayList<>();
+        return places;
     }
 
     /**
@@ -192,9 +193,11 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
             Place p = new Place();
             p.setId(rs.getInt("gid"));
             p.setNome(rs.getString("nome"));
-            p.setSigla(rs.getString("sigla"));
+            String sigla = rs.getString("sigla");
+            if(sigla == null)
+                p.setSigla("");
+            p.setSigla(sigla);
             p.setTipo(rs.getString("tipo"));
-            System.out.println("\n\nGEOMETRIA CARAI : "+rs.getString("geo")+" \n\n");
             p.setWay(new WKTReader().read(rs.getString("geo")));
             p.setMaxX(rs.getDouble("maxx"));
             p.setMaxY(rs.getDouble("maxy"));

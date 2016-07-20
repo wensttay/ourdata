@@ -55,7 +55,7 @@ public class KeyPlace
         }
         if (getClass() != obj.getClass())
         {
-            return false;
+            return false; 
         }
         final KeyPlace other = (KeyPlace) obj;
         if (!Objects.equals(this.columNumber, other.columNumber))
