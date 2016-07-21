@@ -66,13 +66,6 @@ public class PlaceUtils
 
     public static double getOverlap(Place place, Place otherPlace, float controlVariable)
     {
-        double areaA = getArea(place);
-        double areaB = getArea(otherPlace);
-        if(areaA < areaB) {
-            Place aux = place;
-            place = otherPlace;
-            otherPlace = aux;
-        }
         double intersectArea = calculateIntersectionArea(place, otherPlace);
         double placeArea = getArea(place);
         double otherPlaceArea = getArea(otherPlace);
