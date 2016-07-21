@@ -32,6 +32,10 @@ public class QueryResourceItemSearchBo
     public List<ResourceItemSearch> getResourceItemSearchSortedByRank(String placeName, String placeType){
         
         List<Place> resultPlaces = queryPlaceBo.getPlacesByName(placeName, placeType);
+        
+        for(Place p : resultPlaces){
+            System.out.println(p.getNome());
+        }
         List<Resource> resources = new ArrayList<>();
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
         
@@ -50,13 +54,14 @@ public class QueryResourceItemSearchBo
                 double overlapPercent;
                 double rankingPercent;
                 
-                overlapPercent = PlaceUtils.getOverlap2(place, resource.getPlace());
+                overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f);
+                System.out.println("Overlap percent: "+overlapPercent+"\n");
                 
-                overlapPercent*=0.8f;
+               // overlapPercent*=0.8f;
                 
-                rankingPercent = repeatPercent + overlapPercent;
+                //rankingPercent = repeatPercent + overlapPercent;
                 
-                if(rankingPercent > 1) rankingPercent = 1;
+                rankingPercent = overlapPercent;
                 
                 ResourceItemSearch itemSearch = new ResourceItemSearch(resource,rankingPercent);
                 

@@ -66,18 +66,30 @@ public class PlaceUtils
 
     public static double getOverlap(Place place, Place otherPlace, float controlVariable)
     {
-        double intersc = getIntersectArea(place, otherPlace);
+        double areaA = getArea(place);
+        double areaB = getArea(otherPlace);
+        if(areaA < areaB) {
+            Place aux = place;
+            place = otherPlace;
+            otherPlace = aux;
+        }
+        double intersectArea = calculateIntersectionArea(place, otherPlace);
+        double placeArea = getArea(place);
+        double otherPlaceArea = getArea(otherPlace);
+        System.out.println("Area(A^B): "+intersectArea);
+        System.out.println("Area(A - B): "+(placeArea - otherPlaceArea));
+        System.out.println("const * Area(A - B): "+(controlVariable*(placeArea - otherPlaceArea)));
+        System.out.println("Area(B - A): "+(otherPlaceArea - placeArea));
+        System.out.println("(1 - const) * Area(A - B): "+((1-controlVariable)*(placeArea - otherPlaceArea)));
+        
+        double intersc = calculateIntersectionArea(place, otherPlace);
         return intersc / 
                 (intersc + 
                     (controlVariable * (getArea(place) - getArea(otherPlace))) +
                     ((1 - controlVariable) * (getArea(otherPlace) - getArea(place)))
                 );
-    }
-    
-    public static double getOverlap2(Place place, Place otherPlace){
-        double si = calculateIntersectionArea(place, otherPlace);
-        double su = getArea(place) + getArea(otherPlace) - si;
-        return si/su;
+        
+        
     }
     
     private static double calculateIntersectionArea(Place place, Place otherPlace){
@@ -87,6 +99,14 @@ public class PlaceUtils
                 return dx*dy;
         return 0;
     }
+    
+    public static double getOverlap2(Place place, Place otherPlace){
+        double si = calculateIntersectionArea(place, otherPlace);
+        double su = getArea(place) + getArea(otherPlace) - si;
+        return si/su;
+    }
+    
+    
     
     private static double getArea(Place place){
         double maxX = place.getMaxX();

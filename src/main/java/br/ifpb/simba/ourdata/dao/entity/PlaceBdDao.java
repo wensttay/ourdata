@@ -103,10 +103,11 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      */
     public List<Place> burcarPorTitulos(String titulo, String tipo)
     {
+        List<Place> places = new ArrayList<>();
         try
         {
             conectar();
-            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE (nome");
+            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(the_geom) as geo FROM gazetteer WHERE (nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?) AND (tipo ILIKE ?)");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
             int i = 1;
@@ -115,26 +116,22 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
             ps.setString(i++, tipo);
             
             ResultSet rs = ps.executeQuery();
-            List<Place> places = new ArrayList<>();
-            while (rs.next())
-            {
+            
+            while (rs.next()) {
                 Place p = preencherObjeto(rs);
-                if (p != null)
-                {
+                if (p != null) {
                     places.add(p);
                 }
             }
             
             return places;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        } finally
-        {
+        } finally {
             desconectar();
         }
 
-        return new ArrayList<>();
+        return places;
     }
     
     /**
@@ -191,7 +188,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
         try
         {
             Place p = new Place();
-            p.setId(rs.getInt("id"));
+            p.setId(rs.getInt("gid"));
             p.setNome(rs.getString("nome"));
             String sigla = rs.getString("sigla");
             if(sigla == null)
