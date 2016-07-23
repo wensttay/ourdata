@@ -17,8 +17,6 @@ import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +28,6 @@ public class FinderKeyPlaceCSV{
 
         KeyPlacesBo keyPlacesBo = new KeyPlacesBo(KeyPlacesBo.NUM_ROWS_CHECK_DEFAULT);
         final String CATALOG_URL = "http://dados.gov.br/";
-
         CkanClient ckanClient = new CkanClient(CATALOG_URL);
         KeyPlaceBdDao keyWordBdDao = new KeyPlaceBdDao();
         List<String> datasetNames = new ArrayList<>();
@@ -49,7 +46,7 @@ public class FinderKeyPlaceCSV{
 //        Iterating dataset's names
         int auxDatasetNamesSize = datasetNames.size();
 
-        for ( int i = 0; i < auxDatasetNamesSize; i++ ){
+        for ( int i = 69; i < auxDatasetNamesSize; i++ ){
             CkanDataset dataset = null;
             List<CkanResource> resources = new ArrayList<>();
             try{

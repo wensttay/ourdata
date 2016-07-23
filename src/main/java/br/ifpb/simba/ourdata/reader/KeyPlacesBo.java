@@ -24,24 +24,24 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class KeyPlacesBo{
+public class KeyPlacesBo {
 
     public static final int NUM_ROWS_CHECK_DEFAULT = 10;
     private int numRowsCheck;
     private final PlaceBdDao placeBdDao;
     private List<Place> placesGazetteer;
 
-    public KeyPlacesBo( int numRowsCheck ){
+    public KeyPlacesBo(int numRowsCheck) {
         this.numRowsCheck = numRowsCheck;
         placeBdDao = new PlaceBdDao();
         this.placesGazetteer = placeBdDao.getAll();
     }
 
-    public int getNumRowsCheck(){
+    public int getNumRowsCheck() {
         return this.numRowsCheck;
     }
 
-    public void setNumRowsCheck( int numRowsCheck ){
+    public void setNumRowsCheck(int numRowsCheck) {
         this.numRowsCheck = numRowsCheck;
     }
 
@@ -58,20 +58,20 @@ public class KeyPlacesBo{
         return result;
     }
 
-    private Place getMinorPlace( List<Place> places ){
-        if ( places.isEmpty() ){
+    private Place getMinorPlace(List<Place> places) {
+        if (places.isEmpty()) {
             return null;
         }
         //first place
         Place minor = places.get(0);
         Geometry minor_way = minor.getWay();
 
-        for ( int i = 1; i < places.size(); i++ ){
+        for (int i = 1; i < places.size(); i++) {
 
             Place current = places.get(i);
             Geometry current_way = current.getWay();
 
-            if ( current_way.getArea() < minor_way.getArea() ){
+            if (current_way.getArea() < minor_way.getArea()) {
                 minor = current;
                 minor_way = current_way;
             }
@@ -80,20 +80,20 @@ public class KeyPlacesBo{
         return minor;
     }
 
-    private KeyPlace getMinorKeyPlace( List<KeyPlace> keyPlaces ){
-        if ( keyPlaces.isEmpty() ){
+    private KeyPlace getMinorKeyPlace(List<KeyPlace> keyPlaces) {
+        if (keyPlaces.isEmpty()) {
             return null;
         }
         //first place
         KeyPlace minor = keyPlaces.get(0);
         Geometry minor_way = minor.getPlace().getWay();
 
-        for ( int i = 1; i < keyPlaces.size(); i++ ){
+        for (int i = 1; i < keyPlaces.size(); i++) {
 
             KeyPlace current = keyPlaces.get(i);
             Geometry current_way = current.getPlace().getWay();
 
-            if ( current_way.getArea() < minor_way.getArea() ){
+            if (current_way.getArea() < minor_way.getArea()) {
                 minor = current;
                 minor_way = current_way;
             }
@@ -101,9 +101,9 @@ public class KeyPlacesBo{
 
         return minor;
     }
-    
+
     @Deprecated
-    public List<KeyPlace> getKeyPlaces( CkanResource resource ){
+    public List<KeyPlace> getKeyPlaces(CkanResource resource) {
 
         float percent = 0;
 
@@ -116,14 +116,14 @@ public class KeyPlacesBo{
 
         //get a List which contains all csv content
         List<String[]> csvRows = csvReader.build(resourceUrl);
-        if ( csvRows == null ){
+        if (csvRows == null) {
             csvRows = new ArrayList<>();
         }
 
         int csvRowsSize = csvRows.size();
 
         //Iterating all csvRows
-        for ( int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++ ){
+        for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
 
             //getting current row
             String[] row = csvRows.get(rowIndex);
@@ -132,20 +132,20 @@ public class KeyPlacesBo{
             List<KeyPlace> rowKeyPlaces = new ArrayList<>();
 
             //Iterating each csvRow's columns
-            for ( int colIndex = 0; colIndex < row.length; colIndex++ ){
+            for (int colIndex = 0; colIndex < row.length; colIndex++) {
                 String colValue = row[colIndex].replace("\n", " ");
                 colValue = colValue.trim();
 
-                try{
+                try {
                     Geometry geometry = new WKTReader().read(colValue);
-                    if ( geometry == null ){
+                    if (geometry == null) {
                         throw new ParseException("não foi possível converter " + colValue + " para Well Known Text.");
                     }
                     System.out.println("Achou geometria");
 
                     double minx, miny, maxx, maxy;
                     Envelope envelope = geometry.getEnvelopeInternal();
-                    if ( envelope == null ){
+                    if (envelope == null) {
                         throw new ParseException("não foi possível converter " + colValue + " para Well Known Text.");
                     }
                     minx = envelope.getMinX();
@@ -173,18 +173,18 @@ public class KeyPlacesBo{
                     keyPlace.setRepeatNumber(1);
                     keyPlace.setRowsNumber(csvRowsSize);
                     rowKeyPlaces.add(keyPlace);
-                } catch ( ParseException ex ){
+                } catch (ParseException ex) {
                     //Creating place list
                     List<Place> places = new ArrayList<>();
 
                     //is this col a valid one?
-                    if ( colValue != null && !colValue.equals("") ){
+                    if (colValue != null && !colValue.equals("")) {
                         places.addAll(buscarPorTitulos(colValue));
                     }
 
                     Place place = getMinorPlace(places);
 
-                    if ( place != null ){
+                    if (place != null) {
                         KeyPlace keyPlace = new KeyPlace();
                         keyPlace.setColumNumber(colIndex);
                         keyPlace.setColumValue(colValue);
@@ -205,16 +205,16 @@ public class KeyPlacesBo{
              * the whole thing until row 10,
              * I guess the csv does not contains any place xD
              */
-            if ( rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty() ){
+            if (rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty()) {
                 System.out.println("!! ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
 
             //percent feedback
-            if ( !rowKeyPlaces.isEmpty() ){
+            if (!rowKeyPlaces.isEmpty()) {
                 NumberFormat formatter = new DecimalFormat("#0.00");
-                float percentRead = ((( float ) rowIndex * 100) / ( float ) csvRowsSize);
-                if ( percent + 1 < percentRead ){
+                float percentRead = (((float) rowIndex * 100) / (float) csvRowsSize);
+                if (percent + 1 < percentRead) {
                     System.out.println(formatter.format(percentRead) + " %");
                     percent = percentRead;
                 }
@@ -222,14 +222,14 @@ public class KeyPlacesBo{
 
         } //ends rows iteration
 
-        if ( !resultKeyPlaces.isEmpty() ){
+        if (!resultKeyPlaces.isEmpty()) {
             System.out.println("100 %");
         }
 
         return resultKeyPlaces;
     }
 
-    public List<KeyPlace> getKeyPlaces2( CkanResource resource ) throws IOException{
+    public List<KeyPlace> getKeyPlaces2(CkanResource resource) throws IOException {
 
         float percent = 0;
 
@@ -241,14 +241,14 @@ public class KeyPlacesBo{
 
         //get a List which contains all csv content
         List<String[]> csvRows = csvReader.build(resourceUrl);
-        if ( csvRows == null ){
+        if (csvRows == null) {
             csvRows = new ArrayList<>();
         }
 
         int csvRowsSize = csvRows.size();
 
         //Iterating all csvRows
-        for ( int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++ ){
+        for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
 
             //getting current row
             String[] row = csvRows.get(rowIndex);
@@ -257,21 +257,21 @@ public class KeyPlacesBo{
             List<KeyPlace> rowKeyPlaces = new ArrayList<>();
 
             //Iterating each csvRow's columns
-            for ( int colIndex = 0; colIndex < row.length; colIndex++ ){
+            for (int colIndex = 0; colIndex < row.length; colIndex++) {
 
                 String colValue = row[colIndex].replace("\n", " ");
                 colValue = colValue.trim();
 
                 Place place = null;
 
-                if ( colValue != null && !colValue.equals("") ){
+                if (colValue != null && !colValue.equals("")) {
                     //Search by GEOMETRY String format
-                    if ( place == null ){
+                    if (place == null) {
                         place = searchByGemotryFormat(colValue);
                     }
 
                     //Search by colum Name
-                    if ( place == null ){
+                    if (place == null) {
                         //Creating place list
                         List<Place> places = new ArrayList<>();
                         places.addAll(buscarPorTitulos(colValue));
@@ -279,15 +279,15 @@ public class KeyPlacesBo{
                     }
                 }
 
-                if ( place != null ){
+                if (place != null) {
                     KeyPlace keyPlace = preencherKeyplace(colIndex, csvRowsSize,
                             colValue, resourceId, place);
                     rowKeyPlaces.add(keyPlace);
                 }
-                
+
             } //ends col iteration
 
-            if ( !rowKeyPlaces.isEmpty() ){
+            if (!rowKeyPlaces.isEmpty()) {
                 resultKeyPlaces.add(getMinorKeyPlace(rowKeyPlaces));
             }
 
@@ -296,30 +296,30 @@ public class KeyPlacesBo{
              * the whole thing until row 10,
              * I guess the csv does not contains any place xD
              */
-            if ( rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty() ){
-                System.out.println(TextColor.ANSI_RED.getCode() + " " +"ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+            if (rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty()) {
+                System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
 
             //percent feedback
             percent = percentFeedback(rowKeyPlaces, rowIndex, csvRowsSize, percent);
-            
+
         } //ends rows iteration
 
-        if ( !resultKeyPlaces.isEmpty() ){
+        if (!resultKeyPlaces.isEmpty()) {
             System.out.println("100 %");
         }
-        
+
         csvReader.closeAll();
         return resultKeyPlaces;
     }
 
-    private float percentFeedback(List<KeyPlace> rowKeyPlaces, int rowIndex, int csvRowsSize, float percent){
-        if ( !rowKeyPlaces.isEmpty() ){
+    private float percentFeedback(List<KeyPlace> rowKeyPlaces, int rowIndex, int csvRowsSize, float percent) {
+        if (!rowKeyPlaces.isEmpty()) {
             NumberFormat formatter = new DecimalFormat("#0.00");
-            float percentRead = ((( float ) rowIndex * 100) / ( float ) csvRowsSize);
-            
-            if ( percent + 10 < percentRead ){
+            float percentRead = (((float) rowIndex * 100) / (float) csvRowsSize);
+
+            if (percent + 10 < percentRead) {
                 System.out.println(formatter.format(percentRead) + " %");
                 return percentRead;
             }
@@ -327,8 +327,8 @@ public class KeyPlacesBo{
         return percent;
     }
 
-    private KeyPlace preencherKeyplace( int colIndex, int csvRowsSize,
-            String colValue, String resourceId, Place place ){
+    private KeyPlace preencherKeyplace(int colIndex, int csvRowsSize,
+            String colValue, String resourceId, Place place) {
 
         KeyPlace keyPlace = new KeyPlace();
         keyPlace.setColumNumber(colIndex);
@@ -341,9 +341,9 @@ public class KeyPlacesBo{
         return keyPlace;
     }
 
-    private Place searchByGemotryFormat( String colValue ){
+    private Place searchByGemotryFormat(String colValue) {
 
-        try{
+        try {
             Geometry geometry = new WKTReader().read(colValue);
             Envelope envelope = geometry.getEnvelopeInternal();
 
@@ -352,9 +352,10 @@ public class KeyPlacesBo{
             place.setMaxY(envelope.getMaxY());
             place.setMinX(envelope.getMinX());
             place.setMinY(envelope.getMinY());
+            place.setId(-99);
 
             return place;
-        } catch ( ParseException | NullPointerException ex ){
+        } catch (ParseException | NullPointerException ex) {
 //            System.out.println("Não foi possível converter " + colValue + " para Well Known Text.");
             return null;
         }
