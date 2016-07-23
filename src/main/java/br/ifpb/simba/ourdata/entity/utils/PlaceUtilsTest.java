@@ -11,13 +11,10 @@ import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
  *
  * @author kieckegard
  */
-public class PlaceUtilsTest
-{
-    public static void main(String[] args)
-    {
+public class PlaceUtilsTest{
+    public static void main( String[] args ){
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
         bo.getResourceItemSearchSortedByRank("cajazeiras", "municipio");
-        
-        
+
     }
 }

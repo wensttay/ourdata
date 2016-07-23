@@ -65,7 +65,7 @@
                     <td><%= String.format("%.2f",resource.getRanking()*100) + "%"%></td>
                     <td><%= resource.getResource().getDescricao()%></td>
                     <td><%=resource.getResource().getFormato()%></td>  
-                    <td><a href="<%=resource.getResource().getUrl()%>">Link Para Download</a></td>
+                    <td><a href="<%=resource.getResource().getUrl()%>" target="_blank" >Link Para Download</a></td>
                 </tr>
                 <%
                     }

@@ -8,6 +8,5 @@ package br.ifpb.simba.ourdata.dao;
  * @param <T> Type of First Object ID
  * @param <I> Type of Secound Object ID
  */
-public abstract class GenericRelationBdDao<T, I> extends GenericBdDao implements DaoRelation<T, I>
-{
+public abstract class GenericRelationBdDao<T, I> extends GenericBdDao implements DaoRelation<T, I>{
 }

@@ -12,18 +12,16 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class TestQueryResourceSearchBo
-{
-    public static void main(String[] args)
-    {
+public class TestQueryResourceSearchBo{
+    public static void main( String[] args ){
         String placeName = "Rio Grande do Norte";
-        
+
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
-        
+
         List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(placeName, "cidade");
-        
-        for(ResourceItemSearch item : itensSearch){
-            System.out.println(item.getRanking()+" : "+item.getResource().getDescricao()+" | "+item.getResource().getUrl());
+
+        for ( ResourceItemSearch item : itensSearch ){
+            System.out.println(item.getRanking() + " : " + item.getResource().getDescricao() + " | " + item.getResource().getUrl());
         }
     }
 }

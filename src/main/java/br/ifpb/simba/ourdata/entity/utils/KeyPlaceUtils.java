@@ -6,7 +6,6 @@
 package br.ifpb.simba.ourdata.entity.utils;
 
 import br.ifpb.simba.ourdata.entity.KeyPlace;
-import br.ifpb.simba.ourdata.entity.Place;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  *
  * @author Wensttay
  */
-public class KeyPlaceUtils {
+public class KeyPlaceUtils{
 
     /**
      * Return a list with a 'lite Version' of result seach KeyWords's resource.
@@ -25,20 +24,20 @@ public class KeyPlaceUtils {
      *
      * @return Filered list, without repeat KeyPlaces
      */
-    public static List<KeyPlace> getLiteVersion(List<KeyPlace> keyWords) {
+    public static List<KeyPlace> getLiteVersion( List<KeyPlace> keyWords ){
         List<KeyPlace> liteVersion = new ArrayList<>();
 
-        if (keyWords != null && !keyWords.isEmpty()) {
-            for (KeyPlace keyWord : keyWords) {
+        if ( keyWords != null && !keyWords.isEmpty() ){
+            for ( KeyPlace keyWord : keyWords ){
                 boolean exist = false;
-                for (KeyPlace liteVersionAux : liteVersion) {
-                    if (liteVersionAux.equals(keyWord)) {
+                for ( KeyPlace liteVersionAux : liteVersion ){
+                    if ( liteVersionAux.equals(keyWord) ){
                         liteVersionAux.setRepeatNumber(keyWord.getRepeatNumber() + liteVersionAux.getRepeatNumber());
                         exist = true;
                         break;
                     }
                 }
-                if (!exist) {
+                if ( !exist ){
                     liteVersion.add(keyWord);
                 }
             }

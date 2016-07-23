@@ -7,10 +7,10 @@ package br.ifpb.simba.ourdata.enums;
 
 /**
  * Enum of Place Types
- * 
+ *
  * @author Wensttay
  */
-public enum PlaceType {
+public enum PlaceType{
     MICRORREGIAO("Microrregião", "microrregiao"),
     ESTADO("Estado", "estado"),
     MUNICIPIO("Município", "municipio"),
@@ -19,14 +19,14 @@ public enum PlaceType {
 
     private String nameToUser;
     private String nameToBd;
-    
+
     /**
      * Default Constructor for PlaceType
-     * 
+     *
      * @param nameToUser Name used to show for the users
      * @param nameToBd Name used to persist on Data Base
      */
-    PlaceType(String nameToUser, String nameToBd) {
+    PlaceType( String nameToUser, String nameToBd ){
         this.nameToUser = nameToUser;
         this.nameToBd = nameToBd;
     }
@@ -34,31 +34,29 @@ public enum PlaceType {
     /**
      * @return the nameToUser
      */
-    public String getNameToUser() {
+    public String getNameToUser(){
         return nameToUser;
     }
 
     /**
      * @param nameToUser the nameToUser to set
      */
-    public void setNameToUser(String nameToUser) {
+    public void setNameToUser( String nameToUser ){
         this.nameToUser = nameToUser;
     }
 
     /**
      * @return the nameToBd
      */
-    public String getNameToBd() {
+    public String getNameToBd(){
         return nameToBd;
     }
 
     /**
      * @param nameToBd the nameToBd to set
      */
-    public void setNameToBd(String nameToBd) {
+    public void setNameToBd( String nameToBd ){
         this.nameToBd = nameToBd;
     }
-    
-    
-    
+
 }

@@ -11,19 +11,18 @@ import java.util.TreeSet;
  *
  * @author Pedro Arthur
  */
-public class ResourceHeaderAnalityCsv implements ResourceHeaderAnality<ResourceHeader>
-{
+public class ResourceHeaderAnalityCsv implements ResourceHeaderAnality<ResourceHeader>{
 
     /**
      * Method of taking an ResourceHeader over a URL passed by parameter
      *
      * @param url Url of the resource you want to analyze
      *
-     * @return ResourceHeader, class that contains information about the resource.
+     * @return ResourceHeader, class that contains information about the
+     * resource.
      */
     @Override
-    public ResourceHeader getHeader(String url)
-    {
+    public ResourceHeader getHeader( String url ){
 
         List<String[]> rows = new CSVReaderOD().build(url);
         List<ColumnHeader> columns = new ArrayList<>();
@@ -34,13 +33,10 @@ public class ResourceHeaderAnalityCsv implements ResourceHeaderAnality<ResourceH
 
 //        System.out.println("colunas: "+qtd_columns);
 //        System.out.println("linhas: "+qtd_rows); 
-
         Set<String> set;
-        for (int j = 0; j < qtd_columns; j++)
-        {
+        for ( int j = 0; j < qtd_columns; j++ ){
             set = new TreeSet<>();
-            for (int i = 1; i < qtd_rows; i++)
-            {
+            for ( int i = 1; i < qtd_rows; i++ ){
                 String cell = rows.get(i)[j];
                 set.add(cell);
             }

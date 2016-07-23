@@ -3,6 +3,7 @@ package br.ifpb.simba.ourdata.dao.ckan;
 
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetResourcesBdDao;
+import br.ifpb.simba.ourdata.reader.TextColor;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
@@ -19,8 +20,7 @@ import java.util.List;
  *
  * @author Wensttay, Pedro Arthur
  */
-public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
-{
+public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
     private DataSetResourcesBdDao dataSetResourcesBdDao;
     private CkanResourceBdDao ckanResourceBdDao;
 
@@ -29,8 +29,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * properties_path
      * 'PROPERTIES_PATH_DEFAULT' to JDBC connection
      */
-    public CkanDataSetBdDao()
-    {
+    public CkanDataSetBdDao(){
     }
 
     /**
@@ -39,8 +38,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public CkanDataSetBdDao(String properties_path)
-    {
+    public CkanDataSetBdDao( String properties_path ){
         super.setProperties_path(properties_path);
     }
 
@@ -53,13 +51,11 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert(CkanDataset obj)
-    {
-        try
-        {
+    public boolean insert( CkanDataset obj ){
+        try{
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO dataset");
-            sql.append("id, author, notes, title, name, metadata_created, metadata_modified)"); 
+            sql.append("id, author, notes, title, name, metadata_created, metadata_modified)");
             sql.append("VALUES(?, ?, ?, ?, ?, ?, ?)");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
 
@@ -74,11 +70,9 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
 
             return ps.executeUpdate() != 0;
 
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -94,10 +88,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * uptated with sucess or the update is not possible.
      */
     @Override
-    public boolean update(CkanDataset obj)
-    {
-        try
-        {
+    public boolean update( CkanDataset obj ){
+        try{
             conectar();
             StringBuilder sql = new StringBuilder("UPDATE dataset SET author = ?, notes = ?, title = ?,");
             sql.append("name = ?, metadata_created = ?, metadata_modified = ? WHERE id = ?");
@@ -114,11 +106,9 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
 
             return (ps.executeUpdate() != 0);
 
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -134,10 +124,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * ID, false = not exist CkanDataSet saved with this ID
      */
     @Override
-    public boolean exist(String id)
-    {
-        try
-        {
+    public boolean exist( String id ){
+        try{
             conectar();
 
             String sql = "SELECT * FROM DATASET WHERE ID = ?";
@@ -147,11 +135,9 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
 
             return (ps.executeQuery().next());
 
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -167,19 +153,14 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * into JDBC
      */
     @Override
-    public void insertOrUpdate(CkanDataset obj)
-    {
-        if (exist(obj.getId()))
-        {
+    public void insertOrUpdate( CkanDataset obj ){
+        if ( exist(obj.getId()) ){
             Timestamp timestampModified = getTimestampModified(obj.getId());
-            if (timestampModified != null && obj.getMetadataModified().after(timestampModified))
-            {
+            if ( timestampModified != null && obj.getMetadataModified().after(timestampModified) ){
                 System.out.println("Houve modificação no dataset " + obj.getId());
                 insertOrUpdateAtributes(obj);
             }
-        }
-        else
-        {
+        } else{
             insert(obj);
             insertOrUpdateAtributes(obj);
         }
@@ -192,17 +173,14 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      * @param obj CkanDataset type with the atributes which want to be inserted
      * or updated in JDBC
      */
-    private void insertOrUpdateAtributes(CkanDataset obj)
-    {
+    private void insertOrUpdateAtributes( CkanDataset obj ){
         List<CkanResource> auxListResource = obj.getResources();
 
-        if (auxListResource == null)
-        {
+        if ( auxListResource == null ){
             auxListResource = new ArrayList<>();
         }
 
-        for (CkanResource ckanResource : auxListResource)
-        {
+        for ( CkanResource ckanResource : auxListResource ){
             getCkanResourceBdDao().insertOrUpdate(ckanResource);
             getDataSetResourcesBdDao().insert(obj.getId(), ckanResource.getId());
         }
@@ -216,10 +194,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      *
      * @return
      */
-    private Timestamp getTimestampModified(String id)
-    {
-        try
-        {
+    private Timestamp getTimestampModified( String id ){
+        try{
             conectar();
             String sql = "SELECT METADATA_MODIFIED FROM DATASET WHERE ID = ?";
 
@@ -230,11 +206,9 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
             rs.next();
 
             return rs.getTimestamp("METADATA_MODIFIED");
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return null;
@@ -245,10 +219,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      *
      * @return A CkanResourceBdDao instaced
      */
-    private CkanResourceBdDao getCkanResourceBdDao()
-    {
-        if (ckanResourceBdDao == null)
-        {
+    private CkanResourceBdDao getCkanResourceBdDao(){
+        if ( ckanResourceBdDao == null ){
             ckanResourceBdDao = new CkanResourceBdDao(getProperties_path());
         }
         return this.ckanResourceBdDao;
@@ -259,10 +231,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>
      *
      * @return A DataSetResourcesBdDao instaced
      */
-    private DataSetResourcesBdDao getDataSetResourcesBdDao()
-    {
-        if (dataSetResourcesBdDao == null)
-        {
+    private DataSetResourcesBdDao getDataSetResourcesBdDao(){
+        if ( dataSetResourcesBdDao == null ){
             dataSetResourcesBdDao = new DataSetResourcesBdDao();
         }
         return dataSetResourcesBdDao;

@@ -8,8 +8,7 @@ package br.ifpb.simba.ourdata.dao;
  * @param <T> Type of First Object ID
  * @param <I> Type of Secound Object ID
  */
-public interface DaoRelation<T, I>
-{
+public interface DaoRelation<T, I>{
     /**
      * Method to insert a relation between a T type and I type on some secure
      * repository
@@ -19,5 +18,5 @@ public interface DaoRelation<T, I>
      *
      * @return True = Sucess / False = Fail
      */
-    boolean insert(T id, I otherId);
+    boolean insert( T id, I otherId );
 }

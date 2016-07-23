@@ -15,15 +15,14 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class QueryResourceBo
-{
+public class QueryResourceBo{
     private ResourceBdDao resourceDao;
-    
+
     public QueryResourceBo(){
         resourceDao = new ResourceBdDao();
     }
-    
-    public List<Resource> listResourcesIntersectedBy(Place place){
+
+    public List<Resource> listResourcesIntersectedBy( Place place ){
         return resourceDao.getResourcesIntersectedBy(place);
     }
 }

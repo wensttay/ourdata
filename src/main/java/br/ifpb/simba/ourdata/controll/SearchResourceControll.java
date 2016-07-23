@@ -5,16 +5,9 @@
  */
 package br.ifpb.simba.ourdata.controll;
 
-import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
-import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
-import br.ifpb.simba.ourdata.entity.Place;
-import br.ifpb.simba.ourdata.entity.Resource;
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
-import br.ifpb.simba.ourdata.entity.utils.PlaceUtils;
 import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -28,8 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Wensttay
  */
-@WebServlet(name = "SearchResources", urlPatterns = {"/SearchResources"})
-public class SearchResourceControll extends HttpServlet {
+@WebServlet( name = "SearchResources", urlPatterns = { "/SearchResources" } )
+public class SearchResourceControll extends HttpServlet{
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,18 +30,19 @@ public class SearchResourceControll extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
+     *
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+    protected void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
+
         String nameOfPlace = request.getParameter("nameOfPlace");
         String typeOfPlace = request.getParameter("typeOfPlace");
 
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
-        
+
         List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
-        
+
         //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
 
@@ -64,12 +58,13 @@ public class SearchResourceControll extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
+     *
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet( HttpServletRequest request, HttpServletResponse response )
+            throws ServletException, IOException{
         processRequest(request, response);
     }
 
@@ -78,12 +73,13 @@ public class SearchResourceControll extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
+     *
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost( HttpServletRequest request, HttpServletResponse response )
+            throws ServletException, IOException{
         processRequest(request, response);
     }
 
@@ -93,7 +89,7 @@ public class SearchResourceControll extends HttpServlet {
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo() {
+    public String getServletInfo(){
         return "Short description";
     }// </editor-fold>
 

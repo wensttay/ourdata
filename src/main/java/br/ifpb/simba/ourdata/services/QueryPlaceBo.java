@@ -14,15 +14,14 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class QueryPlaceBo
-{
+public class QueryPlaceBo{
     private PlaceBdDao placeDao;
-    
+
     public QueryPlaceBo(){
         placeDao = new PlaceBdDao();
     }
-    
-    public List<Place> getPlacesByName(String name, String type){
-        return placeDao.burcarPorTitulos(name,type);
+
+    public Place getPlacesByName( String name, String type ){
+        return placeDao.burcarPorTitulos(name, type);
     }
 }

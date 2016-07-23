@@ -2,6 +2,7 @@
 package br.ifpb.simba.ourdata.dao.ckan;
 
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
+import br.ifpb.simba.ourdata.reader.TextColor;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,15 +17,13 @@ import java.util.List;
  *
  * @author Wensttay, Pedro Arthur
  */
-public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
-{
+public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
     /**
      * This constructor create a CkanResourceBdDao using the default
      * properties_path to JDBC connection
      * 'PROPERTIES_PATH_DEFAULT'
      */
-    public CkanResourceBdDao()
-    {
+    public CkanResourceBdDao(){
     }
 
     /**
@@ -33,8 +32,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public CkanResourceBdDao(String properties_path)
-    {
+    public CkanResourceBdDao( String properties_path ){
         super.setProperties_path(properties_path);
     }
 
@@ -47,10 +45,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert(CkanResource obj)
-    {
-        try
-        {
+    public boolean insert( CkanResource obj ){
+        try{
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO resource(ID, DESCRIPTION, FORMAT, URL,");
             sql.append("ID_DATASET) VALUES(?, ?, ?, ?, ?)");
@@ -64,11 +60,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
             ps.setString(i++, obj.getPackageId());
 
             return (ps.executeUpdate() != 0);
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -83,10 +77,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      * uptated with sucess or the update is not possible.
      */
     @Override
-    public boolean update(CkanResource obj)
-    {
-        try
-        {
+    public boolean update( CkanResource obj ){
+        try{
             conectar();
             StringBuilder sql = new StringBuilder("UPDATE RESOURCE SET DESCRIPTION = ?, FORMAT = ?, URL = ?,");
             sql.append("ID_DATASET = ? WHERE ID = ?");
@@ -100,11 +92,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
             ps.setString(i++, obj.getId());
 
             return (ps.executeUpdate() != 0);
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -121,10 +111,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      * ID, false = not exist CkanDataSet saved with this ID
      */
     @Override
-    public boolean exist(String id)
-    {
-        try
-        {
+    public boolean exist( String id ){
+        try{
             conectar();
             String sql = "SELECT * FROM RESOURCE WHERE ID = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -132,11 +120,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
             ps.setString(1, id);
 
             return (ps.executeQuery().next());
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return false;
@@ -152,14 +138,10 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      * into JDBC
      */
     @Override
-    public void insertOrUpdate(CkanResource obj)
-    {
-        if (exist(obj.getId()))
-        {
+    public void insertOrUpdate( CkanResource obj ){
+        if ( exist(obj.getId()) ){
             update(obj);
-        }
-        else
-        {
+        } else{
             insert(obj);
         }
 
@@ -171,10 +153,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
      *
      * @return A list of all CkanResource in JDBC
      */
-    public List<CkanResource> list()
-    {
-        try
-        {
+    public List<CkanResource> list(){
+        try{
             conectar();
             String sql = "SELECT * FROM resource";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -182,8 +162,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
 
             List<CkanResource> resources = new ArrayList<>();
 
-            while (rs.next())
-            {
+            while ( rs.next() ){
                 CkanResource resource = new CkanResource();
                 resource.setId(rs.getString("id"));
                 resource.setDescription(rs.getString("description"));
@@ -194,11 +173,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>
             }
             return resources;
 
-        } catch (SQLException | URISyntaxException | IOException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( SQLException | URISyntaxException | IOException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return new ArrayList<>();

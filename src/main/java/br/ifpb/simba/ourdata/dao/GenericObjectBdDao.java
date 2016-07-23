@@ -8,6 +8,5 @@ package br.ifpb.simba.ourdata.dao;
  * @param <T> Type of Object
  * @param <I> Type of T's ID
  */
-public abstract class GenericObjectBdDao<T, I> extends GenericBdDao implements Dao<T, I>
-{
+public abstract class GenericObjectBdDao<T, I> extends GenericBdDao implements Dao<T, I>{
 }

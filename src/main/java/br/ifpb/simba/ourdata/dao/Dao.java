@@ -6,8 +6,7 @@ package br.ifpb.simba.ourdata.dao;
  *
  * @author Wensttay
  */
-public interface Dao<T, I>
-{
+public interface Dao<T, I>{
     /**
      * Method to insert something on some secure repository
      *
@@ -15,7 +14,7 @@ public interface Dao<T, I>
      *
      * @return True = Sucess / False = Fail
      */
-    public boolean insert(T obj);
+    public boolean insert( T obj );
 
     /**
      * Method to update something on some secure repository
@@ -24,14 +23,14 @@ public interface Dao<T, I>
      *
      * @return True = Sucess / False = Fail
      */
-    public boolean update(T obj);
+    public boolean update( T obj );
 
     /**
      * Method to insert or update something on some secure repository
      *
      * @param obj Object to be inserted or updated
      */
-    public void insertOrUpdate(T obj);
+    public void insertOrUpdate( T obj );
 
     /**
      * Method to verify if exist something on some secure repository
@@ -40,5 +39,5 @@ public interface Dao<T, I>
      *
      * @return True = Exits / False = No Exists
      */
-    public boolean exist(I id);
+    public boolean exist( I id );
 }

@@ -3,6 +3,7 @@ package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
+import br.ifpb.simba.ourdata.reader.TextColor;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
@@ -18,15 +19,13 @@ import java.util.List;
  *
  * @author Wensttay, kieckegard
  */
-public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
-{
+public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
     /**
      * This constructor create a KeyPlaceBdDao using the default
      * properties_path
      * 'PROPERTIES_PATH_DEFAULT' to JDBC connection
      */
-    public PlaceBdDao()
-    {
+    public PlaceBdDao(){
     }
 
     /**
@@ -35,11 +34,10 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public PlaceBdDao(String properties_path)
-    {
+    public PlaceBdDao( String properties_path ){
         super.setProperties_path(properties_path);
     }
-    
+
     /**
      * Method to insert a Place type into a JDBC
      *
@@ -49,8 +47,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert(Place obj)
-    {
+    public boolean insert( Place obj ){
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -61,32 +58,25 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      * @return A list of all Place in JDBC
      */
     @Override
-    public List<Place> getAll()
-    {
+    public List<Place> getAll(){
         List<Place> places = new ArrayList<>();
-        try
-        {
+        try{
             conectar();
-            String sql = "SELECT *, ST_AsText(the_geom) as geo FROM gazetteer";
+            String sql = "SELECT *, ST_AsText(way) as geo FROM place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
-            
-            while (rs.next())
-            {
+            while ( rs.next() ){
                 Place p = preencherObjeto(rs);
-                if (p != null)
-                {
+                if ( p != null ){
                     places.add(p);
                 }
             }
             return places;
 
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
         return places;
@@ -97,43 +87,41 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      * param value into JDBC
      *
      * @param titulo String type that can be a name or a sigla of some Place
-     * @param tipo String that represents the type of place. Could be state, city, microregion, etc.
+     * @param tipo String that represents the type of place. Could be state,
+     * city, microregion, etc.
      *
      * @return A list with all Places with name or sigla equals(titulo)
      */
-    public List<Place> burcarPorTitulos(String titulo, String tipo)
-    {
-        List<Place> places = new ArrayList<>();
-        try
-        {
+    public Place burcarPorTitulos( String titulo, String tipo ){
+        try{
             conectar();
-            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(the_geom) as geo FROM gazetteer WHERE (nome");
+            StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE (nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?) AND (tipo ILIKE ?)");
+
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
             ps.setString(i++, tipo);
-            
+
             ResultSet rs = ps.executeQuery();
-            
-            while (rs.next()) {
-                Place p = preencherObjeto(rs);
-                if (p != null) {
-                    places.add(p);
-                }
+
+            Place p = null;
+
+            if ( rs.next() ){
+                p = preencherObjeto(rs);
             }
-            
-            return places;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } finally {
+
+            return p;
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
 
-        return places;
+        return null;
     }
-    
+
     /**
      * Method to search Places with the atribute 'name' or 'sigla' equals to the
      * param value into JDBC
@@ -142,10 +130,8 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
      *
      * @return A list with all Places with name or sigla equals(titulo)
      */
-    public List<Place> burcarPorTitulos(String titulo)
-    {
-        try
-        {
+    public List<Place> burcarPorTitulos( String titulo ){
+        try{
             conectar();
             StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?");
@@ -153,46 +139,42 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
-            
+
             ResultSet rs = ps.executeQuery();
             List<Place> places = new ArrayList<>();
-            while (rs.next())
-            {
+            while ( rs.next() ){
                 Place p = preencherObjeto(rs);
-                if (p != null)
-                {
+                if ( p != null ){
                     places.add(p);
                 }
             }
-            
+
             return places;
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex)
-        {
-            ex.printStackTrace();
-        } finally
-        {
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
             desconectar();
         }
 
         return new ArrayList<>();
     }
-    
+
     /**
      * This method fill a Place with a ResultSet param
-     * 
+     *
      * @param rs ResultSet with result of Search Place
+     *
      * @return A new Place with ResulSet's Values
      */
-    private Place preencherObjeto(ResultSet rs)
-    {
-        try
-        {
+    private Place preencherObjeto( ResultSet rs ){
+        try{
             Place p = new Place();
-            p.setId(rs.getInt("gid"));
+            p.setId(rs.getInt("id"));
             p.setNome(rs.getString("nome"));
             String sigla = rs.getString("sigla");
-            if(sigla == null)
+            if ( sigla == null ){
                 p.setSigla("");
+            }
             p.setSigla(sigla);
             p.setTipo(rs.getString("tipo"));
             p.setWay(new WKTReader().read(rs.getString("geo")));
@@ -201,9 +183,8 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>
             p.setMinX(rs.getDouble("minx"));
             p.setMinY(rs.getDouble("miny"));
             return p;
-        } catch (SQLException | ParseException ex)
-        {
-            ex.printStackTrace();
+        } catch ( SQLException | ParseException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         }
         return null;
     }

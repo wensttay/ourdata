@@ -9,10 +9,10 @@ package br.ifpb.simba.ourdata.test;
  *
  * @author Wensttay
  */
-public class AtualizadorDBTest {
+public class AtualizadorDBTest{
     final static String url = "http://dados.gov.br/";
-    
-    public static void main(String[] args) {
+
+    public static void main( String[] args ){
         (new Thread(new AtualizadorDBThread(url))).start();
     }
 }
