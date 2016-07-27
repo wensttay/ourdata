@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -229,14 +230,14 @@ public class KeyPlacesBo {
         return resultKeyPlaces;
     }
 
-    public List<KeyPlace> getKeyPlaces2(CkanResource resource) throws IOException {
-
+    public List<KeyPlace> getKeyPlaces2(CkanResource resource, CkanDataset dataset) throws IOException {
+        
         float percent = 0;
 
         List<KeyPlace> resultKeyPlaces = new ArrayList<>();
         String resourceId = resource.getId();
         String resourceUrl = resource.getUrl();
-
+        
         CSVReaderOD csvReader = new CSVReaderOD();
 
         //get a List which contains all csv content
@@ -246,6 +247,8 @@ public class KeyPlacesBo {
         }
 
         int csvRowsSize = csvRows.size();
+        
+        KeyPlace keyPlaceFoundInDescription = getPlaceByDescriptions(resource, csvRowsSize, dataset);
 
         //Iterating all csvRows
         for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
@@ -289,6 +292,8 @@ public class KeyPlacesBo {
 
             if (!rowKeyPlaces.isEmpty()) {
                 resultKeyPlaces.add(getMinorKeyPlace(rowKeyPlaces));
+            } else if(keyPlaceFoundInDescription != null) {
+                resultKeyPlaces.add(keyPlaceFoundInDescription);
             }
 
             /*
@@ -297,6 +302,7 @@ public class KeyPlacesBo {
              * I guess the csv does not contains any place xD
              */
             if (rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty()) {
+                resultKeyPlaces.add(keyPlaceFoundInDescription);
                 System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
@@ -328,7 +334,7 @@ public class KeyPlacesBo {
     }
 
     private KeyPlace preencherKeyplace(int colIndex, int csvRowsSize,
-            String colValue, String resourceId, Place place) {
+                            String colValue, String resourceId, Place place) {
 
         KeyPlace keyPlace = new KeyPlace();
         keyPlace.setColumNumber(colIndex);
@@ -340,9 +346,25 @@ public class KeyPlacesBo {
         keyPlace.setRowsNumber(csvRowsSize);
         return keyPlace;
     }
+    
+    private KeyPlace getPlaceByDescriptions(CkanResource resource, int rowsSize, CkanDataset dataset) {
+        
+        String resourceName = resource.getName();
+        String datasetName  = dataset.getName();
+        String datasetNotes = dataset.getNotes();
+        
+        for(Place place : placesGazetteer) { 
+            
+            if(resourceName.contains(place.getNome()) || datasetName.contains(place.getNome()) || datasetNotes.contains(place.getNome())) { 
+                return preencherKeyplace(-99,rowsSize,place.getNome(),resource.getId(),place); 
+            }
+        }
+        
+        return null;
+    }
 
     private Place searchByGemotryFormat(String colValue) {
-
+        
         try {
             Geometry geometry = new WKTReader().read(colValue);
             Envelope envelope = geometry.getEnvelopeInternal();

@@ -76,7 +76,7 @@ public class FinderKeyPlaceCSV{
 
 //                        Instancie a list of KeyPlace with the KeyWords of CSV resource
                         //keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
-                        keyWords = keyPlacesBo.getKeyPlaces2(currentResource);
+                        keyWords = keyPlacesBo.getKeyPlaces2(currentResource,dataset);
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place
