@@ -51,24 +51,9 @@ public class PlaceUtils{
         double otherPlaceArea = getArea(otherPlace);
 
         double divisor1 = intersectArea;
-        double divisor2 = controlVariable * (placeArea - intersectArea + 0.01);
-        double divisor3 = (1f - controlVariable) * (otherPlaceArea - intersectArea + 0.01);
+        double divisor2 = controlVariable * (placeArea - intersectArea);
+        double divisor3 = (1f - controlVariable) * (otherPlaceArea - intersectArea);
         double result = intersectArea / (divisor1 + divisor2 + divisor3);
-
-//        if (result == 1f)
-//        {
-//            System.out.println("Area(A^B): " + intersectArea);
-//            System.out.println("Area(A - B): " + (placeArea - otherPlaceArea));
-//            System.out.println("const * Area(A - B): " + (controlVariable * (placeArea - otherPlaceArea)));
-//            System.out.println("Area(B - A): " + (otherPlaceArea - placeArea));
-//            System.out.println("(1 - const) * Area(A - B): " + ((1 - controlVariable) * (placeArea - otherPlaceArea)));
-//
-//            System.out.println("Place: " + place.getNome() + "(" + place.getSigla() + ")");
-//            System.out.println("Place: " + otherPlace.getNome() + "(" + otherPlace.getSigla() + ")");
-//            System.out.println("divisor 1: " + divisor1);
-//            System.out.println("divisor 2: " + divisor2);
-//            System.out.println("divisor 3: " + divisor3);
-//        }
         return result;
     }
 

@@ -52,6 +52,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
      */
     @Override
     public boolean insert( KeyPlace obj ){
+        int x = 0;
         try{
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE,");

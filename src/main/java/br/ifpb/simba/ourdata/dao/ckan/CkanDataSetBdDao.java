@@ -3,7 +3,6 @@ package br.ifpb.simba.ourdata.dao.ckan;
 
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
 import br.ifpb.simba.ourdata.dao.ckan.relation.DataSetResourcesBdDao;
-import br.ifpb.simba.ourdata.reader.TextColor;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
@@ -54,8 +53,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
     public boolean insert( CkanDataset obj ){
         try{
             conectar();
-            StringBuilder sql = new StringBuilder("INSERT INTO dataset");
-            sql.append("id, author, notes, title, name, metadata_created, metadata_modified)");
+            StringBuilder sql = new StringBuilder("INSERT INTO dataset(");
+            sql.append("id, author, notes, title, name, metadata_created, metadata_modified) ");
             sql.append("VALUES(?, ?, ?, ?, ?, ?, ?)");
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
 
@@ -71,7 +70,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
             return ps.executeUpdate() != 0;
 
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            ex.printStackTrace();
         } finally{
             desconectar();
         }
@@ -107,7 +106,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
             return (ps.executeUpdate() != 0);
 
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            ex.printStackTrace();
         } finally{
             desconectar();
         }
@@ -136,7 +135,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
             return (ps.executeQuery().next());
 
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            ex.printStackTrace();
         } finally{
             desconectar();
         }
@@ -207,7 +206,8 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
 
             return rs.getTimestamp("METADATA_MODIFIED");
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            ex.printStackTrace();
+            ex.printStackTrace();
         } finally{
             desconectar();
         }
@@ -236,5 +236,48 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
             dataSetResourcesBdDao = new DataSetResourcesBdDao();
         }
         return dataSetResourcesBdDao;
+    }
+
+    @Override
+    public List<CkanDataset> getAll(){
+        List<CkanDataset> ckanDatasets = new ArrayList<>();
+        try{
+            conectar();
+            String sql = "SELECT * FROM dataset";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while ( rs.next() ){                
+                CkanDataset dataset = fill(rs);
+                if(dataset != null){
+                    ckanDatasets.add(dataset);
+                }
+            }
+            return ckanDatasets;
+            
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            ex.printStackTrace();
+        }finally{
+            desconectar();
+        }
+        
+        return new ArrayList<>();
+    }
+
+    @Override
+    public CkanDataset fill( ResultSet rs ){
+        try{
+            CkanDataset ckanDataset = new CkanDataset();
+            ckanDataset.setId(rs.getString("id"));
+            ckanDataset.setAuthor(rs.getString("author"));
+            ckanDataset.setNotes(rs.getString("notes"));
+            ckanDataset.setName(rs.getString("name"));
+            ckanDataset.setMetadataCreated(rs.getTimestamp("metadata_created"));
+            ckanDataset.setMetadataModified(rs.getTimestamp("metadata_modified"));
+            return ckanDataset;
+        } catch ( SQLException ex ){
+            ex.printStackTrace();
+        }
+        return null;
     }
 }
