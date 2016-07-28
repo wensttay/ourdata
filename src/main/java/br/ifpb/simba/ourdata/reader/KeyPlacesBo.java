@@ -10,8 +10,10 @@ import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.entity.Place;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -27,6 +29,8 @@ import java.util.List;
 public class KeyPlacesBo{
 
     public static final int NUM_ROWS_CHECK_DEFAULT = 10;
+    public static final int WKT_ID = -99;
+
     private int numRowsCheck;
     private final PlaceBdDao placeBdDao;
     private List<Place> placesGazetteer;
@@ -101,7 +105,7 @@ public class KeyPlacesBo{
 
         return minor;
     }
-    
+
     @Deprecated
     public List<KeyPlace> getKeyPlaces( CkanResource resource ){
 
@@ -237,16 +241,17 @@ public class KeyPlacesBo{
         String resourceId = resource.getId();
         String resourceUrl = resource.getUrl();
 
-        CSVReaderOD csvReader = new CSVReaderOD();
+        CSVReaderOD cSVReaderOD = new CSVReaderOD();
 
         //get a List which contains all csv content
-        List<String[]> csvRows = csvReader.build(resourceUrl);
+        List<String[]> csvRows = cSVReaderOD.build(resourceUrl);
+
         if ( csvRows == null ){
             csvRows = new ArrayList<>();
         }
 
         int csvRowsSize = csvRows.size();
-
+        
         //Iterating all csvRows
         for ( int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++ ){
 
@@ -259,15 +264,35 @@ public class KeyPlacesBo{
             //Iterating each csvRow's columns
             for ( int colIndex = 0; colIndex < row.length; colIndex++ ){
 
+//              Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
+//              resutados encontrados na pesquisa no Gazetteer
+                if ( resultKeyPlaces.size() > numRowsCheck ){
+                    for ( int i = 0; i < numRowsCheck; i++ ){
+                        while ( colIndex < row.length
+                                && resultKeyPlaces.get(i).getColumNumber() != colIndex ){
+                            colIndex++;
+                        }
+                    }
+                    if ( colIndex >= row.length ){
+                        break;
+                    }
+                }
+
                 String colValue = row[colIndex].replace("\n", " ");
                 colValue = colValue.trim();
 
                 Place place = null;
+                String columValueGeometry = "";
 
                 if ( colValue != null && !colValue.equals("") ){
                     //Search by GEOMETRY String format
+
                     if ( place == null ){
                         place = searchByGemotryFormat(colValue);
+
+                        if ( place != null ){
+                            columValueGeometry = new WKTWriter().write(place.getWay());
+                        }
                     }
 
                     //Search by colum Name
@@ -280,11 +305,16 @@ public class KeyPlacesBo{
                 }
 
                 if ( place != null ){
+
+                    if ( !columValueGeometry.isEmpty() ){
+                        colValue = columValueGeometry;
+                    }
+
                     KeyPlace keyPlace = preencherKeyplace(colIndex, csvRowsSize,
                             colValue, resourceId, place);
                     rowKeyPlaces.add(keyPlace);
                 }
-                
+
             } //ends col iteration
 
             if ( !rowKeyPlaces.isEmpty() ){
@@ -297,34 +327,33 @@ public class KeyPlacesBo{
              * I guess the csv does not contains any place xD
              */
             if ( rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty() ){
-                System.out.println(TextColor.ANSI_RED.getCode() + " " +"ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+                System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
                 break;
             }
 
             //percent feedback
-            percent = percentFeedback(rowKeyPlaces, rowIndex, csvRowsSize, percent);
-            
+            percentFeedback(rowKeyPlaces, rowIndex, csvRowsSize, percent);
+
         } //ends rows iteration
 
         if ( !resultKeyPlaces.isEmpty() ){
             System.out.println("100 %");
         }
-        
-        csvReader.closeAll();
+       
+        cSVReaderOD.closeAll();
         return resultKeyPlaces;
     }
 
-    private float percentFeedback(List<KeyPlace> rowKeyPlaces, int rowIndex, int csvRowsSize, float percent){
+    private void percentFeedback(List<KeyPlace> rowKeyPlaces, int rowIndex, int csvRowsSize, Float percent){
         if ( !rowKeyPlaces.isEmpty() ){
             NumberFormat formatter = new DecimalFormat("#0.00");
             float percentRead = ((( float ) rowIndex * 100) / ( float ) csvRowsSize);
-            
+
             if ( percent + 10 < percentRead ){
                 System.out.println(formatter.format(percentRead) + " %");
-                return percentRead;
+                percent = percentRead;
             }
         }
-        return percent;
     }
 
     private KeyPlace preencherKeyplace( int colIndex, int csvRowsSize,
@@ -347,11 +376,12 @@ public class KeyPlacesBo{
             Geometry geometry = new WKTReader().read(colValue);
             Envelope envelope = geometry.getEnvelopeInternal();
 
-            Place place = new Place(geometry);
+            Place place = new Place(new GeometryFactory().toGeometry(envelope));
             place.setMaxX(envelope.getMaxX());
             place.setMaxY(envelope.getMaxY());
             place.setMinX(envelope.getMinX());
             place.setMinY(envelope.getMinY());
+            place.setId(WKT_ID);
 
             return place;
         } catch ( ParseException | NullPointerException ex ){

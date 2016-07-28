@@ -5,12 +5,13 @@
  */
 package br.ifpb.simba.ourdata.test;
 
-import br.ifpb.simba.ourdata.entity.utils.KeyPlaceUtils;
+import br.ifpb.simba.ourdata.dao.ckan.CkanDataSetBdDao;
+import br.ifpb.simba.ourdata.dao.ckan.CkanResourceBdDao;
 import br.ifpb.simba.ourdata.dao.entity.KeyPlaceBdDao;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
+import br.ifpb.simba.ourdata.entity.utils.KeyPlaceUtils;
 import br.ifpb.simba.ourdata.reader.KeyPlacesBo;
 import br.ifpb.simba.ourdata.reader.TextColor;
-import eu.trentorise.opendata.jackan.CkanClient;
 import eu.trentorise.opendata.jackan.exceptions.JackanException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
@@ -19,54 +20,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 /**
  *
  * @author Wensttay
  */
-@Deprecated
-public class FinderKeyPlaceCSV{
+public class FinderKeyPlaceCSVOff{
 
     public static void main( String[] args ){
 
         KeyPlacesBo keyPlacesBo = new KeyPlacesBo(KeyPlacesBo.NUM_ROWS_CHECK_DEFAULT);
-        final String CATALOG_URL = "http://dados.gov.br/";
-
-        CkanClient ckanClient = new CkanClient(CATALOG_URL);
+        
+        CkanResourceBdDao resourceBdDao = new CkanResourceBdDao();
+        CkanDataSetBdDao dataSetBdDao = new CkanDataSetBdDao();
+        
         KeyPlaceBdDao keyWordBdDao = new KeyPlaceBdDao();
-        List<String> datasetNames = new ArrayList<>();
-
-        try{
-            datasetNames.addAll(ckanClient.getDatasetList());
-        } catch ( JackanException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        }
+        List<CkanDataset> datasets = new ArrayList<>();
 
         int keyWordsSaved = 0;
         int sucess = 0;
         int totalResources = 0;
         int csvResources = 0;
-
-//        Iterating dataset's names
-        int auxDatasetNamesSize = datasetNames.size();
-
-        for ( int i = 0; i < auxDatasetNamesSize; i++ ){
-            CkanDataset dataset = null;
+        
+        datasets.addAll(dataSetBdDao.getAll());
+        int datasetSize = datasets.size();
+        
+//        Iterating dataset's datasets
+        for ( int i = 74; i < 75; i++ ){
+            CkanDataset dataset = datasets.get(i);
             List<CkanResource> resources = new ArrayList<>();
-            try{
-                dataset = ckanClient.getDataset(datasetNames.get(i));
-                if ( dataset != null ){
-                    resources.addAll(dataset.getResources());
-                }
-            } catch ( JackanException ex ){
-                System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            }
+            resources.addAll(resourceBdDao.searchByDatasetId(dataset.getId()));
 
 //            Iterating resources
             int auxResourceSize = resources.size();
             for ( int j = 0; j < auxResourceSize; j++ ){
                 CkanResource currentResource = resources.get(j);
                 ++totalResources;
-                List<KeyPlace> keyWords = null;
+                List<KeyPlace> keyWords = new ArrayList<>();
 
                 try{
 //                    Verify if the type of resource is a 'CSV'
@@ -74,12 +64,12 @@ public class FinderKeyPlaceCSV{
                         csvResources++;
 
                         System.out.println("=====================================================================================");
-                        System.out.println("Index DataSet: " + i + " (" + datasetNames.get(i) + ")");
+                        System.out.println("Index DataSet: " + i + " (" + datasets.get(i).getName() + ")");
                         System.out.println("Resource_URL: " + resources.get(j).getUrl());
 
 //                        Instancie a list of KeyPlace with the KeyWords of CSV resource
                         //keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
-                        keyWords = keyPlacesBo.getKeyPlaces2(currentResource);
+                        keyWords.addAll(keyPlacesBo.getKeyPlaces2(currentResource));
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place

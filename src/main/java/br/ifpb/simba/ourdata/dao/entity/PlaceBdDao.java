@@ -177,7 +177,13 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
             }
             p.setSigla(sigla);
             p.setTipo(rs.getString("tipo"));
-            p.setWay(new WKTReader().read(rs.getString("geo")));
+
+            String way = rs.getString("geo");
+            
+            if ( way != null ){
+                p.setWay(new WKTReader().read(way));
+            }
+            
             p.setMaxX(rs.getDouble("maxx"));
             p.setMaxY(rs.getDouble("maxy"));
             p.setMinX(rs.getDouble("minx"));

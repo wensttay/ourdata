@@ -34,7 +34,11 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
 
     private static final int NUM_ROWS_CHECK_DEFAULT = 10;
     private int numRowsCheck;
+
+    private CSVReader cSVReader;
     private InputStream is;
+    private ByteArrayInputStream bais;
+    private InputStreamReader isr;
     private BufferedReader br;
 
     /**
@@ -70,7 +74,7 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
     public CSVReader getCSVReaderBuild( String url ) throws IOException{
         URL stackURL = new URL(url);
         stackURL.openConnection().setReadTimeout(120000);
-        InputStream is = stackURL.openStream();
+        is = stackURL.openStream();
         return getCSVReader(is);
     }
 
@@ -87,20 +91,42 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
     private CSVReader getCSVReader( InputStream is ) throws IOException{
         char separator, quote = 34;
         byte[] bytes = IOUtils.toByteArray(is);
-        List<String> lines = getLines(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.ISO_8859_1)));
+        
+        bais = new ByteArrayInputStream(bytes);
+        isr = new InputStreamReader(bais, StandardCharsets.ISO_8859_1);
+        br = new BufferedReader(isr);
+        List<String> lines = getLines(br);
+
         String first_line = lines.get(0);
         separator = getSeparator(first_line);
-        br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), StandardCharsets.ISO_8859_1));
-        return new CSVReader(br, separator, quote);
+
+        bais = new ByteArrayInputStream(bytes);
+        isr = new InputStreamReader(bais, StandardCharsets.ISO_8859_1);
+        br = new BufferedReader(isr);
+
+        cSVReader = new CSVReader(br, separator, quote);
+
+        return cSVReader;
     }
 
     public void closeAll() throws IOException{
+
+        if ( cSVReader != null ){
+            cSVReader.close();
+        }
         if ( br != null ){
             br.close();
+        }
+        if ( isr != null ){
+            isr.close();
+        }
+        if ( bais != null ){
+            bais.close();
         }
         if ( is != null ){
             is.close();
         }
+
     }
 
     /**

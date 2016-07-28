@@ -153,7 +153,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      *
      * @return A list of all CkanResource in JDBC
      */
-    public List<CkanResource> list(){
+    @Override
+    public List<CkanResource> getAll(){
         try{
             conectar();
             String sql = "SELECT * FROM resource";
@@ -163,13 +164,10 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             List<CkanResource> resources = new ArrayList<>();
 
             while ( rs.next() ){
-                CkanResource resource = new CkanResource();
-                resource.setId(rs.getString("id"));
-                resource.setDescription(rs.getString("description"));
-                resource.setFormat(rs.getString("format"));
-                resource.setUrl(rs.getString("url"));
-                resource.setPackageId(rs.getString("id_dataset"));
-                resources.add(resource);
+                CkanResource resource = fill(rs);
+                if ( resource != null ){
+                    resources.add(resource);
+                }
             }
             return resources;
 
@@ -179,6 +177,58 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             desconectar();
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * This method return a java.util.List; with all the CkanResource inserted
+     * in JDBC
+     *
+     * @return A list of all CkanResource in JDBC with Dataset id
+     *
+     * @param id Id of Dataset father that wants search
+     */
+    public List<CkanResource> searchByDatasetId( String id ){
+        try{
+            conectar();
+            String sql = "SELECT * FROM resource WHERE id_dataset = ?";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            int i = 1;
+            ps.setString(i++, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            List<CkanResource> resources = new ArrayList<>();
+
+            while ( rs.next() ){
+                CkanResource resource = fill(rs);
+                if ( resource != null ){
+                    resources.add(resource);
+                }
+            }
+            return resources;
+
+        } catch ( SQLException | URISyntaxException | IOException | ClassNotFoundException ex ){
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally{
+            desconectar();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public CkanResource fill( ResultSet rs ){
+        try{
+            CkanResource resource = new CkanResource();
+            resource.setId(rs.getString("id"));
+            resource.setDescription(rs.getString("description"));
+            resource.setFormat(rs.getString("format"));
+            resource.setUrl(rs.getString("url"));
+            resource.setPackageId(rs.getString("id_dataset"));
+            return resource;
+        } catch ( SQLException ex ){
+            ex.printStackTrace();
+        }
+        return null;
     }
 
 }
