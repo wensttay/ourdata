@@ -46,10 +46,10 @@ public class FinderKeyPlaceCSVOff{
         int datasetSize = datasets.size();
         
 //        Iterating dataset's datasets
-        for ( int i = 74; i < 75; i++ ){
-            CkanDataset dataset = datasets.get(i);
+        for ( int i = 2; i < 3; i++ ){
+            CkanDataset currentDataset = datasets.get(i);
             List<CkanResource> resources = new ArrayList<>();
-            resources.addAll(resourceBdDao.searchByDatasetId(dataset.getId()));
+            resources.addAll(resourceBdDao.searchByDatasetId(currentDataset.getId()));
 
 //            Iterating resources
             int auxResourceSize = resources.size();
@@ -69,7 +69,7 @@ public class FinderKeyPlaceCSVOff{
 
 //                        Instancie a list of KeyPlace with the KeyWords of CSV resource
                         //keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
-                        keyWords.addAll(keyPlacesBo.getKeyPlaces2(currentResource));
+                        keyWords.addAll(keyPlacesBo.getKeyPlaces2(currentResource, currentDataset));
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place

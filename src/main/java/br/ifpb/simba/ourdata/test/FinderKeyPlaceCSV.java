@@ -48,12 +48,12 @@ public class FinderKeyPlaceCSV{
         int auxDatasetNamesSize = datasetNames.size();
 
         for ( int i = 69; i < auxDatasetNamesSize; i++ ){
-            CkanDataset dataset = null;
+            CkanDataset currentDataset = null;
             List<CkanResource> resources = new ArrayList<>();
             try{
-                dataset = ckanClient.getDataset(datasetNames.get(i));
-                if ( dataset != null ){
-                    resources.addAll(dataset.getResources());
+                currentDataset = ckanClient.getDataset(datasetNames.get(i));
+                if ( currentDataset != null ){
+                    resources.addAll(currentDataset.getResources());
                 }
             } catch ( JackanException ex ){
                 System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
@@ -77,7 +77,7 @@ public class FinderKeyPlaceCSV{
 
 //                        Instancie a list of KeyPlace with the KeyWords of CSV resource
                         //keyWords = csv.getKeyPlaces(resources.get(j).getId(), resources.get(j).getUrl());
-                        keyWords = keyPlacesBo.getKeyPlaces2(currentResource);
+                        keyWords = keyPlacesBo.getKeyPlaces2(currentResource,currentDataset);
                         keyWords = KeyPlaceUtils.getLiteVersion(keyWords);
 
 //                        Print a KeyPlace name and Number of repeat cases with de same place
