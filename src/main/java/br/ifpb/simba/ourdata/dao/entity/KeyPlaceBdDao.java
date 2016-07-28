@@ -53,13 +53,15 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
     @Override
     public boolean insert( KeyPlace obj ){
         int x = 0;
+        PreparedStatement ps = null;
+        boolean result;
         try{
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE,");
             sql.append("REPEAT_NUMBER, ROWS_NUMBER, METADATA_CREATED, WAY, minX, minY, maxX, maxY, ID_PLACE, ID_RESOURCE)");
             sql.append("VALUES(?, ?, ?, ?, ?, ST_GeomFromText(?), ?, ?, ?, ?, ?, ?)");
-            PreparedStatement ps = getConnection().prepareStatement(sql.toString());
-
+            ps = getConnection().prepareStatement(sql.toString());
+            
             int i = 1;
             ps.setInt(i++, obj.getColumNumber());
             ps.setString(i++, obj.getColumValue());
@@ -75,13 +77,19 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
             ps.setInt(i++, obj.getPlace().getId());
             ps.setString(i++, obj.getIdResource());
 
-            return (ps.executeUpdate() != 0);
+            result = (ps.executeUpdate() != 0);
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            return false;
-        } finally{
+            result = false;
+        } 
+        try {
+            ps.close();
             desconectar();
+        } catch (Exception ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         }
+        
+        return result;
     }
 
     /**

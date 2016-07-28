@@ -72,16 +72,6 @@ public class KeyPlace{
     }
 
     /**
-     * Representation of this KeyPlace on String formate
-     *
-     * @return String with all values into this KeyPlace
-     */
-    @Override
-    public String toString(){
-        return "KeyWord{" + "repeatNumber=" + getRepeatNumber() + ", rowsNumber=" + getRowsNumber() + ", columName=" + getColumNumber() + ", columValue=" + getColumValue() + ", metadataCreated=" + getMetadataCreated() + ", idResource=" + getIdResource() + '}';
-    }
-
-    /**
      * Instancie a comparator usign a Name's KeyPlace
      * <p>
      */
@@ -91,6 +81,16 @@ public class KeyPlace{
             return s1.getPlace().getNome().compareTo(s2.getPlace().getNome());
         }
     };
+
+    /**
+     * Representation of this KeyPlace on String formate
+     *
+     * @return String with all values into this KeyPlace
+     */
+    @Override
+    public String toString() {
+        return "KeyPlace{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columNumber=" + columNumber + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=" + place.toString() + '}';
+    }
 
     /**
      * @return the repeatNumber

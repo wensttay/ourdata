@@ -40,10 +40,9 @@ public class Place{
      * @return String with all values into this Place
      */
     @Override
-    public String toString(){
-        return "Place{" + "id=" + id + ", nome=" + nome + ", sigla=" + sigla + ", tipo=" + tipo + ", minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY + '}';
+    public String toString() {
+        return "Place{" + "id=" + id + ", nome=" + nome + ", sigla=" + sigla + ", tipo=" + tipo + ", way=" + way + ", minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY + '}';
     }
-
     /**
      * @return the id
      */

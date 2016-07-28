@@ -99,7 +99,11 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
 
         String first_line = lines.get(0);
         separator = getSeparator(first_line);
-
+        
+        bais.close();
+        isr.close();
+        br.close();
+        
         bais = new ByteArrayInputStream(bytes);
         isr = new InputStreamReader(bais, StandardCharsets.ISO_8859_1);
         br = new BufferedReader(isr);
@@ -196,8 +200,8 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
     @Override
     public List<String[]> build( String url ){
         try{
-            CSVReader reader = getCSVReaderBuild(url);
-            return reader.readAll();
+            cSVReader = getCSVReaderBuild(url);
+            return cSVReader.readAll();
         } catch ( IOException ex ){
             TestReaderCSV.error_count++;
             System.out.println(TextColor.ANSI_RED.getCode() + "Error: Couldn't open the URL [" + TestReaderCSV.error_count + "]" + TextColor.ANSI_BLACK.getCode());
