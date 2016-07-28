@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.entity.Place;
@@ -19,22 +18,22 @@ import java.util.List;
  *
  * @author Wensttay, kieckegard
  */
-public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
+public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
+
     /**
-     * This constructor create a KeyPlaceBdDao using the default
-     * properties_path
+     * This constructor create a KeyPlaceBdDao using the default properties_path
      * 'PROPERTIES_PATH_DEFAULT' to JDBC connection
      */
-    public PlaceBdDao(){
+    public PlaceBdDao() {
     }
 
     /**
-     * This constructor create a PlaceBdDao using the properties_path
-     * passed to JDBC connection
+     * This constructor create a PlaceBdDao using the properties_path passed to
+     * JDBC connection
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public PlaceBdDao( String properties_path ){
+    public PlaceBdDao(String properties_path) {
         super.setProperties_path(properties_path);
     }
 
@@ -47,36 +46,35 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert( Place obj ){
+    public boolean insert(Place obj) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
-     * This method return a java.util.List; with all the Place inserted
-     * in JDBC
+     * This method return a java.util.List; with all the Place inserted in JDBC
      *
      * @return A list of all Place in JDBC
      */
     @Override
-    public List<Place> getAll(){
+    public List<Place> getAll() {
         List<Place> places = new ArrayList<>();
-        try{
+        try {
             conectar();
             String sql = "SELECT *, ST_AsText(way) as geo FROM place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-
-            while ( rs.next() ){
+            
+            while (rs.next()) {
                 Place p = preencherObjeto(rs);
-                if ( p != null ){
+                if (p != null) {
                     places.add(p);
                 }
             }
             return places;
-
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+            
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return places;
@@ -92,33 +90,33 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
      *
      * @return A list with all Places with name or sigla equals(titulo)
      */
-    public Place burcarPorTitulos( String titulo, String tipo ){
-        try{
+    public Place burcarPorTitulos(String titulo, String tipo) {
+        try {
             conectar();
             StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE (nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?) AND (tipo ILIKE ?)");
-
+            
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
             ps.setString(i++, tipo);
-
+            
             ResultSet rs = ps.executeQuery();
-
+            
             Place p = null;
-
-            if ( rs.next() ){
+            
+            if (rs.next()) {
                 p = preencherObjeto(rs);
             }
-
+            
             return p;
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
-
+        
         return null;
     }
 
@@ -130,8 +128,8 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
      *
      * @return A list with all Places with name or sigla equals(titulo)
      */
-    public List<Place> burcarPorTitulos( String titulo ){
-        try{
+    public List<Place> burcarPorTitulos(String titulo) {
+        try {
             conectar();
             StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?");
@@ -139,23 +137,23 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
-
+            
             ResultSet rs = ps.executeQuery();
             List<Place> places = new ArrayList<>();
-            while ( rs.next() ){
+            while (rs.next()) {
                 Place p = preencherObjeto(rs);
-                if ( p != null ){
+                if (p != null) {
                     places.add(p);
                 }
             }
-
+            
             return places;
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
-
+        
         return new ArrayList<>();
     }
 
@@ -166,18 +164,17 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
      *
      * @return A new Place with ResulSet's Values
      */
-    private Place preencherObjeto( ResultSet rs ){
-        try{
+    private Place preencherObjeto(ResultSet rs) {
+        try {
             Place p = new Place();
             p.setId(rs.getInt("id"));
             p.setNome(rs.getString("nome"));
             String sigla = rs.getString("sigla");
-            if ( sigla == null ){
+            if (sigla == null) {
                 p.setSigla("");
             }
             p.setSigla(sigla);
             p.setTipo(rs.getString("tipo"));
-
             String way = rs.getString("geo");
             
             if ( way != null ){
@@ -189,7 +186,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String>{
             p.setMinX(rs.getDouble("minx"));
             p.setMinY(rs.getDouble("miny"));
             return p;
-        } catch ( SQLException | ParseException ex ){
+        } catch (SQLException | ParseException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         }
         return null;
