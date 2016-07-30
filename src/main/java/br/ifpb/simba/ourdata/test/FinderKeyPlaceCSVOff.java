@@ -45,7 +45,7 @@ public class FinderKeyPlaceCSVOff{
         int datasetSize = datasets.size();
         
 //        Iterating dataset's datasets
-        for ( int i = 66; i < datasetSize; i++ ){
+        for ( int i = 0; i < datasetSize; i++ ){
             CkanDataset currentDataset = datasets.get(i);
             List<CkanResource> resources = new ArrayList<>();
             resources.addAll(resourceBdDao.searchByDatasetId(currentDataset.getId()));
