@@ -45,9 +45,11 @@ public class SearchResourceControll extends HttpServlet{
 
         //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
+        request.setAttribute("size",itensSearch.size());
+        request.setAttribute("nameOfPlace",nameOfPlace);
 
         ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher("/index.jsp");
+        RequestDispatcher rd = sc.getRequestDispatcher("/result.jsp");
         rd.forward(request, response);
 
     }

@@ -15,5 +15,18 @@
 .tittle a{
 	font-family: snaphand;
 	color: skyblue;
-	font-size: 50px !important;
+	font-size: 40px !important;
+}
+
+.skyblue {
+	color: skyblue;
+}
+
+.border-skyblue:focus{
+	border-color: skyblue !important;
+}
+
+
+.white thead tr th, .white tbody tr, .white{
+	color : #fff;
 }
