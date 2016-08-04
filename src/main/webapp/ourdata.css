@@ -1,0 +1,19 @@
+.dark-select option {
+	color: #333;
+}
+
+.background{
+	background-image: url(images/stardust.png);
+	background-repeat: repeat;
+}
+
+@font-face {
+    font-family: snaphand;
+    src: url(fonts/snaphand-v1-free.ttf);
+}
+
+.tittle a{
+	font-family: snaphand;
+	color: skyblue;
+	font-size: 50px !important;
+}
