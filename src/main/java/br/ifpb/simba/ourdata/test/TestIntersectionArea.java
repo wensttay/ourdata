@@ -53,6 +53,6 @@ public class TestIntersectionArea{
 
 //        RDF
 //        Sparkl
-//                      OWL
+//        OWL
     }
 }

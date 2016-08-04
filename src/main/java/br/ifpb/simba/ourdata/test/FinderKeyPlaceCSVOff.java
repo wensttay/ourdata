@@ -18,21 +18,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
  *
  * @author Wensttay
  */
-public class FinderKeyPlaceCSVOff{
+public class FinderKeyPlaceCSVOff {
 
-    public static void main( String[] args ){
+    public static void main(String[] args) {
 
         KeyPlacesBo keyPlacesBo = new KeyPlacesBo(KeyPlacesBo.NUM_ROWS_CHECK_DEFAULT);
-        
+
         CkanResourceBdDao resourceBdDao = new CkanResourceBdDao();
         CkanDataSetBdDao dataSetBdDao = new CkanDataSetBdDao();
-        
+
         KeyPlaceBdDao keyWordBdDao = new KeyPlaceBdDao();
         List<CkanDataset> datasets = new ArrayList<>();
 
@@ -40,26 +38,26 @@ public class FinderKeyPlaceCSVOff{
         int sucess = 0;
         int totalResources = 0;
         int csvResources = 0;
-        
+
         datasets.addAll(dataSetBdDao.getAll());
         int datasetSize = datasets.size();
-        
+
 //        Iterating dataset's datasets
-        for ( int i = 0; i < datasetSize; i++ ){
+        for ( int i = 258; i < datasetSize; i++ ){
             CkanDataset currentDataset = datasets.get(i);
             List<CkanResource> resources = new ArrayList<>();
             resources.addAll(resourceBdDao.searchByDatasetId(currentDataset.getId()));
 
 //            Iterating resources
             int auxResourceSize = resources.size();
-            for ( int j = 0; j < auxResourceSize; j++ ){
+            for (int j = 0; j < auxResourceSize; j++) {
                 CkanResource currentResource = resources.get(j);
                 ++totalResources;
                 List<KeyPlace> keyWords = new ArrayList<>();
 
-                try{
+                try {
 //                    Verify if the type of resource is a 'CSV'
-                    if ( resources.get(j).getFormat().equals("CSV") ){
+                    if (resources.get(j).getFormat().equals("CSV")) {
                         csvResources++;
 
                         System.out.println("=====================================================================================");
@@ -77,7 +75,13 @@ public class FinderKeyPlaceCSVOff{
 //                            System.out.println(keyWord.getPlace().getNome() + " | Repetiu: " + keyWord.getRepeatNumber() + " Vezes");
 //                        }
 //                        Insert all the CSV's KeyPlace into DataBase
-                        if ( keyWordBdDao.insertAll(keyWords) && !keyWords.isEmpty() ){
+                        if (!keyWords.isEmpty()) {
+                            System.out.println("Inserindo KeyWorks ...");
+                        } else {
+                            System.out.println("Nenhuma KeyWork foi encontrada!");
+                        }
+
+                        if (!keyWords.isEmpty() && keyWordBdDao.insertAll(keyWords)) {
                             sucess++;
                             keyWordsSaved += keyWords.size();
                             System.out.println("Sucess: " + sucess);
@@ -86,7 +90,7 @@ public class FinderKeyPlaceCSVOff{
                             System.out.println("Total de KeyWords salvos no Banco: " + keyWordsSaved);
                         }
                     }
-                } catch ( IOException | OutOfMemoryError ex ){
+                } catch (IOException | OutOfMemoryError ex) {
                     System.out.println(TextColor.ANSI_RED.getCode() + " " + ex.getMessage());
                 }
             }

@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.entity.Place;
@@ -23,22 +22,22 @@ import java.util.logging.Logger;
  *
  * @author Wensttay, kieckegard
  */
-public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
+public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
+
     /**
-     * This constructor create a KeyPlaceBdDao using the default
-     * properties_path
+     * This constructor create a KeyPlaceBdDao using the default properties_path
      * 'PROPERTIES_PATH_DEFAULT' to JDBC connection.
      */
-    public KeyPlaceBdDao(){
+    public KeyPlaceBdDao() {
     }
 
     /**
-     * This constructor create a KeyPlaceBdDao using the properties_path
-     * passed to JDBC connection
+     * This constructor create a KeyPlaceBdDao using the properties_path passed
+     * to JDBC connection
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public KeyPlaceBdDao( String properties_path ){
+    public KeyPlaceBdDao(String properties_path) {
         super.setProperties_path(properties_path);
     }
 
@@ -50,18 +49,39 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
      * @return A boolean that means: true = inserted with sucess, false = not
      * insert with sucess or inserssion is not possible.
      */
+    
+    public boolean conectAndInsert(KeyPlace obj){
+        
+        boolean result;
+        
+        try {
+            conectar();
+            result = insert(obj);
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            result = false;
+        }
+        
+        try {
+            desconectar();
+        } catch (Exception ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        }
+        
+        return result;
+    }
+    
     @Override
-    public boolean insert( KeyPlace obj ){
-        int x = 0;
+    public boolean insert(KeyPlace obj) {
         PreparedStatement ps = null;
         boolean result;
-        try{
-            conectar();
+        
+        try {
             StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE,");
             sql.append("REPEAT_NUMBER, ROWS_NUMBER, METADATA_CREATED, WAY, minX, minY, maxX, maxY, ID_PLACE, ID_RESOURCE)");
             sql.append("VALUES(?, ?, ?, ?, ?, ST_GeomFromText(?), ?, ?, ?, ?, ?, ?)");
             ps = getConnection().prepareStatement(sql.toString());
-            
+
             int i = 1;
             ps.setInt(i++, obj.getColumNumber());
             ps.setString(i++, obj.getColumValue());
@@ -78,67 +98,67 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
             ps.setString(i++, obj.getIdResource());
 
             result = (ps.executeUpdate() != 0);
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            System.out.println(TextColor.ANSI_RED.getCode() + "Já existe no banco");
             result = false;
-        } 
+        }
         try {
             ps.close();
-            desconectar();
         } catch (Exception ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         }
-        
+
         return result;
     }
 
     /**
-     * This method return a java.util.List; with all the KeyPlace inserted
-     * in JDBC
+     * This method return a java.util.List; with all the KeyPlace inserted in
+     * JDBC
      *
      * @return A list of all KeyPlace in JDBC
      */
     @Override
-    public List<KeyPlace> getAll(){
+    public List<KeyPlace> getAll() {
         List<KeyPlace> places = new ArrayList<>();
 
-        try{
+        try {
             conectar();
             String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
-            while ( rs.next() ){
+            while (rs.next()) {
                 KeyPlace p = preencherObjeto(rs);
-                if ( p != null ){
+                if (p != null) {
                     places.add(p);
                 }
             }
 
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return places;
     }
 
-    public List<KeyPlace> getKeyPlacesFromResourceId( String id ){
+    public List<KeyPlace> getKeyPlacesFromResourceId(String id) {
         String sql = "SELECT * FROM Resource_Place WHERE id_resource = ?";
         List<KeyPlace> keyPlaces = new ArrayList<>();
 
-        try{
+        try {
             PreparedStatement pstm = getConnection().prepareStatement(sql);
             pstm.setString(1, id);
 
             ResultSet rs = pstm.executeQuery();
 
-            while ( rs.next() ){
+            while (rs.next()) {
                 KeyPlace kp = preencherObjeto(rs);
                 keyPlaces.add(kp);
             }
             return keyPlaces;
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return keyPlaces;
@@ -151,8 +171,8 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
      *
      * @return A new KeyPlace with ResulSet's Values
      */
-    private KeyPlace preencherObjeto( ResultSet rs ){
-        try{
+    private KeyPlace preencherObjeto(ResultSet rs) {
+        try {
             KeyPlace kw = new KeyPlace();
             kw.setColumNumber(rs.getInt("COLUM_NUMBER"));
             kw.setColumValue(rs.getString("COLUM_VALUE"));
@@ -163,7 +183,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
 
             Place place = new Place();
             place.setWay(new WKTReader().read(rs.getString("geo")));
-            place.setWay(( Geometry ) rs.getObject("WAY"));
+            place.setWay((Geometry) rs.getObject("WAY"));
             place.setId(rs.getInt("ID_PLACE"));
             place.setMaxX(rs.getDouble("maxx"));
             place.setMaxY(rs.getDouble("maxy"));
@@ -172,7 +192,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
             kw.setPlace(place);
 
             return kw;
-        } catch ( SQLException | ParseException ex ){
+        } catch (SQLException | ParseException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return null;
         }
@@ -185,20 +205,45 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer>{
      *
      * @return
      */
-    public boolean insertAll( List<KeyPlace> listKeyWords ){
-        try{
+    public boolean insertAll(List<KeyPlace> listKeyWords) {
+        long size = listKeyWords.size();
+        long count = 0;
+        float porcent = 0;
+        float oldPorcent = 0;
+        
+        try {
             conectar();
-            for ( KeyPlace keyWord : listKeyWords ){
-                insert(keyWord);
-            }
-            return true;
-
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (Exception ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
-        } finally{
-            desconectar();
         }
+        
+        for (KeyPlace keyWord : listKeyWords) {
+            if(insert(keyWord)){
+                System.out.println("Inserido Com Sucesso");
+            }
+            
+            count++;
+            porcent = (count * 100) / size;
+            
+            if (porcent > oldPorcent + 10) {
+                oldPorcent = porcent;
+                System.out.println(porcent + " %");
+            }
+        }
+        
+        if (!listKeyWords.isEmpty()) {
+            System.out.println("100.0 %");
+        }
+        
+        try {
+            desconectar();
+        } catch (Exception ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            return false;
+        }
+        
+        return true;
     }
 
 }
