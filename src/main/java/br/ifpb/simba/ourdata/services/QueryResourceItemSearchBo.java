@@ -9,6 +9,9 @@ import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
 import br.ifpb.simba.ourdata.entity.utils.PlaceUtils;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,11 +20,12 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class QueryResourceItemSearchBo{
-    private QueryPlaceBo queryPlaceBo;
-    private QueryResourceBo queryResourceBo;
+public class QueryResourceItemSearchBo {
+    
+    private final QueryPlaceBo queryPlaceBo;
+    private final QueryResourceBo queryResourceBo;
 
-    public QueryResourceItemSearchBo(){
+    public QueryResourceItemSearchBo() {
         queryPlaceBo = new QueryPlaceBo();
         queryResourceBo = new QueryResourceBo();
     }
@@ -29,20 +33,34 @@ public class QueryResourceItemSearchBo{
     public List<ResourceItemSearch> getResourceItemSearchSortedByRank( String placeName, String placeType ){
 
         Place resultPlace = queryPlaceBo.getPlacesByName(placeName, placeType);
-
+        return getResourceItemSearchSortedByRank(resultPlace);  
+    }
+    
+    public List<ResourceItemSearch> getResourceItemSearchSortedByRank(Envelope envelope) {
+        
+        GeometryFactory fac = new GeometryFactory();
+        Geometry geometry = fac.toGeometry(envelope);
+        Place place = new Place();
+        place.setWay(geometry);
+        
+        return getResourceItemSearchSortedByRank(place);    
+    }
+    
+    private List<ResourceItemSearch> getResourceItemSearchSortedByRank(Place place) {
+        
         List<Resource> resources = new ArrayList<>();
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
 
-        if ( resultPlace != null ){
+        if ( place != null ) {
 
             //Todos os recursos cuja geometria intersectou com o lugar passado por parâmetro são adicionados nessa lista.
-            resources.addAll(queryResourceBo.listResourcesIntersectedBy(resultPlace));
+            resources.addAll(queryResourceBo.listResourcesIntersectedBy(place));
 
-            for ( Resource resource : resources ){
+            for ( Resource resource : resources ) {
                 double repeatPercent = resource.getRepeatPercent(0.2f);
-                double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), resultPlace, 0.8f) * 0.8f;
+                double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
                 double rankingPercent = repeatPercent + overlapPercent;
-//                System.out.println("Overlap percent: "+overlapPercent+"\n");
+                //System.out.println("Overlap percent: "+overlapPercent+"\n");
 
                 ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent);
                 itensSearch.add(itemSearch);
@@ -52,4 +70,6 @@ public class QueryResourceItemSearchBo{
         Collections.sort(itensSearch);
         return itensSearch;
     }
+    
+    
 }

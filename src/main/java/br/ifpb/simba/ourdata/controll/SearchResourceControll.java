@@ -7,6 +7,11 @@ package br.ifpb.simba.ourdata.controll;
 
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
 import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
+import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -36,20 +41,30 @@ public class SearchResourceControll extends HttpServlet{
      */
     protected void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
 
-        String nameOfPlace = request.getParameter("nameOfPlace");
-        String typeOfPlace = request.getParameter("typeOfPlace");
+        //String nameOfPlace = request.getParameter("nameOfPlace");
+        //String typeOfPlace = request.getParameter("typeOfPlace");
 
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
 
-        List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
-
-        //passando a lista de ResourceItemSearch para o JSP
+        //List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
+       
+        //request.setAttribute("nameOfPlace",nameOfPlace);
+        
+        double maxx = Double.parseDouble(request.getParameter("maxx"));
+        double minx = Double.parseDouble(request.getParameter("maxx"));
+        double maxy = Double.parseDouble(request.getParameter("maxy"));
+        double miny = Double.parseDouble(request.getParameter("miny"));
+        
+        Envelope envelope = new Envelope(maxx,minx,maxy,miny);
+        
+        List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(envelope);
+        
+        
+         //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
         request.setAttribute("size",itensSearch.size());
-        request.setAttribute("nameOfPlace",nameOfPlace);
-
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher("/result.jsp");
+        
+        RequestDispatcher rd = request.getRequestDispatcher("/result.jsp");
         rd.forward(request, response);
 
     }

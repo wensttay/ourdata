@@ -31,34 +31,14 @@
                     OurData
                 </a>
             </h1>
-            <form method="GET" action="SearchResources">
-            <nav class="nav">
+
+            <nav id="nav">
                 <ul>
-                   
-                    <li>
-                        <div class="select-wrapper">
-                            <select class="border-skyblue dark-select" name="typeOfPlace" required>
-                                <%
-                                    for (PlaceType placeType : PlaceType.values()) {
-                                %>
-                                <option value="<%=placeType.getNameToBd()%>"><%=placeType.getNameToUser()%></option>
-                                <%
-                                    }
-                                %>
-                            </select>
-                        </div>
-                    </li>
-                    <li style="width: 400px;">
-                        <input class="border-skyblue" name="nameOfPlace" type="text" placeholder="Place Name" required>
-                    </li>
-                    <li>
-                        <button type="submit" class="button alt">Search <i class="fa fa-search" aria-hidden="true"></i></button>
-                    </li>
-                    
+                    <li><a href="index_2.html#pac-input">Search</a></li>
+                    <li><a href="generic.html">About</a></li>
+                    <li><a href="index_2.html#footer">Contact</a></li>
                 </ul>
-                            
             </nav>
-            </form>
         </header>
 
 
@@ -92,11 +72,13 @@
                         </tr> -->
                         <%
                             List<ResourceItemSearch> pageResources = (ArrayList) request.getAttribute("resourseList");
-                            if (pageResources == null) {
+                            if (pageResources == null)
+                            {
                                 pageResources = new ArrayList<>();
                             }
                             int count = 0;
-                            for (ResourceItemSearch resource : pageResources) {
+                            for (ResourceItemSearch resource : pageResources)
+                            {
                                 count++;
                         %>
                         <tr>    
