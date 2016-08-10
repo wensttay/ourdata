@@ -80,12 +80,12 @@ function drawRectangleByViewport(viewport) {
     updateHiddenInputs(maxx, minx, maxy, miny);
 
     // Verifica se já existe um infoWindow, se sim, vai fechar. 
-    if (infoWindow !== null)
+    if (infoWindow != null)
         infoWindow.close();
     // Instancia um infoWindow
     infoWindow = new google.maps.InfoWindow();
 
-    if (rectangle !== null)
+    if (rectangle != null)
         rectangle.setMap(null);
 
     drawRectangleByRect(maxx, minx, maxy, miny);
