@@ -42,6 +42,11 @@ public class QueryResourceItemSearchBo {
         Geometry geometry = fac.toGeometry(envelope);
         Place place = new Place();
         place.setWay(geometry);
+        place.setMaxX(envelope.getMaxX());
+        place.setMinX(envelope.getMinX());
+        place.setMaxY(envelope.getMaxY());
+        place.setMinY(envelope.getMinY());
+        
         
         return getResourceItemSearchSortedByRank(place);    
     }

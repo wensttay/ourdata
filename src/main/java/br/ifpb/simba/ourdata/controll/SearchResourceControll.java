@@ -51,7 +51,7 @@ public class SearchResourceControll extends HttpServlet{
         //request.setAttribute("nameOfPlace",nameOfPlace);
         
         double maxx = Double.parseDouble(request.getParameter("maxx"));
-        double minx = Double.parseDouble(request.getParameter("maxx"));
+        double minx = Double.parseDouble(request.getParameter("minx"));
         double maxy = Double.parseDouble(request.getParameter("maxy"));
         double miny = Double.parseDouble(request.getParameter("miny"));
         
