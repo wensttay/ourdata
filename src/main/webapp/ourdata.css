@@ -2,10 +2,10 @@
 	color: #333;
 }
 
-/*.background{
+.background{
 	background-image: url(images/stardust.png);
 	background-repeat: repeat;
-} */
+} 
 
 @font-face {
     font-family: snaphand;
