@@ -26,7 +26,7 @@
         <!-- Header -->
         <header id="header">
             <h1 class="tittle" >
-                <a href="index.jsp">
+                <a href="index.html">
                     <img src="images/OurData.png" alt="Logo" width="40" height="40" style="margin: 5px 20px 0 5px;">
                     OurData
                 </a>
@@ -45,13 +45,13 @@
         <!-- Table -->
         <section id="main" class="main" style="width: 80%; margin: 0px auto; margin-top: 200px;">
             <c:if test="${requestScope.size > 0}">
-                <h3 class="white">We Found <span class="skyblue">${requestScope.size}</span> resources about "${requestScope.nameOfPlace}"!</h3>
+                <h3 >We Found <span class="skyblue">${requestScope.size}</span> resources about "${requestScope.nameOfPlace}"!</h3>
             </c:if>
             <c:if test="${requestScope.size == 0}">
-                <h3 class="white"> There's no resources about "${requestScope.nameOfPlace}"!</h3>
+                <h3 > There's no resources about "${requestScope.nameOfPlace}"!</h3>
             </c:if>
             <div class="table-wrapper">
-                <table class="white">
+                <table>
                     <thead>
                         <tr>
                             <th>#</th>
