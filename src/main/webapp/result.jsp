@@ -26,7 +26,7 @@
         <!-- Header -->
         <header id="header">
             <h1 class="tittle" >
-                <a href="index.jsp">
+                <a href="index.html">
                     <img src="images/OurData.png" alt="Logo" width="40" height="40" style="margin: 5px 20px 0 5px;">
                     OurData
                 </a>
@@ -34,9 +34,9 @@
 
             <nav id="nav">
                 <ul>
-                    <li><a href="index_2.html#pac-input">Search</a></li>
+                    <li><a href="index.html#pac-input">Search</a></li>
                     <li><a href="generic.html">About</a></li>
-                    <li><a href="index_2.html#footer">Contact</a></li>
+                    <li><a href="index.html#footer">Contact</a></li>
                 </ul>
             </nav>
         </header>
@@ -95,6 +95,42 @@
                 </table>
             </div>
         </section>
+
+        <!-- Footer -->
+        <footer id="footer" style="margin-top: 50px;">
+            <div class="container">
+                <div class="row">
+
+                    <section class="4u 12u(medium) 12u(small)">
+                        <h3>Contact Us</h3>
+                        <ul class="icons">
+                            <li><a href="#" class="icon rounded fa-twitter"><span class="label">Twitter</span></a></li>
+                            <li><a href="#" class="icon rounded fa-facebook"><span class="label">Facebook</span></a></li>
+                            <li><a href="#" class="icon rounded fa-google-plus"><span class="label">Google+</span></a></li>
+                            <li><a href="#" class="icon rounded fa-linkedin"><span class="label">LinkedIn</span></a></li>
+                        </ul>
+                        <ul class="tabular">
+                            <li>
+                                <h3>Address</h3>
+                                1234 Somewhere Road<br>
+                                Nashville, TN 00000
+                            </li>
+                            <li>
+                                <h3>Mail</h3>
+                                <a href="#">someone@untitled.com</a>
+                            </li>
+                            <li>
+                                <h3>Phone</h3>
+                                (99) 99999-9999
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+                <ul class="copyright">
+                    <li>&copy; Untitled. All rights reserved.</li>
+                </ul>
+            </div>
+        </footer>
 
     </body>
 </html>
