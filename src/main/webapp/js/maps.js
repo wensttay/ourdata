@@ -212,8 +212,6 @@ function initialize() {
     initSearchBox();
 }
 
-
-
 //carrega o script do google maps
 function loadScript() {
     var myKey = "AIzaSyDgesfzerpawSKDeYXdMBNRudZMKrVe5zE";

@@ -1,9 +1,10 @@
 .dark-select option {
-	color: #333;
+	color: white;
 }
 
 .background{
-	background-image: url(images/stardust.png);
+	/*background-image: url(images/stardust.png);*/
+        background-color: white;
 	background-repeat: repeat;
 } 
 
