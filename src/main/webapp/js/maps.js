@@ -66,6 +66,7 @@ function initSearchBox() {
         map_ref.fitBounds(viewport);
 
         drawRectangleByViewport(viewport);
+        updateHiddenPlaceName();
     });
 }
 
@@ -168,6 +169,10 @@ function updateHiddenInputs(maxx, minx, maxy, miny) {
     $('input[name=minx]').val(minx);
     $('input[name=maxy]').val(maxy);
     $('input[name=miny]').val(miny);
+}
+
+function updateHiddenPlaceName() {
+    $('input[name=placeName]').val($("#pac-input").val());
 }
 
 //função que constrói o mapa

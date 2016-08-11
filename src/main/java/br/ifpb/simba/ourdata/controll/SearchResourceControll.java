@@ -40,6 +40,8 @@ public class SearchResourceControll extends HttpServlet{
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
+        
+        request.setCharacterEncoding("UTF-8");
 
         //String nameOfPlace = request.getParameter("nameOfPlace");
         //String typeOfPlace = request.getParameter("typeOfPlace");
@@ -54,6 +56,7 @@ public class SearchResourceControll extends HttpServlet{
         double minx = Double.parseDouble(request.getParameter("minx"));
         double maxy = Double.parseDouble(request.getParameter("maxy"));
         double miny = Double.parseDouble(request.getParameter("miny"));
+        String placeName = request.getParameter("placeName");
         
         Envelope envelope = new Envelope(maxx,minx,maxy,miny);
         
@@ -63,6 +66,7 @@ public class SearchResourceControll extends HttpServlet{
          //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
         request.setAttribute("size",itensSearch.size());
+        request.setAttribute("nameOfPlace",placeName);
         
         RequestDispatcher rd = request.getRequestDispatcher("/result.jsp");
         rd.forward(request, response);
