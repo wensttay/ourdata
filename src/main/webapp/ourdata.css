@@ -13,11 +13,12 @@
     src: url(fonts/snaphand-v1-free.ttf);
 }*/
 
-/*.tittle a{
-	font-family: snaphand;
-	color: skyblue;
+
+.tittle a{
+	/*font-family: snaphand;*/
+	color: black;
 	font-size: 40px !important;
-}*/
+}
 
 .skyblue {
 	color: skyblue;
