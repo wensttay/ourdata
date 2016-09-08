@@ -7,15 +7,10 @@ package br.ifpb.simba.ourdata.controll;
 
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
 import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -59,7 +54,6 @@ public class SearchResourceControll extends HttpServlet{
         String placeName = request.getParameter("placeName");
         
         Envelope envelope = new Envelope(maxx,minx,maxy,miny);
-        
         List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(envelope);
         
         

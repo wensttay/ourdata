@@ -321,11 +321,13 @@ public class KeyPlacesBo {
 
                     KeyPlace keyPlace = preencherKeyplace(colIndex, csvRowsSize,
                             colValue, resourceId, place);
-                    rowKeyPlaces.add(keyPlace);
-
+                    
                     if (!columValueGeometry.isEmpty()) {
                         keyPlace.setColumValue(columValueGeometry);
                     }
+                    
+                    rowKeyPlaces.add(keyPlace);
+   
                 }
 
             } //ends col iteration
@@ -412,15 +414,21 @@ public class KeyPlacesBo {
     }
 
     private KeyPlace getPlaceByDescriptions(CkanResource resource, int rowsSize, CkanDataset dataset) {
-
+        
+        String resourceName = resource.getName();
         String resourceDescription = resource.getDescription();
         String datasetName = dataset.getName();
         String datasetNotes = dataset.getNotes();
+        
 
         for (Place place : placesGazetteer) {
 
             if (!place.getNome().equals("")) {
-                if (resourceDescription.contains(place.getNome()) || datasetName.contains(place.getNome()) || datasetNotes.contains(place.getNome())) {
+                if (resourceName.contains(place.getNome())
+                        || resourceDescription.contains(place.getNome())
+                        || datasetName.contains(place.getNome()) 
+                        || datasetNotes.contains(place.getNome())) {
+                    
                     return preencherKeyplace(WKT_ID, rowsSize, place.getNome(), resource.getId(), place);
                 }
             }

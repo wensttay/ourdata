@@ -61,7 +61,7 @@ function initSearchBox() {
         // });
 
         var viewport = places[0].geometry.viewport;
-        var location = places[0].geometry.location;
+//        var location = places[0].geometry.location;
 
         map_ref.fitBounds(viewport);
 
@@ -73,10 +73,11 @@ function initSearchBox() {
 //desenha o retângulo no mapa de acordo com o viewbox passado por parâmetro.
 function drawRectangleByViewport(viewport) {
 
-    var maxx = viewport.getNorthEast().lat();
-    var minx = viewport.getNorthEast().lng();
-    var maxy = viewport.getSouthWest().lat();
-    var miny = viewport.getSouthWest().lng();
+    var maxx = viewport.getNorthEast().lng();
+    var minx = viewport.getSouthWest().lng();
+    
+    var maxy = viewport.getNorthEast().lat();
+    var miny = viewport.getSouthWest().lat();
 
     updateHiddenInputs(maxx, minx, maxy, miny);
 
@@ -92,8 +93,8 @@ function drawRectangleByViewport(viewport) {
     drawRectangleByRect(maxx, minx, maxy, miny);
 
     var contentString = '<b>Bounding Box</b><br>' +
-            'North-east corner: ' + maxx + ', ' + minx + '<br>' +
-            'South-west corner: ' + maxy + ', ' + miny;
+            'North-east corner: ' + maxx + ', ' + maxy + '<br>' +
+            'South-west corner: ' + minx + ', ' + miny;
 
     drawInfoWindow(contentString, viewport.getNorthEast());
 }
@@ -111,10 +112,10 @@ function drawRectangleByViewport(viewport) {
 function drawRectangleByRect(maxx, minx, maxy, miny) {
     //Define o bounds do retângulo de acordo com os valores passado por parâmetro
     var bounds = {
-        north: maxx,
-        south: maxy,
-        east: minx,
-        west: miny
+        north: maxy,
+        south: miny,
+        east: maxx,
+        west: minx
     };
 
     // strokeColor: '#FF0000',

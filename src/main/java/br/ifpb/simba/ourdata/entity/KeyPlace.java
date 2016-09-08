@@ -26,6 +26,7 @@ public class KeyPlace{
     public static void setComparadorByName( Comparator<KeyPlace> aComparadorByName ){
         comparadorByName = aComparadorByName;
     }
+    
     private int repeatNumber;
     private int rowsNumber;
     private int columNumber;
