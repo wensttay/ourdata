@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,9 @@ public class ResourceBdDao extends GenericBdDao{
     private PreparedStatement pstm;
 
     public List<Resource> getResourcesIntersectedBy( Place placeToSearch ){
+        
+        Date start;
+        
         List<Resource> resources = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
@@ -38,32 +42,43 @@ public class ResourceBdDao extends GenericBdDao{
         sql.append("d.title dataset_title ");
         sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
-        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id");
+        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
+        
+//        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
+//        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
+//        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ");
+//        sql.append("d.title dataset_title ");
+//        sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
+//        sql.append("JOIN dataset d ON r.id_dataset = d.id ");
+//        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
 
         try{
             conectar();
             WKTWriter writer = new WKTWriter();
+            
+            
+            
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, writer.write(placeToSearch.getWay()));
+            System.out.println(pstm.toString());
             
-            long start = System.currentTimeMillis();
+            System.out.println("Executando consulta...");
+            start = new Date(System.currentTimeMillis());
+            
             ResultSet rs = pstm.executeQuery();
-            long end = System.currentTimeMillis();
-            
-            System.out.println("!!!!!!! PreparedStatement execute Query time : "+(end-start)+"ms !!!!!!!");
-            System.out.println("SQL Query: "+pstm.toString());
-
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
             Resource r;
             
-            start = System.currentTimeMillis();
+            System.out.println("Preenchendo Objetos com  consulta...");
+            start = new Date(System.currentTimeMillis());
+            
             while ( rs.next() ){
                 r = formaResource(rs);
                 resources.add(r);
             }
-            end = System.currentTimeMillis();
             
-            System.out.println("!!!!!!! Resources_Places has been added to list : "+(end-start)+"ms !!!!!!!");
-
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+           
             return resources;
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex ){
             Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,6 +88,7 @@ public class ResourceBdDao extends GenericBdDao{
 
     private Resource formaResource( ResultSet rs ) throws SQLException, ParseException{
         String id_resource = rs.getString("id");
+        String name = rs.getString("name");
         String description = rs.getString("description");
         if ( description.equals("") ){
             description = rs.getString("dataset_title");
@@ -124,7 +140,7 @@ public class ResourceBdDao extends GenericBdDao{
         } while ( rs.next() && id_resource.equals(rs.getString("id")) );
 
         rs.previous();
-        Resource r = new Resource(id_resource, description, format, url, idDataset);
+        Resource r = new Resource(id_resource, name, description, format, url, idDataset);
         Place p = new Place();
         p.setMaxX(maxx);
         p.setMaxY(maxy);

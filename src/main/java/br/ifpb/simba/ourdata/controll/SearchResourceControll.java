@@ -7,25 +7,15 @@ package br.ifpb.simba.ourdata.controll;
 
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
 import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
-import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
-import com.github.filosganga.geogson.jts.JtsAdapterFactory;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -64,21 +54,8 @@ public class SearchResourceControll extends HttpServlet{
         String placeName = request.getParameter("placeName");
         
         Envelope envelope = new Envelope(maxx,minx,maxy,miny);
-        
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapterFactory(new GeometryAdapterFactory())
-                .registerTypeAdapterFactory(new JtsAdapterFactory())
-                .create();
-        
         List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(envelope);
         
-        GeometryFactory fac = new GeometryFactory();
-        Geometry geometry = fac.toGeometry(envelope);
-        
-        String json = gson.toJson(geometry, Geometry.class);
-        
-        System.out.println("geoJson Representation = "+json);
-
          //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
         request.setAttribute("size",itensSearch.size());

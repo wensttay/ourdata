@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class Resource implements Comparable<Resource>{
     private String id;
+    private String name;
     private String descricao;
     private String formato;
     private String url;
@@ -27,13 +28,21 @@ public class Resource implements Comparable<Resource>{
 
     }
 
-    public Resource( String id, String descricao, String formato, String url, String idDataset ){
+    public Resource(String id, String name, String descricao, String formato, String url, String idDataset) {
         this.id = id;
+        this.name = name;
         this.descricao = descricao;
         this.formato = formato;
         this.url = url;
         this.idDataset = idDataset;
-        this.keyplaces = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void addKeyPlace( KeyPlace kp ){

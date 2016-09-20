@@ -27,7 +27,7 @@
         <header id="header">
             <h1 class="tittle" >
                 <a href="index.html">
-                    <img src="images/OurData.png" alt="Logo" width="40" height="40" style="margin: 5px 20px 0 5px;">
+                    <img src="images/OurData.png" alt="Logo" width="60" style="margin: 12px 20px 0 5px; float: left; top: 40px;">
                     OurData
                 </a>
             </h1>

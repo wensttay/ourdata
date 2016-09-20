@@ -14,6 +14,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +25,8 @@ public class QueryResourceItemSearchBo {
     
     private final QueryPlaceBo queryPlaceBo;
     private final QueryResourceBo queryResourceBo;
-
+    private Date start;
+    
     public QueryResourceItemSearchBo() {
         queryPlaceBo = new QueryPlaceBo();
         queryResourceBo = new QueryResourceBo();
@@ -38,6 +40,8 @@ public class QueryResourceItemSearchBo {
     
     public List<ResourceItemSearch> getResourceItemSearchSortedByRank(Envelope envelope) {
         
+        System.out.println("Criando objeto de pesquisa...");
+        start = new Date(System.currentTimeMillis());
         GeometryFactory fac = new GeometryFactory();
         Geometry geometry = fac.toGeometry(envelope);
         Place place = new Place();
@@ -47,7 +51,7 @@ public class QueryResourceItemSearchBo {
         place.setMaxY(envelope.getMaxY());
         place.setMinY(envelope.getMinY());
         
-        
+        System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         return getResourceItemSearchSortedByRank(place);    
     }
     
@@ -57,22 +61,31 @@ public class QueryResourceItemSearchBo {
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
 
         if ( place != null ) {
-
+            
+            start = new Date(System.currentTimeMillis());
+//            System.out.println("Obtendo todos os resources que intersectão com o lugar passado por parâmetro...");
             //Todos os recursos cuja geometria intersectou com o lugar passado por parâmetro são adicionados nessa lista.
             resources.addAll(queryResourceBo.listResourcesIntersectedBy(place));
-
+//            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+            
+            start = new Date(System.currentTimeMillis());
+            System.out.println("Obtendo calculo do RankingPercent (repeatPercent + overlapPercent)...");
             for ( Resource resource : resources ) {
                 double repeatPercent = resource.getRepeatPercent(0.2f);
                 double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
                 double rankingPercent = repeatPercent + overlapPercent;
                 //System.out.println("Overlap percent: "+overlapPercent+"\n");
-
                 ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent);
                 itensSearch.add(itemSearch);
             }
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         }
-
+        
+        start = new Date(System.currentTimeMillis());
+        System.out.println("Ordenando SearchResources encontrados...");
         Collections.sort(itensSearch);
+        System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+        
         return itensSearch;
     }
     
