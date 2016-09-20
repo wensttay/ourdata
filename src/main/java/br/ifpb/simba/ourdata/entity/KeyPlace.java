@@ -1,9 +1,14 @@
 
 package br.ifpb.simba.ourdata.entity;
 
+import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
+import com.github.filosganga.geogson.jts.JtsAdapterFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Objects;
+import org.bson.Document;
 
 /**
  * Class to represent a KeyPlace, this class save some meta-dates of a one Place
@@ -33,6 +38,30 @@ public class KeyPlace{
     private Timestamp metadataCreated;
     private String idResource;
     private Place place;
+    
+    private String toJson() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapterFactory(new GeometryAdapterFactory())
+                .registerTypeAdapterFactory(new JtsAdapterFactory())
+                .create();
+        return gson.toJson(this, KeyPlace.class);
+    }
+    
+    public Document toDocument() {
+        return Document.parse(toJson());
+    }
+    
+    public KeyPlace fromDocument(Document document) {
+        
+        this.repeatNumber = document.getInteger("repeatNumber");
+        this.rowsNumber = document.getInteger("rowsNumber");
+        this.columNumber = document.getInteger("columNumber");
+        this.columValue = document.getString("columValue");
+        this.idResource = document.getString("idResource");
+        
+        return this;
+        
+    }
 
     /**
      * Return if this KeyPlace is equals the KayPlace passed param
@@ -89,7 +118,7 @@ public class KeyPlace{
      */
     @Override
     public String toString() {
-        return "KeyPlace{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columNumber=" + columNumber + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=" + place.toString() + '}';
+        return "KeyPlace{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columNumber=" + columNumber + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=}";
     }
 
     /**

@@ -45,15 +45,24 @@ public class ResourceBdDao extends GenericBdDao{
             WKTWriter writer = new WKTWriter();
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, writer.write(placeToSearch.getWay()));
-
+            
+            long start = System.currentTimeMillis();
             ResultSet rs = pstm.executeQuery();
+            long end = System.currentTimeMillis();
+            
+            System.out.println("!!!!!!! PreparedStatement execute Query time : "+(end-start)+"ms !!!!!!!");
+            System.out.println("SQL Query: "+pstm.toString());
 
             Resource r;
-
+            
+            start = System.currentTimeMillis();
             while ( rs.next() ){
                 r = formaResource(rs);
                 resources.add(r);
             }
+            end = System.currentTimeMillis();
+            
+            System.out.println("!!!!!!! Resources_Places has been added to list : "+(end-start)+"ms !!!!!!!");
 
             return resources;
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex ){

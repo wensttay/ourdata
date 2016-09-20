@@ -27,6 +27,7 @@ public class Place{
     public Place( Geometry way ){
         this.way = way;
     }
+    
 
     /**
      * Default Constructor

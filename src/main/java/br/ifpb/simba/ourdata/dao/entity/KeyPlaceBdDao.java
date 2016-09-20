@@ -126,14 +126,46 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
             conectar();
             String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
+            System.out.print("Executando Query ["+sql+"]...");
             ResultSet rs = ps.executeQuery();
-
+            System.out.println(" Done!");   
+            System.out.print("Percorrendo Cursor e preenchendo a List de Resource_places...");
             while (rs.next()) {
                 KeyPlace p = preencherObjeto(rs);
                 if (p != null) {
                     places.add(p);
                 }
             }
+            System.out.println(" Done!");
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally {
+            desconectar();
+        }
+        return places;
+    }
+    
+    public List<KeyPlace> getBetween(int start, int end) {
+        List<KeyPlace> places = new ArrayList<>();
+
+        try {
+            conectar();
+            String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place LIMIT ? OFFSET ?";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, end);
+            ps.setInt(2, start);
+            System.out.print("Executando Query ["+sql+"]...");
+            ResultSet rs = ps.executeQuery();
+            System.out.println(" Done!");   
+            System.out.print("Percorrendo Cursor e preenchendo a List de Resource_places...");
+            while (rs.next()) {
+                KeyPlace p = preencherObjeto(rs);
+                if (p != null) {
+                    places.add(p);
+                }
+            }
+            System.out.println(" Done!");
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
@@ -183,7 +215,6 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
 
             Place place = new Place();
             place.setWay(new WKTReader().read(rs.getString("geo")));
-            place.setWay((Geometry) rs.getObject("WAY"));
             place.setId(rs.getInt("ID_PLACE"));
             place.setMaxX(rs.getDouble("maxx"));
             place.setMaxY(rs.getDouble("maxy"));
