@@ -1,4 +1,4 @@
-package br.ifpb.simba.ourdata.entity;
+package br.ifpb.simba.ourdata.dao.entity;
 
 import com.mongodb.MongoClient;
 

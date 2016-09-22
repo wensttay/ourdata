@@ -206,6 +206,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
     private KeyPlace preencherObjeto(ResultSet rs) {
         try {
             KeyPlace kw = new KeyPlace();
+            kw.setId(rs.getInt("id"));
             kw.setColumNumber(rs.getInt("COLUM_NUMBER"));
             kw.setColumValue(rs.getString("COLUM_VALUE"));
             kw.setRepeatNumber(rs.getInt("REPEAT_NUMBER"));

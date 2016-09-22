@@ -40,11 +40,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-        <dependency>
             <groupId>eu.trentorise.opendata</groupId>
             <artifactId>jackan</artifactId>
             <version>0.4.2</version>
@@ -58,6 +53,23 @@
             <groupId>net.sourceforge.jexcelapi</groupId>
             <artifactId>jxl</artifactId>
             <version>2.6.12</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
         </dependency>
         
         <dependency>
@@ -118,6 +130,31 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.stratio.cassandra/cassandra-lucene-index-plugin -->
+        <dependency>
+            <groupId>com.stratio.cassandra</groupId>
+            <artifactId>cassandra-lucene-index-plugin</artifactId>
+            <version>3.0.8.2</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.datastax.cassandra/cassandra-driver-core -->
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        
+        <!-- https://mvnrepository.com/artifact/com.stratio.cassandra/cassandra-lucene-index-builder -->
+        <dependency>
+            <groupId>com.stratio.cassandra</groupId>
+            <artifactId>cassandra-lucene-index-builder</artifactId>
+            <version>3.0.8.2</version>
+        </dependency>
+
+
+
 
 
 

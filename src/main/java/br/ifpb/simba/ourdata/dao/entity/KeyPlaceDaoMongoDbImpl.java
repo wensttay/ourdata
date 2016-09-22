@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ifpb.simba.ourdata.entity;
+package br.ifpb.simba.ourdata.dao.entity;
 
+import br.ifpb.simba.ourdata.entity.KeyPlace;
+import br.ifpb.simba.ourdata.entity.KeyPlaceDao;
 import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
 import com.github.filosganga.geogson.jts.JtsAdapterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -59,12 +60,15 @@ public class KeyPlaceDaoMongoDbImpl implements KeyPlaceDao {
         
         MongoCursor<Document> cursor = result.iterator();
         
-        
         while(cursor.hasNext()) {
             resultList.add(new KeyPlace().fromDocument(cursor.next()));
         }
         Long end = System.currentTimeMillis();
-        System.out.println("timeout: "+(end-start));
+        
+        System.out.println("!!!!!!! MONGODB + GEOJSON !!!!!!!");
+        System.out.println("Executou a Busca e adicionou objetos à lista de KeyPlaces Tempo: "+(end-start)+"ms.");
+        System.out.println("Quantidade de Resource_Places encontrados: "+resultList.size());
+        System.out.println("!!!!!!! FIM MONGODB + GEOJSON !!!!!!!");
         
         return resultList;
     }

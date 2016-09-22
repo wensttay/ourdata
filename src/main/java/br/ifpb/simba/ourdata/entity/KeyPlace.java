@@ -32,6 +32,7 @@ public class KeyPlace{
         comparadorByName = aComparadorByName;
     }
     
+    private int id;
     private int repeatNumber;
     private int rowsNumber;
     private int columNumber;
@@ -120,6 +121,14 @@ public class KeyPlace{
     @Override
     public String toString() {
         return "KeyPlace{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", columNumber=" + columNumber + ", columValue=" + columValue + ", metadataCreated=" + metadataCreated + ", idResource=" + idResource + ", place=}";
+    }
+    
+    public int getId() {
+        return this.id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**

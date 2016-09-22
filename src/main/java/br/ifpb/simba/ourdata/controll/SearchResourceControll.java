@@ -5,9 +5,10 @@
  */
 package br.ifpb.simba.ourdata.controll;
 
+import br.ifpb.simba.ourdata.dao.entity.KeyPlaceDaoMongoDbImpl;
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
 import br.ifpb.simba.ourdata.services.QueryResourceItemSearchBo;
-import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.io.ParseException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -53,17 +54,25 @@ public class SearchResourceControll extends HttpServlet{
         double miny = Double.parseDouble(request.getParameter("miny"));
         String placeName = request.getParameter("placeName");
         
-        Envelope envelope = new Envelope(maxx,minx,maxy,miny);
-        List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(envelope);
+        RequestDispatcher rd;
         
-         //passando a lista de ResourceItemSearch para o JSP
-        request.setAttribute("resourseList", itensSearch);
-        request.setAttribute("size",itensSearch.size());
-        request.setAttribute("nameOfPlace",placeName);
-        
-        RequestDispatcher rd = request.getRequestDispatcher("/result.jsp");
-        rd.forward(request, response);
-
+        try {
+            
+            List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(maxx,maxy,minx,miny);
+            
+            //passando a lista de ResourceItemSearch para o JSP
+            request.setAttribute("resourseList", itensSearch);
+            request.setAttribute("size",itensSearch.size());
+            request.setAttribute("nameOfPlace",placeName);
+            
+            rd = request.getRequestDispatcher("/result.jsp");
+            rd.forward(request, response);
+        }
+        catch (ParseException ex) {
+            
+            rd = request.getRequestDispatcher("/index.html");
+            rd.forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

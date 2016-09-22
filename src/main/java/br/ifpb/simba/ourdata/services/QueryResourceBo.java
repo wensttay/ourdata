@@ -23,6 +23,7 @@ public class QueryResourceBo{
     }
 
     public List<Resource> listResourcesIntersectedBy( Place place ){
+        
         return resourceDao.getResourcesIntersectedBy(place);
     }
 }

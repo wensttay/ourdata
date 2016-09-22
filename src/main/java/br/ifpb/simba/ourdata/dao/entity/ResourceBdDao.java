@@ -42,7 +42,7 @@ public class ResourceBdDao extends GenericBdDao{
         sql.append("d.title dataset_title ");
         sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
-        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
+        sql.append("WHERE ST_Intersects(rp.way, ST_GeomFromText(?)) ORDER BY id ");
         
 //        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
 //        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
@@ -59,15 +59,17 @@ public class ResourceBdDao extends GenericBdDao{
             
             
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            pstm.setString(1, writer.write(placeToSearch.getWay()));
+            pstm.setString(1, placeToSearch.getWay().toString());
             System.out.println(pstm.toString());
             
-            System.out.println("Executando consulta...");
+            System.out.println("!!!!!!!!! Executando consulta no PostgreSQL (+PostGis) ...");
             start = new Date(System.currentTimeMillis());
             
             ResultSet rs = pstm.executeQuery();
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+            System.out.println("Duração: " + (System.currentTimeMillis() - start.getTime()) + "ms !!!!!!!!!");
             Resource r;
+            
+            System.out.println("Consulta SQL: "+pstm.toString());
             
             System.out.println("Preenchendo Objetos com  consulta...");
             start = new Date(System.currentTimeMillis());
@@ -88,7 +90,6 @@ public class ResourceBdDao extends GenericBdDao{
 
     private Resource formaResource( ResultSet rs ) throws SQLException, ParseException{
         String id_resource = rs.getString("id");
-        String name = rs.getString("name");
         String description = rs.getString("description");
         if ( description.equals("") ){
             description = rs.getString("dataset_title");
@@ -140,7 +141,7 @@ public class ResourceBdDao extends GenericBdDao{
         } while ( rs.next() && id_resource.equals(rs.getString("id")) );
 
         rs.previous();
-        Resource r = new Resource(id_resource, name, description, format, url, idDataset);
+        Resource r = new Resource(id_resource, "", description, format, url, idDataset);
         Place p = new Place();
         p.setMaxX(maxx);
         p.setMaxY(maxy);

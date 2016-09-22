@@ -7,6 +7,7 @@ package br.ifpb.simba.ourdata.entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,13 +20,13 @@ public class Resource implements Comparable<Resource>{
     private String descricao;
     private String formato;
     private String url;
-    private List<KeyPlace> keyplaces;
+    private final List<KeyPlace> keyPlaces;
     private String idDataset;
     private Place place;
     private Double precisionScore;
 
     public Resource(){
-
+        this.keyPlaces = new LinkedList<>();
     }
 
     public Resource(String id, String name, String descricao, String formato, String url, String idDataset) {
@@ -35,6 +36,7 @@ public class Resource implements Comparable<Resource>{
         this.formato = formato;
         this.url = url;
         this.idDataset = idDataset;
+        this.keyPlaces = new LinkedList<>();
     }
 
     public String getName() {
@@ -57,7 +59,7 @@ public class Resource implements Comparable<Resource>{
         int sum_repeat = 0;
         int rows;
 
-        if ( !keyplaces.isEmpty() ){
+        if ( !keyPlaces.isEmpty() ){
             rows = getKeyplaces().get(0).getRowsNumber();
         } else{
             return 0;
@@ -137,14 +139,7 @@ public class Resource implements Comparable<Resource>{
      * @return the keyplaces
      */
     public List<KeyPlace> getKeyplaces(){
-        return keyplaces;
-    }
-
-    /**
-     * @param keyplaces the keyplaces to set
-     */
-    public void setKeyplaces( List<KeyPlace> keyplaces ){
-        this.keyplaces = keyplaces;
+        return keyPlaces;
     }
 
     /**

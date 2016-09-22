@@ -5,13 +5,15 @@
  */
 package br.ifpb.simba.ourdata.services;
 
+import br.ifpb.simba.ourdata.dao.entity.KeyPlaceDaoCassandraDbImpl;
+import br.ifpb.simba.ourdata.dao.entity.KeyPlaceDaoMongoDbImpl;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
+import br.ifpb.simba.ourdata.entity.utils.GeometryUtils;
 import br.ifpb.simba.ourdata.entity.utils.PlaceUtils;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.io.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -38,18 +40,30 @@ public class QueryResourceItemSearchBo {
         return getResourceItemSearchSortedByRank(resultPlace);  
     }
     
-    public List<ResourceItemSearch> getResourceItemSearchSortedByRank(Envelope envelope) {
+    private void testMongoCassandra(Geometry geo) {
+        KeyPlaceDaoCassandraDbImpl cassandra = new KeyPlaceDaoCassandraDbImpl();
+        cassandra.getIntersectedBy(geo);
+        
+        KeyPlaceDaoMongoDbImpl mongo = new KeyPlaceDaoMongoDbImpl();
+        mongo.getIntersected(geo);
+    }
+    
+    public List<ResourceItemSearch> getResourceItemSearchSortedByRank(Double maxx, Double maxy, Double minx, Double miny) throws ParseException {
         
         System.out.println("Criando objeto de pesquisa...");
         start = new Date(System.currentTimeMillis());
-        GeometryFactory fac = new GeometryFactory();
-        Geometry geometry = fac.toGeometry(envelope);
+        Geometry geometry = GeometryUtils.fromEnvelope(maxx, maxy, minx, miny);
+        
+        //Testing the same request on MongoDb and Cassandra
+        testMongoCassandra(geometry);       
+        
+        System.out.println("Created Envelope : "+geometry.toString());
         Place place = new Place();
         place.setWay(geometry);
-        place.setMaxX(envelope.getMaxX());
-        place.setMinX(envelope.getMinX());
-        place.setMaxY(envelope.getMaxY());
-        place.setMinY(envelope.getMinY());
+        place.setMaxX(maxx);
+        place.setMinX(minx);
+        place.setMaxY(maxy);
+        place.setMinY(miny);
         
         System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         return getResourceItemSearchSortedByRank(place);    

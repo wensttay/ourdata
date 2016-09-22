@@ -144,10 +144,11 @@ function showNewRect(event) {
     var ne = rectangle.getBounds().getNorthEast();
     var sw = rectangle.getBounds().getSouthWest();
 
-    var maxx = ne.lat();
-    var minx = ne.lng();
-    var maxy = sw.lat();
-    var miny = sw.lng();
+    var maxx = ne.lng();
+    var minx = sw.lng();  
+    
+    var maxy = ne.lat();
+    var miny = sw.lat();
 
     updateHiddenInputs(maxx, minx, maxy, miny);
 
@@ -170,6 +171,8 @@ function updateHiddenInputs(maxx, minx, maxy, miny) {
     $('input[name=minx]').val(minx);
     $('input[name=maxy]').val(maxy);
     $('input[name=miny]').val(miny);
+    
+    console.log()
 }
 
 function updateHiddenPlaceName() {
