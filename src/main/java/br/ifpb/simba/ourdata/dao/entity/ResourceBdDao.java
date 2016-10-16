@@ -30,7 +30,12 @@ import java.util.logging.Logger;
 public class ResourceBdDao extends GenericBdDao{
 
     private PreparedStatement pstm;
-
+    
+    /**
+     * Retrieves all Resources which its geometry intersects with a place passed by parameter
+     * @param placeToSearch
+     * @return 
+     */
     public List<Resource> getResourcesIntersectedBy( Place placeToSearch ){
         
         Date start;
@@ -38,25 +43,14 @@ public class ResourceBdDao extends GenericBdDao{
         List<Resource> resources = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
-        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way, ");
-        sql.append("d.title dataset_title ");
+        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, d.title dataset_title ");
         sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
-        sql.append("WHERE ST_Intersects(rp.way, ST_GeomFromText(?)) ORDER BY id ");
-        
-//        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
-//        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
-//        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ");
-//        sql.append("d.title dataset_title ");
-//        sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
-//        sql.append("JOIN dataset d ON r.id_dataset = d.id ");
-//        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
+        sql.append("WHERE ST_Contains(rp.way, ST_GeomFromText(?)) ORDER BY id ");
 
         try{
             conectar();
             WKTWriter writer = new WKTWriter();
-            
-            
             
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, placeToSearch.getWay().toString());
@@ -79,11 +73,66 @@ public class ResourceBdDao extends GenericBdDao{
                 resources.add(r);
             }
             
+            pstm.close();
+            
             System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
-           
+            
             return resources;
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex ){
             Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            desconectar();
+        }
+        return resources;
+    }
+    
+    public List<Resource> getResourcesIntersectedBy( String wkt ){
+        
+        Date start;
+        
+        List<Resource> resources = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
+        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
+        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ");
+        sql.append("d.title dataset_title ");
+        sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
+        sql.append("JOIN dataset d ON r.id_dataset = d.id ");
+        sql.append("WHERE ST_Intersects(rp.way, ST_GeomFromText(?)) ORDER BY id ");
+
+        try{
+            conectar();
+            WKTWriter writer = new WKTWriter();
+            
+            PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pstm.setString(1, wkt);
+            System.out.println(pstm.toString());
+            
+            System.out.println("!!!!!!!!! Executando consulta no PostgreSQL (+PostGis) ...");
+            start = new Date(System.currentTimeMillis());
+            
+            ResultSet rs = pstm.executeQuery();
+            System.out.println("Duração: " + (System.currentTimeMillis() - start.getTime()) + "ms !!!!!!!!!");
+            Resource r;
+            
+            System.out.println("Consulta SQL: "+pstm.toString());
+            
+            System.out.println("Preenchendo Objetos com  consulta...");
+            start = new Date(System.currentTimeMillis());
+            
+            while ( rs.next() ){
+                r = formaResource(rs);
+                resources.add(r);
+            }
+            
+            pstm.close();
+            
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+            
+            return resources;
+        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex ){
+            Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            desconectar();
         }
         return resources;
     }
@@ -91,6 +140,7 @@ public class ResourceBdDao extends GenericBdDao{
     private Resource formaResource( ResultSet rs ) throws SQLException, ParseException{
         String id_resource = rs.getString("id");
         String description = rs.getString("description");
+        description = description.trim();
         if ( description.equals("") ){
             description = rs.getString("dataset_title");
         }
@@ -99,7 +149,7 @@ public class ResourceBdDao extends GenericBdDao{
         String idDataset = rs.getString("id_Dataset");
         List<KeyPlace> keyplaces = new ArrayList<>();
 
-        double maxx, maxy, minx, miny;
+        Double maxx, maxy, minx, miny;
 
         maxx = rs.getDouble("maxx");
         maxy = rs.getDouble("maxy");
@@ -128,7 +178,6 @@ public class ResourceBdDao extends GenericBdDao{
             place.setMaxY(rs.getDouble("maxy"));
             place.setMinX(rs.getDouble("minx"));
             place.setMinY(rs.getDouble("miny"));
-            place.setWay(reader.read(rs.getString("way")));
 
             keyPlace.setIdResource(id_resource);
             keyPlace.setPlace(place);

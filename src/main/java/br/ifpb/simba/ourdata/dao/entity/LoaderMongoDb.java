@@ -8,7 +8,7 @@ package br.ifpb.simba.ourdata.dao.entity;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 
 /**
- *
+ * Simple class to migrate postgres data into mongodb database.
  * @author kieckegard
  */
 public class LoaderMongoDb {

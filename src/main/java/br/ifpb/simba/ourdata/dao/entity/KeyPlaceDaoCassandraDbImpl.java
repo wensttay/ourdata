@@ -29,51 +29,64 @@ import java.util.LinkedList;
  */
 public class KeyPlaceDaoCassandraDbImpl implements KeyPlaceDao {
 
-    private Cluster cluster;
-    private Session session;
+    private final Cluster cluster;
+    private final Session session;
+    private PreparedStatement pstm;
 
     public KeyPlaceDaoCassandraDbImpl() {
         cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
         session = cluster.connect("ourdata");
     }
 
+    /**
+     * Inserts a new KeyPlace into resource_place table in OurData keyspace
+     * @param keyPlace 
+     */
     @Override
-    public void insert(KeyPlace kp) {
+    public void insert(KeyPlace keyPlace) {
         String sql = "INSERT INTO resource_place (id,colum_number,colum_value,repeat_number,rows_number,metadata_created,way,"
                 + "id_place,id_resource,minx,maxx,miny,maxy) "
                 + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                
+        //Only this method uses statement, So...
+        //Doesn't need to re-prepare the Statement if the same query was already prepared.
+        if (this.pstm == null)
+            this.pstm = session.prepare(sql);
 
-        PreparedStatement pstm = session.prepare(sql);
-
-        BoundStatement bind = pstm.bind(kp.getId(), kp.getColumNumber(),
-                kp.getColumValue(), kp.getRepeatNumber(), kp.getRowsNumber(),
-                kp.getMetadataCreated(), kp.getPlace().getWay().toString(),
-                kp.getPlace().getId(), kp.getIdResource(), kp.getPlace().getMinX(),
-                kp.getPlace().getMaxX(), kp.getPlace().getMinY(), kp.getPlace().getMaxY());
-
-        session.execute(bind);
+        BoundStatement bind = pstm.bind(keyPlace.getId(), keyPlace.getColumNumber(),
+                keyPlace.getColumValue(), keyPlace.getRepeatNumber(), keyPlace.getRowsNumber(),
+                keyPlace.getMetadataCreated(), keyPlace.getPlace().getWay().toString(),
+                keyPlace.getPlace().getId(), keyPlace.getIdResource(), keyPlace.getPlace().getMinX(),
+                keyPlace.getPlace().getMaxX(), keyPlace.getPlace().getMinY(), keyPlace.getPlace().getMaxY());
+        
+        session.executeAsync(bind);
     }
-
+    
+    /**
+     * Get all Resources which its geom intersects with the geom passed by parameter.
+     * @param geometry Geometry object
+     * @return List of KeyPlaces
+     */
     public List<KeyPlace> getIntersectedBy(Geometry geometry) {
 
         String wkt = geometry.toString();
 
         List<KeyPlace> keyPlaces = new LinkedList<>();
 
-        long start = System.currentTimeMillis();
+        Long start = System.currentTimeMillis();
         ResultSet rs = session.execute("SELECT * FROM resource_place WHERE expr(resource_place_idx, ?)",
                 search().filter(
                         geoShape("way", wkt(wkt)).operation("intersects")
                 ).build());
-        long end = System.currentTimeMillis();
+        Long end = System.currentTimeMillis();
         System.out.println("!!!!!!! CASSANDRA + LUCENE !!!!!!!");
         System.out.println("Executou a Busca e criou o objeto ResultSet. Tempo: "+(end-start)+"ms.");
         
         start = System.currentTimeMillis();
-        for (Row r : rs.all()) {
+        for (Row row : rs.all()) {
 
             try {
-                keyPlaces.add(formaKeyPlace(r));
+                keyPlaces.add(formaKeyPlace(row));
             }
             catch (ParseException ex) {
                 System.out.println(ex.getMessage());
@@ -83,40 +96,32 @@ public class KeyPlaceDaoCassandraDbImpl implements KeyPlaceDao {
         
         System.out.println("Montou todos os resource_places e os adicionou em uma lista. Tempo: "+(end-start)+"ms.");
         System.out.println("Quantidade de Resource_Places encontrados: "+keyPlaces.size());
-        System.out.println("!!!!!!! FIM CASSANRA + LUCENE !!!!!!!");
-
-        
+        System.out.println("!!!!!!! FIM CASSANDRA + LUCENE !!!!!!!");
 
         return keyPlaces;
     }
 
-    public KeyPlace formaKeyPlace(Row r) throws ParseException {
+    private KeyPlace formaKeyPlace(Row row) throws ParseException {
 
         WKTReader reader = new WKTReader();
 
-        int id = r.getInt("id");
-        int columNumber = r.getInt("colum_number");
-        String columValue = r.getString("colum_value");
-        int repeat_number = r.getInt("repeat_number");
-        int rows_number = r.getInt("rows_number");
-        Date metadataCreated = r.getTimestamp("metadata_created");
+        //Getting Parametters from ResultSet Row
+        Integer id = row.getInt("id");
+        Integer columNumber = row.getInt("colum_number");
+        String columValue = row.getString("colum_value");
+        Integer repeat_number = row.getInt("repeat_number");
+        Integer rows_number = row.getInt("rows_number");
+        Date metadataCreated = row.getTimestamp("metadata_created");
         Timestamp metadata_created = new java.sql.Timestamp(metadataCreated.getTime());
-        Geometry geo = reader.read(r.getString("way"));
-        int id_place = r.getInt("id_place");
-        String id_resource = r.getString("id_resource");
-        double minx = r.getDouble("minx");
-        double maxx = r.getDouble("maxx");
-        double miny = r.getDouble("miny");
-        double maxy = r.getDouble("maxy");
-
-        KeyPlace keyPlace = new KeyPlace();
-        keyPlace.setId(id);
-        keyPlace.setColumNumber(columNumber);
-        keyPlace.setColumValue(columValue);
-        keyPlace.setRepeatNumber(repeat_number);
-        keyPlace.setRowsNumber(rows_number);
-        keyPlace.setMetadataCreated(metadata_created);
-
+        Geometry geo = reader.read(row.getString("way"));
+        Integer id_place = row.getInt("id_place");
+        String id_resource = row.getString("id_resource");
+        Double minx = row.getDouble("minx");
+        Double maxx = row.getDouble("maxx");
+        Double miny = row.getDouble("miny");
+        Double maxy = row.getDouble("maxy");
+        
+        //Creating A Place
         Place place = new Place();
         place.setId(id_place);
         place.setWay(geo);
@@ -125,6 +130,14 @@ public class KeyPlaceDaoCassandraDbImpl implements KeyPlaceDao {
         place.setMinY(miny);
         place.setMaxY(maxy);
 
+        //Creating KeyPlace
+        KeyPlace keyPlace = new KeyPlace();
+        keyPlace.setId(id);
+        keyPlace.setColumNumber(columNumber);
+        keyPlace.setColumValue(columValue);
+        keyPlace.setRepeatNumber(repeat_number);
+        keyPlace.setRowsNumber(rows_number);
+        keyPlace.setMetadataCreated(metadata_created);
         keyPlace.setPlace(place);
         
         return keyPlace;

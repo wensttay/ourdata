@@ -8,7 +8,6 @@ package br.ifpb.simba.ourdata.services;
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
 
 /**

@@ -9,8 +9,8 @@ package br.ifpb.simba.ourdata.test;
  *
  * @author kieckegard
  */
-public class AtualizadorDBTestEUA{
-    public static final String url = "http://www.data.gov/";
+public class AtualizadorDBTestUK{
+    public static final String url = "http://data.gov.uk/";
 
     public static void main( String[] args ){
         (new Thread(new AtualizadorDBThread(url, "banco/bancoEua.properties"))).start();

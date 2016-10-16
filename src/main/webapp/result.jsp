@@ -55,7 +55,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Ranking</th>
+                            <th>Accurate</th>
                             <th>Title</th>
                             <th>Format</th>
                             <th>Download</th>

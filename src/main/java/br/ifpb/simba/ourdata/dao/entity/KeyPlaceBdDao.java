@@ -4,7 +4,6 @@ import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import br.ifpb.simba.ourdata.reader.TextColor;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
@@ -18,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class that know how CRUD a KeyPlace type into a JDBC
+ * Class that know how to CRUD a KeyPlace into a JDBC Database
  *
  * @author Wensttay, kieckegard
  */
@@ -46,8 +45,8 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
      *
      * @param obj KeyPlace that need be save into a JDBC
      *
-     * @return A boolean that means: true = inserted with sucess, false = not
-     * insert with sucess or inserssion is not possible.
+     * @return A boolean that means: true = inserted with success, false = not
+     * insert with success or insertion is not possible.
      */
     
     public boolean conectAndInsert(KeyPlace obj){
@@ -146,17 +145,17 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         return places;
     }
     
-    public List<KeyPlace> getBetween(int start, int end) {
+    public List<KeyPlace> getBetween(Integer start, Integer end) {
         List<KeyPlace> places = new ArrayList<>();
 
         try {
             conectar();
             String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place LIMIT ? OFFSET ?";
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setInt(1, end);
-            ps.setInt(2, start);
+            PreparedStatement pstm = getConnection().prepareStatement(sql);
+            pstm.setInt(1, end);
+            pstm.setInt(2, start);
             System.out.print("Executando Query ["+sql+"]...");
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = pstm.executeQuery();
             System.out.println(" Done!");   
             System.out.print("Percorrendo Cursor e preenchendo a List de Resource_places...");
             while (rs.next()) {
@@ -166,6 +165,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
                 }
             }
             System.out.println(" Done!");
+            pstm.close();
 
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
@@ -197,7 +197,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
     }
 
     /**
-     * This method fill a KeyPlace with a ResultSet param
+     * This method fill a KeyPlace with a ResultSet parameter
      *
      * @param rs ResultSet with result of Search KeyPlace
      *
@@ -231,7 +231,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
     }
 
     /**
-     * This method insert all KeyWords passed in a java.util.List; param
+     * This method insert all KeyWords passed in a java.util.List; parameter
      *
      * @param listKeyWords List with KeyWords to insert
      *

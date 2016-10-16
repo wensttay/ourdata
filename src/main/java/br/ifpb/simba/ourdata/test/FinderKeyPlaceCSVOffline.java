@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Wensttay
  */
-public class FinderKeyPlaceCSVOff {
+public class FinderKeyPlaceCSVOffline {
 
     public static void main(String[] args) {
 

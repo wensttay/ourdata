@@ -3,6 +3,7 @@ package br.ifpb.simba.ourdata.dao.entity;
 import com.mongodb.MongoClient;
 
 /**
+ * MongoDb connection provider
  * Created by kieckegard on 03/09/2016.
  */
 public class MongoDbConnection {

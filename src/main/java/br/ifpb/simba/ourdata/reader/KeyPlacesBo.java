@@ -34,7 +34,7 @@ public class KeyPlacesBo {
 
     private int numRowsCheck;
     private final PlaceBdDao placeBdDao;
-    private List<Place> placesGazetteer;
+    private final List<Place> placesGazetteer;
 
     public KeyPlacesBo(int numRowsCheck) {
         this.numRowsCheck = numRowsCheck;

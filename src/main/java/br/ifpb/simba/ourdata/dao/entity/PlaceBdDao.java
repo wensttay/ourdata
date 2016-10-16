@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that know how CRUD a PlaceBdDao type into a JDBC
+ * Class that know how CRUD a PlaceBdDao type into a JDBC Database
  *
  * @author Wensttay, kieckegard
  */

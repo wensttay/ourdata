@@ -55,7 +55,7 @@ public class QueryResourceItemSearchBo {
         Geometry geometry = GeometryUtils.fromEnvelope(maxx, maxy, minx, miny);
         
         //Testing the same request on MongoDb and Cassandra
-        testMongoCassandra(geometry);       
+        //testMongoCassandra(geometry);       
         
         System.out.println("Created Envelope : "+geometry.toString());
         Place place = new Place();
@@ -85,10 +85,9 @@ public class QueryResourceItemSearchBo {
             start = new Date(System.currentTimeMillis());
             System.out.println("Obtendo calculo do RankingPercent (repeatPercent + overlapPercent)...");
             for ( Resource resource : resources ) {
-                double repeatPercent = resource.getRepeatPercent(0.2f);
-                double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
-                double rankingPercent = repeatPercent + overlapPercent;
-                //System.out.println("Overlap percent: "+overlapPercent+"\n");
+                Double repeatPercent = resource.getRepeatPercent(0.2f);
+                Double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
+                Double rankingPercent = repeatPercent + overlapPercent;
                 ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent);
                 itensSearch.add(itemSearch);
             }
