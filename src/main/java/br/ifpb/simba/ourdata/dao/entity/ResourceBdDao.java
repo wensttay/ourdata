@@ -36,7 +36,7 @@ public class ResourceBdDao extends GenericBdDao{
         Date start;
         
         List<Resource> resources = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
+        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.name, r.format, r.url, r.id_dataset, ");
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
         sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way, ");
         sql.append("d.title dataset_title ");

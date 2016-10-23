@@ -23,5 +23,5 @@ public interface Reader<T, I>{
      */
     void print( I urlString );
 
-//    List<KeyWord> filterKeyWord(String resourceId, I urlString, List<Place> PlaceList);
+//    List<KeyPlace> filterKeyPlace(String resourceId, I urlString, List<Place> PlaceList);
 }

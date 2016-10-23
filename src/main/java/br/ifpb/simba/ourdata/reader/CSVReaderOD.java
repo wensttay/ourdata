@@ -281,9 +281,9 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
         PlaceBdDao placeBdDao = new PlaceBdDao();
         float porcent = 0;
 
-        System.out.println("Search for KeyWords into: " + urlString);
+        System.out.println("Search for KeyPlaces into: " + urlString);
 //        Instanciando lista que será retornada como resultado
-        List<KeyPlace> keyWordResultList = new ArrayList<>();
+        List<KeyPlace> keyPlaceResultList = new ArrayList<>();
 
 //        Instanciando a lista que contem todas as linhas(rows) de um CSV 
         List<String[]> rowListOfCsv = build(urlString);
@@ -303,15 +303,15 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
 
         for ( int indexOfRow = 0; indexOfRow < auxSizeOfCsv; indexOfRow++ ){
             String[] row = rowListOfCsv.get(indexOfRow);
-            List<KeyPlace> rowKeyWordsOfRow = new ArrayList<>();
+            List<KeyPlace> rowKeyPlacesOfRow = new ArrayList<>();
 
 //          Iterate of Columns
             for ( int indexOfColumn = 0; indexOfColumn < row.length; indexOfColumn++ ){
 //              Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
 //              resutados encontrados na pesquisa no Gazetteer
-                if ( keyWordResultList.size() > numRowsCheck ){
+                if ( keyPlaceResultList.size() > numRowsCheck ){
                     for ( int i = 0; i < numRowsCheck; i++ ){
-                        while ( indexOfColumn < row.length && keyWordResultList.get(i).getColumNumber() != indexOfColumn ){
+                        while ( indexOfColumn < row.length && keyPlaceResultList.get(i).getColumNumber() != indexOfColumn ){
                             indexOfColumn++;
                         }
                     }
@@ -329,20 +329,20 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
                     newPlaces.addAll(placeBdDao.burcarPorTitulos(columValue));
                 }
 
-//              Checking if has some KeyWords with a place that contains a new place
-                if ( !newPlaces.isEmpty() && !rowKeyWordsOfRow.isEmpty() ){
+//              Checking if has some keyPlaces with a place that contains a new place
+                if ( !newPlaces.isEmpty() && !rowKeyPlacesOfRow.isEmpty() ){
                     List<KeyPlace> aux = new ArrayList<>();
-                    aux.addAll(rowKeyWordsOfRow);
+                    aux.addAll(rowKeyPlacesOfRow);
 
                     for ( Place newPlace : newPlaces ){
-                        for ( KeyPlace kw : rowKeyWordsOfRow ){
+                        for ( KeyPlace kw : rowKeyPlacesOfRow ){
                             if ( kw.getPlace().getWay().intersects(newPlace.getWay()) ){
                                 aux.remove(kw);
                                 break;
                             }
                         }
                     }
-                    rowKeyWordsOfRow = aux;
+                    rowKeyPlacesOfRow = aux;
                 }
 
 //              Instancie and increment the list of row's results with the new KeyPlace
@@ -355,18 +355,18 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
                     kw.setPlace(newPlace);
                     kw.setRepeatNumber(1);
                     kw.setRowsNumber(auxSizeOfCsv);
-                    rowKeyWordsOfRow.add(kw);
+                    rowKeyPlacesOfRow.add(kw);
                 }
             }
 
-//          Increment the resultList with all news KeyWords of this row
-            keyWordResultList.addAll(rowKeyWordsOfRow);
-            if ( indexOfRow >= numRowsCheck && keyWordResultList.isEmpty() ){
-                System.out.println("!! ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+//          Increment the resultList with all news keyPlaces of this row
+            keyPlaceResultList.addAll(rowKeyPlacesOfRow);
+            if ( indexOfRow >= numRowsCheck && keyPlaceResultList.isEmpty() ){
+                System.out.println("!! ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYPLACE !!");
                 break;
             }
 
-            if ( !rowKeyWordsOfRow.isEmpty() ){
+            if ( !rowKeyPlacesOfRow.isEmpty() ){
                 NumberFormat formatter = new DecimalFormat("#0.00");
                 float percentRead = ((( float ) indexOfRow * 100) / ( float ) auxSizeOfCsv);
                 if ( porcent + 20 < percentRead ){
@@ -376,13 +376,13 @@ public class CSVReaderOD implements Reader<List<String[]>, String>{
             }
         }
 
-        if ( !keyWordResultList.isEmpty() ){
+        if ( !keyPlaceResultList.isEmpty() ){
             System.out.println("100 %");
         }
         rowListOfCsv = null;
         columNames = null;
         System.gc();
 
-        return keyWordResultList;
+        return keyPlaceResultList;
     }
 }

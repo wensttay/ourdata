@@ -25,7 +25,7 @@ public class Resource implements Comparable<Resource>{
     private Double precisionScore;
 
     public Resource(){
-
+        this.keyplaces = new ArrayList<>();
     }
 
     public Resource(String id, String name, String descricao, String formato, String url, String idDataset) {
@@ -35,6 +35,7 @@ public class Resource implements Comparable<Resource>{
         this.formato = formato;
         this.url = url;
         this.idDataset = idDataset;
+        this.keyplaces = new ArrayList<>();
     }
 
     public String getName() {

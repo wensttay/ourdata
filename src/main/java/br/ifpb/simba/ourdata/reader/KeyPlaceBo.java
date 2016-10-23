@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author kieckegard
  */
-public class KeyPlacesBo {
+public class KeyPlaceBo {
 
     public static final int NUM_ROWS_CHECK_DEFAULT = 10;
     public static final int WKT_ID = -99;
@@ -36,7 +36,7 @@ public class KeyPlacesBo {
     private final PlaceBdDao placeBdDao;
     private List<Place> placesGazetteer;
 
-    public KeyPlacesBo(int numRowsCheck) {
+    public KeyPlaceBo(int numRowsCheck) {
         this.numRowsCheck = numRowsCheck;
         placeBdDao = new PlaceBdDao();
         this.placesGazetteer = placeBdDao.getAll();
@@ -107,134 +107,7 @@ public class KeyPlacesBo {
         return minor;
     }
 
-    @Deprecated
-    public List<KeyPlace> getKeyPlaces(CkanResource resource) {
-
-        float percent = 0;
-
-        List<KeyPlace> resultKeyPlaces = new ArrayList<>();
-
-        String resourceId = resource.getId();
-        String resourceUrl = resource.getUrl();
-
-        CSVReaderOD csvReader = new CSVReaderOD();
-
-        //get a List which contains all csv content
-        List<String[]> csvRows = csvReader.build(resourceUrl);
-        if (csvRows == null) {
-            csvRows = new ArrayList<>();
-        }
-
-        int csvRowsSize = csvRows.size();
-
-        //Iterating all csvRows
-        for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
-
-            //getting current row
-            String[] row = csvRows.get(rowIndex);
-
-            //creating current row keyplace list
-            List<KeyPlace> rowKeyPlaces = new ArrayList<>();
-
-            //Iterating each csvRow's columns
-            for (int colIndex = 0; colIndex < row.length; colIndex++) {
-                String colValue = row[colIndex].replace("\n", " ");
-                colValue = colValue.trim();
-
-                try {
-                    Geometry geometry = new WKTReader().read(colValue);
-                    if (geometry == null) {
-                        throw new ParseException("não foi possível converter " + colValue + " para Well Known Text.");
-                    }
-                    System.out.println("Achou geometria");
-
-                    double minx, miny, maxx, maxy;
-                    Envelope envelope = geometry.getEnvelopeInternal();
-                    if (envelope == null) {
-                        throw new ParseException("não foi possível converter " + colValue + " para Well Known Text.");
-                    }
-                    minx = envelope.getMinX();
-                    miny = envelope.getMinY();
-                    maxx = envelope.getMaxX();
-                    maxy = envelope.getMaxY();
-
-                    Place place = new Place(geometry);
-
-                    place.setMaxX(maxx);
-                    place.setMaxY(maxy);
-                    place.setMinX(minx);
-                    place.setMinY(miny);
-
-                    place.setSigla("$eo");
-                    place.setTipo("$eo");
-                    place.setId(-99);
-
-                    KeyPlace keyPlace = new KeyPlace();
-                    keyPlace.setColumNumber(colIndex);
-                    keyPlace.setColumValue(colValue);
-                    keyPlace.setIdResource(resourceId);
-                    keyPlace.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
-                    keyPlace.setPlace(place);
-                    keyPlace.setRepeatNumber(1);
-                    keyPlace.setRowsNumber(csvRowsSize);
-                    rowKeyPlaces.add(keyPlace);
-                } catch (ParseException ex) {
-                    //Creating place list
-                    List<Place> places = new ArrayList<>();
-
-                    //is this col a valid one?
-                    if (colValue != null && !colValue.equals("")) {
-                        places.addAll(buscarPorTitulos(colValue));
-                    }
-
-                    Place place = getMinorPlace(places);
-
-                    if (place != null) {
-                        KeyPlace keyPlace = new KeyPlace();
-                        keyPlace.setColumNumber(colIndex);
-                        keyPlace.setColumValue(colValue);
-                        keyPlace.setIdResource(resourceId);
-                        keyPlace.setMetadataCreated(new Timestamp(System.currentTimeMillis()));
-                        keyPlace.setPlace(place);
-                        keyPlace.setRepeatNumber(1);
-                        keyPlace.setRowsNumber(csvRowsSize);
-                        rowKeyPlaces.add(keyPlace);
-                    }
-                }
-            } //ends col iteration
-
-            resultKeyPlaces.addAll(rowKeyPlaces);
-
-            /*
-             * If there's no places found in the csv file and we already verify
-             * the whole thing until row 10,
-             * I guess the csv does not contains any place xD
-             */
-            if (rowIndex >= numRowsCheck && resultKeyPlaces.isEmpty()) {
-                System.out.println("!! ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
-                break;
-            }
-
-            //percent feedback
-            if (!rowKeyPlaces.isEmpty()) {
-                NumberFormat formatter = new DecimalFormat("#0.00");
-                float percentRead = (((float) rowIndex * 100) / (float) csvRowsSize);
-                if (percent + 1 < percentRead) {
-                    System.out.println(formatter.format(percentRead) + " %");
-                    percent = percentRead;
-                }
-            }
-
-        } //ends rows iteration
-
-        if (!resultKeyPlaces.isEmpty()) {
-            System.out.println("100 %");
-        }
-
-        return resultKeyPlaces;
-    }
-
-    public List<KeyPlace> getKeyPlaces2(CkanResource resource, CkanDataset dataset) throws IOException {
+    public List<KeyPlace> getKeyPlaces(CkanResource resource, CkanDataset dataset) throws IOException {
 
         float percent = 0;
 
@@ -252,7 +125,7 @@ public class KeyPlacesBo {
         }
 
         int csvRowsSize = csvRows.size();
-        System.out.println(" |||| " + csvRowsSize + " |||| ");
+        System.out.println("File Row Size: " + csvRowsSize + " |||| ");
 
         //Iterating all csvRows
         for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
@@ -274,6 +147,7 @@ public class KeyPlacesBo {
                         for (int i = 0; i < numRowsCheck; i++) {
                             if (resultKeyPlaces.get(i).getColumNumber() == colIndex) {
                                 validColumNumber = true;
+                                break;
                             }
                         }
 
@@ -346,7 +220,7 @@ public class KeyPlacesBo {
                 if (placeByDescriptions != null) {
                     resultKeyPlaces.add(placeByDescriptions);
                 }
-                System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYWORD !!");
+                System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYPLACE !!");
                 break;
             }
 

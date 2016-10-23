@@ -29,6 +29,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
      * 'PROPERTIES_PATH_DEFAULT' to JDBC connection.
      */
     public KeyPlaceBdDao() {
+        super();
     }
 
     /**
@@ -39,36 +40,6 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
      */
     public KeyPlaceBdDao(String properties_path) {
         super.setProperties_path(properties_path);
-    }
-
-    /**
-     * Method to insert a KeyPlace type into a JDBC
-     *
-     * @param obj KeyPlace that need be save into a JDBC
-     *
-     * @return A boolean that means: true = inserted with sucess, false = not
-     * insert with sucess or inserssion is not possible.
-     */
-    
-    public boolean conectAndInsert(KeyPlace obj){
-        
-        boolean result;
-        
-        try {
-            conectar();
-            result = insert(obj);
-        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            result = false;
-        }
-        
-        try {
-            desconectar();
-        } catch (Exception ex) {
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        }
-        
-        return result;
     }
     
     @Override
@@ -199,14 +170,14 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
     }
 
     /**
-     * This method insert all KeyWords passed in a java.util.List; param
+     * This method insert all KeyPlaces passed in a java.util.List; param
      *
-     * @param listKeyWords List with KeyWords to insert
+     * @param listKeyPlaces List with KeyPlaces to insert
      *
      * @return
      */
-    public boolean insertAll(List<KeyPlace> listKeyWords) {
-        long size = listKeyWords.size();
+    public boolean insertAll(List<KeyPlace> listKeyPlaces) {
+        long size = listKeyPlaces.size();
         long count = 0;
         float porcent = 0;
         float oldPorcent = 0;
@@ -218,8 +189,8 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
             return false;
         }
         
-        for (KeyPlace keyWord : listKeyWords) {
-            if(insert(keyWord)){
+        for (KeyPlace keyPlace : listKeyPlaces) {
+            if(insert(keyPlace)){
                 System.out.println("Inserido Com Sucesso");
             }
             
@@ -232,7 +203,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
             }
         }
         
-        if (!listKeyWords.isEmpty()) {
+        if (!listKeyPlaces.isEmpty()) {
             System.out.println("100.0 %");
         }
         
