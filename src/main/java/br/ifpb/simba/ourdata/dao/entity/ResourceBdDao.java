@@ -7,8 +7,10 @@ package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.dao.GenericBdDao;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
+import br.ifpb.simba.ourdata.entity.Period;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
+import br.ifpb.simba.ourdata.entity.ResourceTimeSearch;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
@@ -17,6 +19,7 @@ import java.net.URISyntaxException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,14 +30,69 @@ import java.util.logging.Logger;
  *
  * @author kieckegard
  */
-public class ResourceBdDao extends GenericBdDao{
+public class ResourceBdDao extends GenericBdDao {
 
     private PreparedStatement pstm;
 
-    public List<Resource> getResourcesIntersectedBy( Place placeToSearch ){
-        
+    public List<ResourceTimeSearch> getResourcesIntersectedBy(Period periodToSearch) {
+        List<ResourceTimeSearch> resources = new ArrayList<>();
+        StringBuilder sql
+                = new StringBuilder("SELECT *, intervalInterTimes(Start_Date, End_Date, ?, ?) as intervalTimes FROM ");
+        sql.append("(SELECT max(r.description) Resource_Description, min(start_date) Start_Date, max(end_date) End_Date, sum(repeat_number) Repeat_Number, max(rows_number) Resource_Rows_Number, id_resource Resource_Id, max(r.url) Resource_Url ");
+        sql.append("FROM RESOURCE_TIME rt JOIN RESOURCE r ON rt.id_resource = r.id ");
+        sql.append("WHERE (? >= start_date AND ? <= end_date) OR (? >= start_date AND ? <= end_date) ");
+        sql.append("GROUP BY (rt.id_resource)) AS rt_search ORDER BY intervalTimes DESC; ");
+
+        try {
+            conectar();
+            PreparedStatement pstm = getConnection().prepareCall(sql.toString());
+            int i = 1;
+
+            Timestamp start = new Timestamp(periodToSearch.getStartDate().getDate().getTime());
+            Timestamp end = new Timestamp(periodToSearch.getEndDate().getDate().getTime());
+
+            pstm.setTimestamp(i++, start);
+            pstm.setTimestamp(i++, end);
+
+            pstm.setTimestamp(i++, start);
+            pstm.setTimestamp(i++, start);
+
+            pstm.setTimestamp(i++, end);
+            pstm.setTimestamp(i++, end);
+
+            ResultSet rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                ResourceTimeSearch rts = preencherRTS(rs);
+                resources.add(rts);
+            }
+
+        } catch (SQLException | URISyntaxException | IOException | ClassNotFoundException ex) {
+            Logger.getLogger(ResourceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return resources;
+    }
+
+    private ResourceTimeSearch preencherRTS(ResultSet rs) throws SQLException {
+        ResourceTimeSearch resourceTimeSearch = new ResourceTimeSearch();
+
+        resourceTimeSearch.setDescription(rs.getString("Resource_Description"));
+        resourceTimeSearch.setStartDate(rs.getTimestamp("Start_Date"));
+        resourceTimeSearch.setEndDate(rs.getTimestamp("End_Date"));
+        resourceTimeSearch.setRepeatNumber(rs.getLong("Repeat_Number"));
+        resourceTimeSearch.setResourceRowsNumber(rs.getLong("Resource_Rows_Number"));
+        resourceTimeSearch.setResourceId(rs.getString("Resource_Id"));
+        resourceTimeSearch.setResourceUrl(rs.getString("Resource_Url"));
+        resourceTimeSearch.setIntervelTimes(rs.getLong("intervalTimes"));
+
+        return resourceTimeSearch;
+    }
+
+    public List<Resource> getResourcesIntersectedBy(Place placeToSearch) {
+
         Date start;
-        
+
         List<Resource> resources = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.name, r.format, r.url, r.id_dataset, ");
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
@@ -43,7 +101,7 @@ public class ResourceBdDao extends GenericBdDao{
         sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
         sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
-        
+
 //        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.format, r.url, r.id_dataset, ");
 //        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
 //        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ");
@@ -51,46 +109,43 @@ public class ResourceBdDao extends GenericBdDao{
 //        sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
 //        sql.append("JOIN dataset d ON r.id_dataset = d.id ");
 //        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
-
-        try{
+        try {
             conectar();
             WKTWriter writer = new WKTWriter();
-            
-            
-            
+
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, writer.write(placeToSearch.getWay()));
             System.out.println(pstm.toString());
-            
+
             System.out.println("Executando consulta...");
             start = new Date(System.currentTimeMillis());
-            
+
             ResultSet rs = pstm.executeQuery();
             System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
             Resource r;
-            
+
             System.out.println("Preenchendo Objetos com  consulta...");
             start = new Date(System.currentTimeMillis());
-            
-            while ( rs.next() ){
+
+            while (rs.next()) {
                 r = formaResource(rs);
                 resources.add(r);
             }
-            
+
             System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
-            
+
             return resources;
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex) {
             Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resources;
     }
 
-    private Resource formaResource( ResultSet rs ) throws SQLException, ParseException{
+    private Resource formaResource(ResultSet rs) throws SQLException, ParseException {
         String id_resource = rs.getString("id");
         String name = rs.getString("name");
         String description = rs.getString("description");
-        if ( description.equals("") ){
+        if (description.equals("")) {
             description = rs.getString("dataset_title");
         }
         String format = rs.getString("format");
@@ -105,17 +160,17 @@ public class ResourceBdDao extends GenericBdDao{
         minx = rs.getDouble("minx");
         miny = rs.getDouble("miny");
 
-        do{
-            if ( rs.getDouble("maxx") > maxx ){
+        do {
+            if (rs.getDouble("maxx") > maxx) {
                 maxx = rs.getDouble("maxx");
             }
-            if ( rs.getDouble("maxy") > maxy ){
+            if (rs.getDouble("maxy") > maxy) {
                 maxy = rs.getDouble("maxy");
             }
-            if ( rs.getDouble("minx") < minx ){
+            if (rs.getDouble("minx") < minx) {
                 minx = rs.getDouble("minx");
             }
-            if ( rs.getDouble("miny") < miny ){
+            if (rs.getDouble("miny") < miny) {
                 miny = rs.getDouble("miny");
             }
 
@@ -137,7 +192,7 @@ public class ResourceBdDao extends GenericBdDao{
             keyPlace.setRepeatNumber(rs.getInt("repeat_number"));
             keyplaces.add(keyPlace);
 
-        } while ( rs.next() && id_resource.equals(rs.getString("id")) );
+        } while (rs.next() && id_resource.equals(rs.getString("id")));
 
         rs.previous();
         Resource r = new Resource(id_resource, name, description, format, url, idDataset);
@@ -149,10 +204,11 @@ public class ResourceBdDao extends GenericBdDao{
 //        p.setWay(new WKTReader().read("POLYGON((" +minx +" "+ miny +", " + maxx +" " + maxy + "))"));
         r.setPlace(p);
 
-        for ( KeyPlace kp : keyplaces ){
+        for (KeyPlace kp : keyplaces) {
             r.addKeyPlace(kp);
         }
 
         return r;
     }
+
 }

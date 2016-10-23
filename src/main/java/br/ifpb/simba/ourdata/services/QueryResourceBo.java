@@ -6,8 +6,10 @@
 package br.ifpb.simba.ourdata.services;
 
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
+import br.ifpb.simba.ourdata.entity.Period;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
+import br.ifpb.simba.ourdata.entity.ResourceTimeSearch;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
 
@@ -24,5 +26,9 @@ public class QueryResourceBo{
 
     public List<Resource> listResourcesIntersectedBy( Place place ){
         return resourceDao.getResourcesIntersectedBy(place);
+    }
+    
+    public List<ResourceTimeSearch> listResourcesIntersectedBy( Period period){
+        return resourceDao.getResourcesIntersectedBy(period);
     }
 }
