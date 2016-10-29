@@ -33,6 +33,7 @@ public class KeyTimeUtils {
                 for (KeyTime liteVersionAux : liteVersion) {
                     if (liteVersionAux.equals(keyTime)) {
                         liteVersionAux.setRepeatNumber(keyTime.getRepeatNumber() + liteVersionAux.getRepeatNumber());
+                        liteVersionAux.getPeriod().addAllRows(keyTime.getPeriod().getRows());
                         exist = true;
                         break;
                     }

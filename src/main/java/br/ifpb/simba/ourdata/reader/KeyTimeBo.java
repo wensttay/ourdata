@@ -8,6 +8,9 @@ package br.ifpb.simba.ourdata.reader;
 import br.ifpb.simba.ourdata.entity.KeyTime;
 import br.ifpb.simba.ourdata.entity.Period;
 import br.ifpb.simba.ourdata.entity.utils.PeriodUtils;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
@@ -18,6 +21,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jdom.JDOMException;
 
 /**
@@ -26,8 +31,9 @@ import org.jdom.JDOMException;
  */
 public class KeyTimeBo {
 
-    public static final int NUM_ROWS_CHECK_DEFAULT = 10;
+    public static final int NUM_ROWS_CHECK_DEFAULT = 5;
     public static final int NO_COLUM_ID = -99;
+    public static final int NO_ROW_ID = -99;
 
     private PeriodUtils periodUtils;
     private int numRowsCheck;
@@ -73,9 +79,10 @@ public class KeyTimeBo {
         }
 
         int csvRowsSize = csvRows.size();
+        int realCsvRowSize = csvRowsSize - 1;
         System.out.println("File Row Size: " + csvRowsSize + " |||| ");
 
-        KeyTime placeByDescriptions = getTimeByDescriptions(resource, csvRowsSize, dataset);
+        KeyTime placeByDescriptions = getTimeByDescriptions(resource, realCsvRowSize, dataset);
 
 //        if (placeByDescriptions != null) {
 //            resultKeyTimes.add(placeByDescriptions);
@@ -120,27 +127,32 @@ public class KeyTimeBo {
                 String colValue = row[colIndex].replace("\n", " ");
                 colValue = colValue.trim();
 
-                if (colValue != null && !colValue.equals("")) {
+                Geometry geom;
+                try {
+                    geom = new WKTReader().read(colValue);
+                } catch (ParseException ex) {
+                    geom = null;
+                }
+
+                if (colValue != null && !colValue.equals("") && geom == null) {
 
                     Date timeBase = null;
                     Timestamp created = resource.getCreated();
                     if (created != null) {
                         timeBase = new Date(created.getTime());
                     }
-                    if (timeBase == null) {
-                        timeBase = new Date();
-                    }
 
                     Period findPeriod = periodUtils.findPeriod(colValue, colIndex, timeBase);
-                    if (placeByDescriptions != null
-                            && findPeriod != null
-                            && findPeriod.intersect(placeByDescriptions.getPeriod())) {
-                        rowPeriods.add(findPeriod);
-                    } else if (findPeriod != null) {
-                        // Verificar com Fábio: 
-                        // O que fazer caso não encontre nenhum Periodo 
-                        // nos titulos para comprar com os encontrado internamente?
-                        rowPeriods.add(findPeriod);
+
+                    if (findPeriod != null) {
+                        findPeriod.addRow(rowIndex);
+                        if (placeByDescriptions != null) {
+                            if (findPeriod.intersect(placeByDescriptions.getPeriod())) {
+                                rowPeriods.add(findPeriod);
+                            }
+                        } else {
+                            rowPeriods.add(findPeriod);
+                        }
                     }
                 }
 
@@ -148,7 +160,7 @@ public class KeyTimeBo {
 
             if (!rowPeriods.isEmpty()) {
                 Period joinPeriods = periodUtils.joinPeriods(rowPeriods);
-                KeyTime preencherKeyTime = preencherKeyTime(csvRowsSize, resourceId, joinPeriods, 1);
+                KeyTime preencherKeyTime = preencherKeyTime(realCsvRowSize, resourceId, joinPeriods, 1);
                 resultKeyTimes.add(preencherKeyTime);
             }
 
@@ -240,6 +252,7 @@ public class KeyTimeBo {
             return null;
         }
 
+        period.addRow(NO_ROW_ID);
         return preencherKeyTime(rowsSize, resource.getId(), period, rowsSize);
     }
 }

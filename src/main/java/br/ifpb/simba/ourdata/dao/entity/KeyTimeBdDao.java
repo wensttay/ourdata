@@ -52,7 +52,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         try {
             StringBuilder sql = new StringBuilder("INSERT INTO resource_time(START_COLUM_NUMBER, END_COLUM_NUMBER, REPEAT_NUMBER");
             sql.append(", ROWS_NUMBER, METADATA_CREATED, START_DATE, END_DATE, ID_RESOURCE)");
-            sql.append("VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+            sql.append("VALUES(?, ?, ?, ?, ?, ?, ?, ?);");
             ps = getConnection().prepareStatement(sql.toString());
 
             int i = 1;
@@ -67,10 +67,27 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
 
             result = (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-//            System.out.println(TextColor.ANSI_RED.getCode() + "Já existe no banco");
             ex.printStackTrace();
             result = false;
+        }
+        
+        for (Integer row : obj.getPeriod().getRows()) {
+
+            try {
+                StringBuilder sql = new StringBuilder("INSERT INTO resource_time_rows(id_resource, start_time, end_time, numero_da_linha)");
+                sql.append(" values (?, ?, ?, ?)");
+                ps = getConnection().prepareStatement(sql.toString());
+
+                int i = 1;
+                ps.setString(i++, obj.getIdResource());
+                ps.setTimestamp(i++, new Timestamp(obj.getPeriod().getStartDate().getDate().getTime()));
+                ps.setTimestamp(i++, new Timestamp(obj.getPeriod().getEndDate().getDate().getTime()));
+                ps.setInt(i++, row);
+
+                result = (ps.executeUpdate() != 0);
+            } catch (Exception ex) {
+                System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            }
         }
 
         try {

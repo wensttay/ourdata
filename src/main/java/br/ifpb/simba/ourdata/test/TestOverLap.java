@@ -16,7 +16,7 @@ import com.vividsolutions.jts.io.WKTReader;
  *
  * @author wensttay
  */
-public class testOverLap{
+public class TestOverLap{
     public static void main(String[] args) throws ParseException{
         Geometry geometry = new WKTReader().read("POLYGON((1 1, 3 1, 3 3, 1 3, 1 1))");
 //        Geometry geometry2 = new WKTReader().read("POLYGON((2 1, 4 1, 4 3, 2 3, 2 1))");

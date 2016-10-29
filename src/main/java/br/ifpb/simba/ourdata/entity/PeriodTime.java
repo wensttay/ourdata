@@ -6,6 +6,7 @@
 package br.ifpb.simba.ourdata.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,10 +14,10 @@ import java.util.Objects;
  * @author wensttay
  */
 public class PeriodTime {
-    
+
     private Date date;
     private int col;
-        
+
     public PeriodTime() {
     }
 
@@ -28,7 +29,7 @@ public class PeriodTime {
         this.date = date;
         this.col = col;
     }
-   
+
     public Date getDate() {
         return date;
     }
@@ -44,7 +45,7 @@ public class PeriodTime {
     public void setCol(int col) {
         this.col = col;
     }
-
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -73,5 +74,5 @@ public class PeriodTime {
         }
         return true;
     }
-    
+
 }
