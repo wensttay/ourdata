@@ -83,7 +83,7 @@
                         %>
                         <tr>    
                             <td><%= count%></td>
-                            <td><%= String.format("%.2f", resource.getRanking() * 100) + "%"%></td>
+                            <td><%= String.format("%.2f", resource.getRanking()) + "%"%></td>
                             <td><%= resource.getResource().getDescricao()%></td>
                             <td><%=resource.getResource().getFormato()%></td>  
                             <td><a class="button alt small" href="<%=resource.getResource().getUrl()%>" target="_blank" >Download <i class="fa fa-download" aria-hidden="true"></i></a></td>

@@ -79,7 +79,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      */
     @Override
     public boolean update( CkanResource obj ){
-        try{
+        try{ 
             conectar();
             StringBuilder sql = new StringBuilder("UPDATE RESOURCE SET DESCRIPTION = ?, FORMAT = ?, URL = ?,");
             sql.append("NAME = ?, ID_DATASET = ? WHERE ID = ?");
@@ -89,13 +89,14 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             ps.setString(i++, obj.getDescription());
             ps.setString(i++, obj.getFormat());
             ps.setString(i++, obj.getUrl());
-            ps.setString(i++, obj.getPackageId());
             ps.setString(i++, obj.getName());
+            ps.setString(i++, obj.getPackageId());
             ps.setString(i++, obj.getId());
 
             return (ps.executeUpdate() != 0);
         } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
-            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            System.out.println("ERRRRRRRRRRRRRRRRRRRRRRRRRRROUUUUUUUUUUU");
         } finally{
             desconectar();
         }

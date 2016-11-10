@@ -23,6 +23,10 @@
         </noscript>
         <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
         <link rel="stylesheet" type="text/css" href="ourdata.css">
+
+        <!-- Bootstrap -->
+        <link href="bootstrap-3.3.6-dist/css/bootstrap-theme.min.css" rel="stylesheet">
+        <link href="bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body class="landing">
 
@@ -47,32 +51,67 @@
         <section id="banner">
             <h2>This is OurData </h2>
             <p>An easy way to find all open data from your country!</p>
-            <ul class="actions">
-                <li>
-                    <a href="#pac-input" class="button big">Get Started <i class="fa fa-arrow-down" aria-hidden="true"></i></a>
-                </li>
-            </ul>
-        </section>
-
-        <!-- One -->
-        <form method="POST" id="search-form" action="SearchResources" style="margin-bottom: 0px;">
-            <input id="pac-input" class="search-input" type="text" placeholder="Type a geoname">
-            <div class="hidden-inputs">
-                <input type="text" name="placeName">
-                <input type="text" name="maxx">
-                <input type="text" name="maxy">
-                <input type="text" name="minx">
-                <input type="text" name="miny">
+            <br/>
+            <div style="padding: 20px 60px; border-radius: 10px; border: 5px solid black; display: table; margin: 50px auto;">
+                <h3 style="color: black;">Select how you whant to Search:</h3>
+                <ul class="actions" style="margin: 0;">
+                    <li>
+                        <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
+                           data-toggle="modal" data-target="#byTime" ><i class="fa fa-clock-o"></i></a>
+                        <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
+                           data-toggle="modal" data-target="#byPosition" ><i class="fa fa-globe"></i></a>
+                    </li>
+                </ul>
             </div>
-            <button type='submit' onclick='validate(event);' id="btnSearch" class="button big map-button">
-                <span>Search</span>
-                <i class="fa fa-search" aria-hidden="true"></i>
-            </button>
-        </form>
-        <section id="map" class="wrapper align-center" style="height: 600px;">
         </section>
 
+        <div class="modal fade" id="byPosition" style="z-index: 99999;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!--One--> 
+                    <form method="GET" id="search-form" action="SearchResources" style="margin-bottom: 0px;">
+                        <input id="pac-input" class="search-input" type="text" placeholder="Type a geoname">
+                        <div class="hidden-inputs">
+                            <input type="text" name="placeName">
+                            <input type="text" name="maxx">
+                            <input type="text" name="maxy">
+                            <input type="text" name="minx">
+                            <input type="text" name="miny">
+                        </div>
+                        <button type='submit' onclick='validate(event);' id="btnSearch" class="button big map-button">
+                            <span>Search</span>
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <section id="map" class="wrapper align-center" style="height: 600px; padding: 0;">
+                    </section>
+                </div>
+            </div>
+        </div>
 
+        <div class="modal fade" id="byTime" style="z-index: 99999">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!--One--> 
+                    <form method="GET" id="search-form" action="SearchResourcesByTime" style="margin: 20px;">
+                        <div class="form-group">
+                            <label for="start-imput">Start:</label>
+                            <input name="startInput" id="start-imput" class="form-control" type="datetime-local">
+                        </div>
+                        <div class="form-group">
+                            <label for="end-imput">End:</label>
+                            <input name="endInput" id="end-imput" class="form-control" type="datetime-local">
+                        </div>
+                        
+                        <input type='submit'
+                               class="button big" 
+                               value="Search"
+                               style=" width: 100%;"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
         <!-- Footer -->
         <footer id="footer">
             <div class="container">
@@ -108,6 +147,7 @@
                 </ul>
             </div>
         </footer>
-        <script type="text/javascript" src="js/maps.js"></script>		
+        <script type="text/javascript" src="js/maps.js"></script>
+        <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
     </body>
 </html>

@@ -19,7 +19,7 @@ public class ResourceTimeSearch {
     private Long resourceRowsNumber;
     private String resourceId;
     private String resourceUrl;
-    private Long intervelTimes;
+    private Float intervelTimes;
 
     public String getDescription() {
         return description;
@@ -77,11 +77,11 @@ public class ResourceTimeSearch {
         this.resourceUrl = resourceUrl;
     }
 
-    public Long getIntervelTimes() {
+    public Float getIntervelTimes() {
         return intervelTimes;
     }
 
-    public void setIntervelTimes(Long intervelTimes) {
+    public void setIntervelTimes(Float intervelTimes) {
         this.intervelTimes = intervelTimes;
     }
 

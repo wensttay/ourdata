@@ -5,9 +5,12 @@
  */
 package br.ifpb.simba.ourdata.services;
 
+import br.ifpb.simba.ourdata.entity.Period;
+import br.ifpb.simba.ourdata.entity.PeriodTime;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
+import br.ifpb.simba.ourdata.entity.ResourceTimeSearch;
 import br.ifpb.simba.ourdata.entity.utils.PlaceUtils;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -74,8 +77,7 @@ public class QueryResourceItemSearchBo {
                 double repeatPercent = resource.getRepeatPercent(0.2f);
                 double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
                 double rankingPercent = repeatPercent + overlapPercent;
-                //System.out.println("Overlap percent: "+overlapPercent+"\n");
-                ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent);
+                ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent * 100);
                 itensSearch.add(itemSearch);
             }
             System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
@@ -87,6 +89,16 @@ public class QueryResourceItemSearchBo {
         System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         
         return itensSearch;
+    }
+    
+    public List<ResourceTimeSearch> getResourceItemSearchByTime(Date start, Date end) {
+        
+        PeriodTime periodStart = new PeriodTime(start);
+        PeriodTime periodEnd = new PeriodTime(end);
+        Period period = new Period(periodStart, periodEnd);
+        List<ResourceTimeSearch> rtses = queryResourceBo.listResourcesIntersectedBy(period);
+        
+        return rtses;
     }
     
     
