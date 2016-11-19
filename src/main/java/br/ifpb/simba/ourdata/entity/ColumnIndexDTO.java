@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author Pedro Arthur
  */
-public class ColumnIndexDTO {
+public class ColumnIndexDTO implements Comparable<ColumnIndexDTO> {
     
     private Long id;
     private String value;
@@ -97,6 +97,11 @@ public class ColumnIndexDTO {
     @Override
     public String toString() {
         return "ColumnIndexDTO{" + "id=" + id + ", value=" + value + ", rowsCount=" + rowsCount + ", columnNumber=" + columnNumber + ", resourceId=" + resourceId + ", datasetId=" + datasetId + '}';
+    }
+
+    @Override
+    public int compareTo(ColumnIndexDTO o) {
+        return this.value.compareTo(o.value);
     }
     
     

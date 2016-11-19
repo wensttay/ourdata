@@ -269,6 +269,7 @@ public class CkanDataSetBdDao extends GenericObjectBdDao<CkanDataset, String>{
         try{
             CkanDataset ckanDataset = new CkanDataset();
             ckanDataset.setId(rs.getString("id"));
+            ckanDataset.setTitle(rs.getString("title"));
             ckanDataset.setAuthor(rs.getString("author"));
             ckanDataset.setNotes(rs.getString("notes"));
             ckanDataset.setName(rs.getString("name"));

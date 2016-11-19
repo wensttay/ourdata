@@ -16,6 +16,7 @@ import java.util.Properties;
  * @author Wensttay
  */
 public abstract class GenericBdDao{
+    
     public static final String PROPERTIES_PATH_DEFAULT = "/banco/banco.properties";
 
     private String properties_path;

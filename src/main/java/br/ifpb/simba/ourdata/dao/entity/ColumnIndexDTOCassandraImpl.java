@@ -29,7 +29,7 @@ public class ColumnIndexDTOCassandraImpl implements ColumnIndexDao {
     @Override
     public void insert(ColumnIndexDTO c) {
         
-        String sql = "INSERT INTO column_index (id,column_value,column_number,row_count,resource_id,dataset_id)"
+        String sql = "INSERT INTO resource_column_index (id,column_value,column_number,row_count,resource_id,dataset_id)"
                 + " VALUES(?,?,?,?,?,?)";
         
         if(this.pstm == null)
@@ -39,7 +39,7 @@ public class ColumnIndexDTOCassandraImpl implements ColumnIndexDao {
                 c.getColumnNumber(),c.getRowsCount(),
                 c.getResourceId(),c.getDatasetId());
         
-        session.executeAsync(bind);
+        session.execute(bind);
     }
     
     
