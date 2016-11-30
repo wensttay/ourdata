@@ -10,6 +10,7 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import java.util.List;
 
 /**
  *
@@ -40,6 +41,16 @@ public class ColumnIndexDTOCassandraImpl implements ColumnIndexDao {
                 c.getResourceId(),c.getDatasetId());
         
         session.execute(bind);
+    }
+
+    @Override
+    public List<ColumnIndexDTO> list(Long start, Long quantity) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<ResourceColumnIndex> getResourcesColumnIndex() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

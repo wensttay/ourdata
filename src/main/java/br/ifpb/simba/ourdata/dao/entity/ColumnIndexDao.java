@@ -6,6 +6,7 @@
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.entity.ColumnIndexDTO;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,6 @@ import br.ifpb.simba.ourdata.entity.ColumnIndexDTO;
 public interface ColumnIndexDao {
     
     void insert(ColumnIndexDTO columnIndexDTO);
+    List<ColumnIndexDTO> list(Long start, Long quantity);
+    List<ResourceColumnIndex> getResourcesColumnIndex();
 }

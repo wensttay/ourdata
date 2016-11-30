@@ -9,7 +9,6 @@ import br.ifpb.simba.ourdata.dao.entity.ColumnIndexDTOPostgresImpl;
 import br.ifpb.simba.ourdata.dao.entity.ColumnIndexDao;
 import br.ifpb.simba.ourdata.entity.ColumnIndexDTO;
 import br.ifpb.simba.ourdata.reader.TextColor;
-import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.util.List;
 import java.util.Set;

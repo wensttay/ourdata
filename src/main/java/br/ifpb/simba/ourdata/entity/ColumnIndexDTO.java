@@ -28,6 +28,10 @@ public class ColumnIndexDTO implements Comparable<ColumnIndexDTO> {
         this.resourceId = resourceId;
         this.datasetId = datasetId;
     }
+    
+    public ColumnIndexDTO() {
+        
+    }
 
     public Long getId() {
         return id;
