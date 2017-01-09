@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.entity.utils;
 
 import br.ifpb.simba.ourdata.entity.KeyPlace;
@@ -11,9 +6,11 @@ import br.ifpb.simba.ourdata.entity.Resource;
 
 /**
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class PlaceUtils{
+public class PlaceUtils {
 
     private double controlVariable = 0.5;
 
@@ -25,27 +22,27 @@ public class PlaceUtils{
      *
      * @return Area of intesect two places pass on params
      */
-    public static double getIntersectArea( Place place, Place otherPlace ){
+    public static double getIntersectArea(Place place, Place otherPlace) {
         double altura = Math.max(0, Math.min(place.getMaxY(), otherPlace.getMaxY()) - Math.max(place.getMinY(), otherPlace.getMinY()));
         double largura = Math.max(0, Math.min(place.getMaxX(), otherPlace.getMaxX()) - Math.max(place.getMinX(), otherPlace.getMinX()));
         return altura * largura;
     }
 
-    public static float getRepeatPercent( Resource resource, float constante ){
+    public static float getRepeatPercent(Resource resource, float constante) {
         int sum_repeat = 0;
         int rows = 0;
-        if ( !resource.getKeyplaces().isEmpty() ){
+        if (!resource.getKeyplaces().isEmpty()) {
             rows = resource.getKeyplaces().get(0).getRowsNumber();
-        } else{
+        } else {
             return 0;
         }
-        for ( KeyPlace kp : resource.getKeyplaces() ){
+        for (KeyPlace kp : resource.getKeyplaces()) {
             sum_repeat += kp.getRepeatNumber();
         }
         return (sum_repeat / rows) * constante;
     }
 
-    public static double getOverlap( Place place, Place otherPlace, float controlVariable ){
+    public static double getOverlap(Place place, Place otherPlace, float controlVariable) {
         double intersectArea = getIntersectArea(place, otherPlace);
         double placeArea = getArea(place);
         double otherPlaceArea = getArea(otherPlace);
@@ -57,7 +54,7 @@ public class PlaceUtils{
         return result;
     }
 
-    private static double getArea( Place place ){
+    private static double getArea(Place place) {
         return (place.getMaxX() - place.getMinX()) * (place.getMaxY() - place.getMinY());
     }
 }

@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.entity.utils;
 
 import br.ifpb.simba.ourdata.entity.Period;
 import br.ifpb.simba.ourdata.entity.PeriodTime;
-import com.mycompany.heideltime.TimeMLReader;
+import br.ifpb.simba.ourdata.heideltime.TimeMLReader;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,7 +17,9 @@ import org.jdom.JDOMException;
 
 /**
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class PeriodUtils {
 
@@ -95,7 +92,7 @@ public class PeriodUtils {
                             finalCal.add(Calendar.DATE, 1);
                             finalCal.add(Calendar.SECOND, -1);
                         }
-                        
+
                         d = finalCal.getTime();
                         list.add(d);
                     } catch (ParseException ex) {

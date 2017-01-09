@@ -1,27 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.services;
 
-import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
 import br.ifpb.simba.ourdata.entity.Place;
-import java.util.List;
 
 /**
  *
- * @author kieckegard
+ * @author Pedro Arthur
  */
-public class QueryPlaceBo{
+public class QueryPlaceBo {
+
     private PlaceBdDao placeDao;
 
-    public QueryPlaceBo(){
+    public QueryPlaceBo() {
         placeDao = new PlaceBdDao();
     }
 
-    public Place getPlacesByName( String name, String type ){
-        return placeDao.burcarPorTitulos(name, type);
+    public Place getPlacesByName(String name, String type) {
+        return getPlaceDao().burcarPorTitulos(name, type);
     }
+
+    /**
+     * @return the placeDao
+     */
+    public PlaceBdDao getPlaceDao() {
+        return placeDao;
+    }
+
+    /**
+     * @param placeDao the placeDao to set
+     */
+    public void setPlaceDao(PlaceBdDao placeDao) {
+        this.placeDao = placeDao;
+    }
+    
 }

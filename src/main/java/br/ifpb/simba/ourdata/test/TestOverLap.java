@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.entity.Place;
@@ -14,10 +8,13 @@ import com.vividsolutions.jts.io.WKTReader;
 
 /**
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class TestOverLap{
-    public static void main(String[] args) throws ParseException{
+public class TestOverLap {
+
+    public static void main(String[] args) throws ParseException {
         Geometry geometry = new WKTReader().read("POLYGON((1 1, 3 1, 3 3, 1 3, 1 1))");
 //        Geometry geometry2 = new WKTReader().read("POLYGON((2 1, 4 1, 4 3, 2 3, 2 1))");
         Geometry geometry2 = new WKTReader().read("POLYGON((1 1, 3 1, 3 3, 1 3, 1 1))");

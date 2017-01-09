@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.controll;
 
 import br.ifpb.simba.ourdata.entity.ResourceItemSearch;
@@ -18,11 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author Wensttay
+ * 
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-@WebServlet( name = "SearchResources", urlPatterns = { "/SearchResources" } )
-public class SearchResourceControll extends HttpServlet{
+@WebServlet(name = "SearchResources", urlPatterns = {"/SearchResources"})
+public class SearchResourceControll extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,34 +31,31 @@ public class SearchResourceControll extends HttpServlet{
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException{
-        
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
 
         //String nameOfPlace = request.getParameter("nameOfPlace");
         //String typeOfPlace = request.getParameter("typeOfPlace");
-
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
-
-        //List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
-       
-        //request.setAttribute("nameOfPlace",nameOfPlace);
+        bo.getQueryResourceBo().getResourceDao().setProperties_path("/banco/bancoAvaliation.properties");
         
+        //List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
+        //request.setAttribute("nameOfPlace",nameOfPlace);
         double maxx = Double.parseDouble(request.getParameter("maxx"));
         double minx = Double.parseDouble(request.getParameter("minx"));
         double maxy = Double.parseDouble(request.getParameter("maxy"));
         double miny = Double.parseDouble(request.getParameter("miny"));
         String placeName = request.getParameter("placeName");
-        
-        Envelope envelope = new Envelope(maxx,minx,maxy,miny);
+
+        Envelope envelope = new Envelope(maxx, minx, maxy, miny);
         List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(envelope);
-        
-        
-         //passando a lista de ResourceItemSearch para o JSP
+
+        //passando a lista de ResourceItemSearch para o JSP
         request.setAttribute("resourseList", itensSearch);
-        request.setAttribute("size",itensSearch.size());
-        request.setAttribute("nameOfPlace",placeName);
-        
+        request.setAttribute("size", itensSearch.size());
+        request.setAttribute("nameOfPlace", placeName);
+
         RequestDispatcher rd = request.getRequestDispatcher("/result.jsp");
         rd.forward(request, response);
 
@@ -78,8 +72,8 @@ public class SearchResourceControll extends HttpServlet{
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response )
-            throws ServletException, IOException{
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -93,8 +87,8 @@ public class SearchResourceControll extends HttpServlet{
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost( HttpServletRequest request, HttpServletResponse response )
-            throws ServletException, IOException{
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -104,7 +98,7 @@ public class SearchResourceControll extends HttpServlet{
      * @return a String containing servlet description
      */
     @Override
-    public String getServletInfo(){
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

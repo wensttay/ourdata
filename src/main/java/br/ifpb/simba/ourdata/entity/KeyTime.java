@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.entity;
 
 import java.sql.Timestamp;
@@ -10,10 +5,12 @@ import java.util.Objects;
 
 /**
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class KeyTime {
-    
+
     private int repeatNumber;
     private int rowsNumber;
     private Timestamp metadataCreated;
@@ -23,7 +20,7 @@ public class KeyTime {
     public KeyTime() {
     }
 
-    public KeyTime(int repeatNumber, int rowsNumber,Timestamp metadataCreated, Period period, String idResource) {
+    public KeyTime(int repeatNumber, int rowsNumber, Timestamp metadataCreated, Period period, String idResource) {
         this.repeatNumber = repeatNumber;
         this.rowsNumber = rowsNumber;
         this.metadataCreated = metadataCreated;
@@ -98,10 +95,9 @@ public class KeyTime {
         return true;
     }
 
-
     @Override
     public String toString() {
         return "KeyTime{" + "repeatNumber=" + repeatNumber + ", rowsNumber=" + rowsNumber + ", metadataCreated=" + metadataCreated + ", period=" + period + ", idResource=" + idResource + '}';
     }
- 
+
 }

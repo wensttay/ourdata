@@ -1,17 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package br.ifpb.simba.ourdata.reader;
 
 /**
  * Enum of print colors
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public enum TextColor{
+public enum TextColor {
     ANSI_RESET("\u001B[0m"),
     ANSI_BLACK("\u001B[30m"),
     ANSI_RED("\u001B[31m"),
@@ -24,23 +20,22 @@ public enum TextColor{
 
     private String code;
 
-    private TextColor( String code ){
+    private TextColor(String code) {
         this.code = code;
     }
 
     /**
      * @return the code
      */
-    public String getCode(){
+    public String getCode() {
         return code;
     }
 
     /**
      * @param code the code to set
      */
-    public void setCode( String code ){
+    public void setCode(String code) {
         this.code = code;
     }
-    
-    
+
 }

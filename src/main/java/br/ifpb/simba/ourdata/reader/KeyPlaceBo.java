@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.reader;
 
 import br.ifpb.simba.ourdata.dao.entity.PlaceBdDao;
@@ -17,6 +12,7 @@ import com.vividsolutions.jts.io.WKTWriter;
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -25,7 +21,7 @@ import java.util.List;
 
 /**
  *
- * @author kieckegard
+ * @author Pedro Arthur
  */
 public class KeyPlaceBo {
 
@@ -195,13 +191,13 @@ public class KeyPlaceBo {
 
                     KeyPlace keyPlace = preencherKeyplace(colIndex, csvRowsSize,
                             colValue, resourceId, place);
-                    
+
                     if (!columValueGeometry.isEmpty()) {
                         keyPlace.setColumValue(columValueGeometry);
                     }
-                    
+
                     rowKeyPlaces.add(keyPlace);
-   
+
                 }
 
             } //ends col iteration
@@ -288,26 +284,109 @@ public class KeyPlaceBo {
     }
 
     private KeyPlace getPlaceByDescriptions(CkanResource resource, int rowsSize, CkanDataset dataset) {
-        
+
         String resourceName = resource.getName();
         String resourceDescription = resource.getDescription();
         String datasetName = dataset.getName();
         String datasetNotes = dataset.getNotes();
-        
 
         for (Place place : placesGazetteer) {
 
             if (!place.getNome().equals("")) {
                 if (resourceName.contains(place.getNome())
                         || resourceDescription.contains(place.getNome())
-                        || datasetName.contains(place.getNome()) 
+                        || datasetName.contains(place.getNome())
                         || datasetNotes.contains(place.getNome())) {
-                    
+
                     return preencherKeyplace(WKT_ID, rowsSize, place.getNome(), resource.getId(), place);
                 }
             }
         }
 
         return null;
+    }
+
+    public List<KeyPlace> getKeyPlaces(InputStream in, int colum, String type, String resourceId) throws IOException {
+
+        List<KeyPlace> resultKeyPlaces = new ArrayList<>();
+        CSVReaderOD cSVReaderOD = new CSVReaderOD();
+
+        //get a List which contains all csv content
+        List<String[]> csvRows = cSVReaderOD.build(in);
+
+        if (csvRows == null) {
+            csvRows = new ArrayList<>();
+        }
+
+        int csvRowsSize = csvRows.size();
+        System.out.println("File Row Size: " + csvRowsSize + " |||| ");
+
+        //Iterating all csvRows
+        for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
+
+            //getting current row
+            String[] row = csvRows.get(rowIndex);
+
+            //creating current row keyplace list
+            List<KeyPlace> rowKeyPlaces = new ArrayList<>();
+
+            //Iterating each csvRow's columns
+            for (int colIndex = 0; colIndex < row.length; colIndex++) {
+
+                if (colIndex != colum) {
+                    colIndex++;
+                    if (colIndex >= row.length) {
+                        break;
+                    }
+                }
+
+                String colValue = row[colIndex].replace("\n", " ");
+                colValue = colValue.trim();
+//                String colValue = row[colIndex];
+
+                Place place = null;
+
+                // MELHORAR ISSO, TA FEIO
+                String columValueGeometry = "";
+
+                if (colValue != null && !colValue.equals("")) {
+                    //Search by GEOMETRY String format
+                    if (type.equals("Geoname")) {
+                        place = searchByGemotryFormat(colValue);
+
+                        if (place != null) {
+                            columValueGeometry = new WKTWriter().write(place.getWay());
+                        }
+                    } else if (type.equals("WKT")) {
+                        //Creating place list
+                        List<Place> places = new ArrayList<>();
+                        places.addAll(buscarPorTitulos(colValue));
+                        place = getMinorPlace(places);
+                    }
+                }
+
+                if (place != null) {
+
+                    KeyPlace keyPlace = preencherKeyplace(colIndex, csvRowsSize,
+                            colValue, resourceId, place);
+
+                    if (!columValueGeometry.isEmpty()) {
+                        keyPlace.setColumValue(columValueGeometry);
+                    }
+
+                    rowKeyPlaces.add(keyPlace);
+
+                }
+
+            } //ends col iteration
+
+            if (!rowKeyPlaces.isEmpty()) {
+                resultKeyPlaces.add(getMinorKeyPlace(rowKeyPlaces));
+            }
+
+        } //ends rows iteration
+
+        cSVReaderOD.closeAll();
+        return resultKeyPlaces;
     }
 }

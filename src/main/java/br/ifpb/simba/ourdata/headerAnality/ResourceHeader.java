@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.headerAnality;
 
 import java.util.ArrayList;
@@ -9,7 +8,8 @@ import java.util.List;
  *
  * @author Pedro Arthur
  */
-public class ResourceHeader{
+public class ResourceHeader {
+
     private List<ColumnHeader> columns;
     private int qtdRows;
 
@@ -17,7 +17,7 @@ public class ResourceHeader{
      * Constructor default to ResourceAnality.
      * <p>
      */
-    public ResourceHeader(){
+    public ResourceHeader() {
         columns = new ArrayList<>();
         qtdRows = 0;
     }
@@ -29,7 +29,7 @@ public class ResourceHeader{
      * @param columns A list with all ColumnsAnality of some resource
      * @param qtdRows A number of rows about some resource
      */
-    public ResourceHeader( List<ColumnHeader> columns, int qtdRows ){
+    public ResourceHeader(List<ColumnHeader> columns, int qtdRows) {
         this.columns = columns;
         this.qtdRows = qtdRows;
     }
@@ -40,35 +40,35 @@ public class ResourceHeader{
      * @return A String representation of class
      */
     @Override
-    public String toString(){
+    public String toString() {
         return "ResourceHeader{" + "columns=" + getColumns() + ", qtdRows=" + getQtdRows() + '}';
     }
 
     /**
      * @return the columns
      */
-    public List<ColumnHeader> getColumns(){
+    public List<ColumnHeader> getColumns() {
         return columns;
     }
 
     /**
      * @param columns the columns to set
      */
-    public void setColumns( List<ColumnHeader> columns ){
+    public void setColumns(List<ColumnHeader> columns) {
         this.columns = columns;
     }
 
     /**
      * @return the qtdRows
      */
-    public int getQtdRows(){
+    public int getQtdRows() {
         return qtdRows;
     }
 
     /**
      * @param qtdRows the qtdRows to set
      */
-    public void setQtdRows( int qtdRows ){
+    public void setQtdRows(int qtdRows) {
         this.qtdRows = qtdRows;
     }
 

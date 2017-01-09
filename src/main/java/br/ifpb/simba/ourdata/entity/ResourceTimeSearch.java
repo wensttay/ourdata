@@ -1,17 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.entity;
 
 import java.sql.Timestamp;
 
 /**
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class ResourceTimeSearch {
+
     private String description;
     private Timestamp startDate;
     private Timestamp endDate;
@@ -89,5 +87,5 @@ public class ResourceTimeSearch {
     public String toString() {
         return "ResourceTimeSearch{\n\t" + "description=" + description + ", \n\tstartDate=" + startDate + ", \n\tendDate=" + endDate + ", \n\trepeatNumber=" + repeatNumber + ", \n\tresourceRowsNumber=" + resourceRowsNumber + ", \n\tresourceId=" + resourceId + ", \n\tresourceUrl=" + resourceUrl + ", \n\tintervelTimes=" + intervelTimes + "\n}";
     }
-    
+
 }

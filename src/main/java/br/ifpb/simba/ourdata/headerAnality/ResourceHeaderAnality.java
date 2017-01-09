@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.headerAnality;
 
 /**
@@ -6,7 +5,8 @@ package br.ifpb.simba.ourdata.headerAnality;
  *
  * @author Pedro Arthur
  */
-public interface ResourceHeaderAnality<T>{
+public interface ResourceHeaderAnality<T> {
+
     /**
      * Method to get a complete ResourceHeader from some string URl
      *
@@ -14,5 +14,5 @@ public interface ResourceHeaderAnality<T>{
      *
      * @return A ResourceHeader with your ColumnsHeaders and Number of Rows
      */
-    public T getHeader( String url );
+    public T getHeader(String url);
 }

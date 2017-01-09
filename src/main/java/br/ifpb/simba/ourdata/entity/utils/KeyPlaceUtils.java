@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.entity.utils;
 
 import br.ifpb.simba.ourdata.entity.KeyPlace;
@@ -11,9 +6,11 @@ import java.util.List;
 
 /**
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class KeyPlaceUtils{
+public class KeyPlaceUtils {
 
     /**
      * Return a list with a 'lite Version' of result seach KeyPlaces's resource.
@@ -24,20 +21,20 @@ public class KeyPlaceUtils{
      *
      * @return Filered list, without repeat KeyPlaces
      */
-    public static List<KeyPlace> getLiteVersion( List<KeyPlace> keyPlaces ){
+    public static List<KeyPlace> getLiteVersion(List<KeyPlace> keyPlaces) {
         List<KeyPlace> liteVersion = new ArrayList<>();
 
-        if ( keyPlaces != null && !keyPlaces.isEmpty() ){
-            for ( KeyPlace keyPlace : keyPlaces ){
+        if (keyPlaces != null && !keyPlaces.isEmpty()) {
+            for (KeyPlace keyPlace : keyPlaces) {
                 boolean exist = false;
-                for ( KeyPlace liteVersionAux : liteVersion ){
-                    if ( liteVersionAux.equals(keyPlace) ){
+                for (KeyPlace liteVersionAux : liteVersion) {
+                    if (liteVersionAux.equals(keyPlace)) {
                         liteVersionAux.setRepeatNumber(keyPlace.getRepeatNumber() + liteVersionAux.getRepeatNumber());
                         exist = true;
                         break;
                     }
                 }
-                if ( !exist ){
+                if (!exist) {
                     liteVersion.add(keyPlace);
                 }
             }

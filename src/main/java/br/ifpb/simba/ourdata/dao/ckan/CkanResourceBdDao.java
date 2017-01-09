@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.dao.ckan;
 
 import br.ifpb.simba.ourdata.dao.GenericObjectBdDao;
@@ -15,15 +14,17 @@ import java.util.List;
 /**
  * Class that know how CRUD a CkanResource type into a JDBC
  *
- * @author Wensttay, Pedro Arthur
+ * @version 1.0
+ * @author Pedro Arthur, Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
+public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> {
+
     /**
      * This constructor create a CkanResourceBdDao using the default
-     * properties_path to JDBC connection
-     * 'PROPERTIES_PATH_DEFAULT'
+     * properties_path to JDBC connection 'PROPERTIES_PATH_DEFAULT'
      */
-    public CkanResourceBdDao(){
+    public CkanResourceBdDao() {
     }
 
     /**
@@ -32,7 +33,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public CkanResourceBdDao( String properties_path ){
+    public CkanResourceBdDao(String properties_path) {
         super.setProperties_path(properties_path);
     }
 
@@ -45,8 +46,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert( CkanResource obj ){
-        try{
+    public boolean insert(CkanResource obj) {
+        try {
             conectar();
             StringBuilder sql = new StringBuilder("INSERT INTO resource(ID, DESCRIPTION, FORMAT, URL,");
             sql.append("NAME ,ID_DATASET) VALUES(?, ?, ?, ?, ?, ?)");
@@ -59,11 +60,11 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             ps.setString(i++, obj.getUrl());
             ps.setString(i++, obj.getName());
             ps.setString(i++, obj.getPackageId());
-            
+
             return (ps.executeUpdate() != 0);
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return false;
@@ -78,8 +79,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      * uptated with sucess or the update is not possible.
      */
     @Override
-    public boolean update( CkanResource obj ){
-        try{ 
+    public boolean update(CkanResource obj) {
+        try {
             conectar();
             StringBuilder sql = new StringBuilder("UPDATE RESOURCE SET DESCRIPTION = ?, FORMAT = ?, URL = ?,");
             sql.append("NAME = ?, ID_DATASET = ? WHERE ID = ?");
@@ -94,10 +95,10 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             ps.setString(i++, obj.getId());
 
             return (ps.executeUpdate() != 0);
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
 //            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             System.out.println("ERRRRRRRRRRRRRRRRRRRRRRRRRRROUUUUUUUUUUU");
-        } finally{
+        } finally {
             desconectar();
         }
         return false;
@@ -110,12 +111,11 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      * be persisted
      *
      * @return A boolean that means: true = exists a CkanResource saved with
-     * this
-     * ID, false = not exist CkanDataSet saved with this ID
+     * this ID, false = not exist CkanDataSet saved with this ID
      */
     @Override
-    public boolean exist( String id ){
-        try{
+    public boolean exist(String id) {
+        try {
             conectar();
             String sql = "SELECT * FROM RESOURCE WHERE ID = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -123,9 +123,9 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             ps.setString(1, id);
 
             return (ps.executeQuery().next());
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return false;
@@ -141,10 +141,10 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      * into JDBC
      */
     @Override
-    public void insertOrUpdate( CkanResource obj ){
-        if ( exist(obj.getId()) ){
+    public void insertOrUpdate(CkanResource obj) {
+        if (exist(obj.getId())) {
             update(obj);
-        } else{
+        } else {
             insert(obj);
         }
 
@@ -157,8 +157,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      * @return A list of all CkanResource in JDBC
      */
     @Override
-    public List<CkanResource> getAll(){
-        try{
+    public List<CkanResource> getAll() {
+        try {
             conectar();
             String sql = "SELECT * FROM resource";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -166,17 +166,17 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
 
             List<CkanResource> resources = new ArrayList<>();
 
-            while ( rs.next() ){
+            while (rs.next()) {
                 CkanResource resource = fill(rs);
-                if ( resource != null ){
+                if (resource != null) {
                     resources.add(resource);
                 }
             }
             return resources;
 
-        } catch ( SQLException | URISyntaxException | IOException | ClassNotFoundException ex ){
+        } catch (SQLException | URISyntaxException | IOException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return new ArrayList<>();
@@ -190,8 +190,8 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
      *
      * @param id Id of Dataset father that wants search
      */
-    public List<CkanResource> searchByDatasetId( String id ){
-        try{
+    public List<CkanResource> searchByDatasetId(String id) {
+        try {
             conectar();
             String sql = "SELECT * FROM resource WHERE id_dataset = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -202,25 +202,25 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
 
             List<CkanResource> resources = new ArrayList<>();
 
-            while ( rs.next() ){
+            while (rs.next()) {
                 CkanResource resource = fill(rs);
-                if ( resource != null ){
+                if (resource != null) {
                     resources.add(resource);
                 }
             }
             return resources;
 
-        } catch ( SQLException | URISyntaxException | IOException | ClassNotFoundException ex ){
+        } catch (SQLException | URISyntaxException | IOException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return new ArrayList<>();
     }
 
     @Override
-    public CkanResource fill( ResultSet rs ){
-        try{
+    public CkanResource fill(ResultSet rs) {
+        try {
             CkanResource resource = new CkanResource();
             resource.setId(rs.getString("id"));
             resource.setDescription(rs.getString("description"));
@@ -228,7 +228,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
             resource.setUrl(rs.getString("url"));
             resource.setPackageId(rs.getString("id_dataset"));
             return resource;
-        } catch ( SQLException ex ){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;

@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.dao;
 
 import java.util.List;
@@ -6,11 +5,15 @@ import java.util.List;
 /**
  * Interface of methods to CRUD Geometric entities
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
+ *
  * @param <T> Type of Object
  * @param <I> Type of T's ID
  */
-public interface DaoGeometric<T, I>{
+public interface DaoGeometric<T, I> {
+
     /**
      * Method to insert something on some secure repository
      *
@@ -18,7 +21,7 @@ public interface DaoGeometric<T, I>{
      *
      * @return True = Sucess / False = Fail
      */
-    public boolean insert( T obj );
+    public boolean insert(T obj);
 
     /**
      * Method to list all of type T on some secure repository

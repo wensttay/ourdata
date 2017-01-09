@@ -22,6 +22,7 @@ $('a').click(function () {
     }, 700);
 });
 
+//.onload(initialize());
 
 function initSearchBox() {
 

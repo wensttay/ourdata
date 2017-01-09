@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.test;
 
 import br.ifpb.simba.ourdata.dao.ckan.CkanDataSetBdDao;
@@ -10,9 +9,12 @@ import java.util.List;
 
 /**
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class AtualizadorDBThread extends Thread{
+public class AtualizadorDBThread extends Thread {
+
     public static final long INTERNAL_TIME_REPEAT_DEFAULT = 5000;
     private String url;
     private CkanClient cc;
@@ -21,7 +23,7 @@ public class AtualizadorDBThread extends Thread{
     private long intervalTimeRepeat;
     private int repeatNumber;
 
-    public AtualizadorDBThread( String url ){
+    public AtualizadorDBThread(String url) {
         this.url = url;
         cc = new CkanClient(this.url);
         cdsbd = new CkanDataSetBdDao();
@@ -30,7 +32,7 @@ public class AtualizadorDBThread extends Thread{
         repeatNumber = 1;
     }
 
-    public AtualizadorDBThread( String url, String dbProp ){
+    public AtualizadorDBThread(String url, String dbProp) {
         this.url = url;
         cc = new CkanClient(this.url);
         cdsbd = new CkanDataSetBdDao(dbProp);
@@ -39,7 +41,7 @@ public class AtualizadorDBThread extends Thread{
         repeatNumber = 1;
     }
 
-    public AtualizadorDBThread( String url, Long intervalTime ){
+    public AtualizadorDBThread(String url, Long intervalTime) {
         this.url = url;
         cc = new CkanClient(this.url);
         cdsbd = new CkanDataSetBdDao();
@@ -48,7 +50,7 @@ public class AtualizadorDBThread extends Thread{
         repeatNumber = 1;
     }
 
-    public AtualizadorDBThread( String url, Long intervalTime, int repeatNumber ){
+    public AtualizadorDBThread(String url, Long intervalTime, int repeatNumber) {
         this.url = url;
         cc = new CkanClient(this.url);
         cdsbd = new CkanDataSetBdDao();
@@ -58,21 +60,21 @@ public class AtualizadorDBThread extends Thread{
     }
 
     @Override
-    public void run(){
-        for ( int i = 0; i < repeatNumber; i++ ){
-            for ( int j = 0; j < datasetlist.size(); j++ ){
-                try{
+    public void run() {
+        for (int i = 0; i < repeatNumber; i++) {
+            for (int j = 0; j < datasetlist.size(); j++) {
+                try {
                     System.out.println("Index DataSet: " + j);
                     CkanDataset dataset = cc.getDataset(datasetlist.get(j));
                     cdsbd.insertOrUpdate(dataset);
 
-                } catch ( CkanException ex ){
+                } catch (CkanException ex) {
                     System.out.println("Acesso negado.");
                 }
             }
-            try{
+            try {
                 Thread.sleep(intervalTimeRepeat);
-            } catch ( InterruptedException ex ){
+            } catch (InterruptedException ex) {
                 System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             }
         }

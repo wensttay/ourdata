@@ -8,7 +8,9 @@ import java.util.Objects;
  * Class to represent a KeyPlace, this class save some meta-dates of a one Place
  * find into a one Resource
  *
- * @author Wensttay, Pedro Arthur
+ * @version 1.0
+ * @author Pedro Arthur, Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class KeyPlace {
 
@@ -117,8 +119,7 @@ public class KeyPlace {
     public void setPlace(Place place) {
         this.place = place;
     }
-    
-    
+
     /**
      * @return the comparadorByName
      */
@@ -132,7 +133,6 @@ public class KeyPlace {
     public static void setComparadorByName(Comparator<KeyPlace> aComparadorByName) {
         comparadorByName = aComparadorByName;
     }
-    
 
     /**
      * Return if this KeyPlace is equals the KayPlace passed param

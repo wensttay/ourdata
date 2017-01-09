@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.headerAnality;
 
 /**
@@ -6,7 +5,8 @@ package br.ifpb.simba.ourdata.headerAnality;
  *
  * @author Pedro Arthur
  */
-public class ColumnHeader{
+public class ColumnHeader {
+
     private int distinctValues;
     private String name;
 
@@ -17,7 +17,7 @@ public class ColumnHeader{
      * @param distinctValues Number of stanza thar not reapeat
      * @param name Colum name
      */
-    public ColumnHeader( int distinctValues, String name ){
+    public ColumnHeader(int distinctValues, String name) {
         this.distinctValues = distinctValues;
         this.name = name;
     }
@@ -28,35 +28,35 @@ public class ColumnHeader{
      * @return A String representation of class
      */
     @Override
-    public String toString(){
+    public String toString() {
         return "Column{" + "distinctValues=" + getDistinctValues() + ", name=" + getName() + '}';
     }
 
     /**
      * @return the distinctValues
      */
-    public int getDistinctValues(){
+    public int getDistinctValues() {
         return distinctValues;
     }
 
     /**
      * @param distinctValues the distinctValues to set
      */
-    public void setDistinctValues( int distinctValues ){
+    public void setDistinctValues(int distinctValues) {
         this.distinctValues = distinctValues;
     }
 
     /**
      * @return the name
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName( String name ){
+    public void setName(String name) {
         this.name = name;
     }
 

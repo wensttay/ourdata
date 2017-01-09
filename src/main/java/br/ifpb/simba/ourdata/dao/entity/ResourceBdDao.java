@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.dao.GenericBdDao;
@@ -28,7 +23,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author kieckegard
+ * @author Pedro Arthur
  */
 public class ResourceBdDao extends GenericBdDao {
 
@@ -68,7 +63,7 @@ public class ResourceBdDao extends GenericBdDao {
                 ResourceTimeSearch rts = preencherRTS(rs);
                 resources.add(rts);
             }
-           
+
         } catch (SQLException | URISyntaxException | IOException | ClassNotFoundException ex) {
             Logger.getLogger(ResourceBdDao.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,7 +74,7 @@ public class ResourceBdDao extends GenericBdDao {
     private ResourceTimeSearch preencherRTS(ResultSet rs) throws SQLException {
         ResourceTimeSearch resourceTimeSearch = new ResourceTimeSearch();
         String desc = rs.getString("Resource_Name");
-        
+
         if (desc == null || desc.equals("")) {
             desc = rs.getString("Resource_Description");
         }
@@ -92,7 +87,7 @@ public class ResourceBdDao extends GenericBdDao {
         if (desc == null || desc.equals("")) {
             desc = rs.getString("dt_name");
         }
-        
+
         resourceTimeSearch.setDescription(desc);
         resourceTimeSearch.setStartDate(rs.getTimestamp("Start_Date"));
         resourceTimeSearch.setEndDate(rs.getTimestamp("End_Date"));
@@ -115,6 +110,51 @@ public class ResourceBdDao extends GenericBdDao {
         sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way, ");
         sql.append("d.title dataset_title ");
         sql.append("FROM Resource r JOIN Resource_Place rp ON r.id = rp.id_resource ");
+        sql.append("JOIN dataset d ON r.id_dataset = d.id ");
+        sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
+
+        try {
+            conectar();
+            WKTWriter writer = new WKTWriter();
+
+            PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pstm.setString(1, writer.write(placeToSearch.getWay()));
+            System.out.println(pstm.toString());
+
+            System.out.println("Executando consulta...");
+            start = new Date(System.currentTimeMillis());
+
+            ResultSet rs = pstm.executeQuery();
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+            Resource r;
+
+            System.out.println("Preenchendo Objetos com  consulta...");
+            start = new Date(System.currentTimeMillis());
+
+            while (rs.next()) {
+                r = formaResource(rs);
+                resources.add(r);
+            }
+
+            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
+
+            return resources;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex) {
+            Logger.getLogger(KeyPlaceBdDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return resources;
+    }
+
+    public List<Resource> getResourcesIntersectedByAvaliation(Place placeToSearch) {
+
+        Date start;
+
+        List<Resource> resources = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.name, r.format, r.url, r.id_dataset, ");
+        sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
+        sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way, ");
+        sql.append("d.title dataset_title ");
+        sql.append("FROM Resource r JOIN Resource_Place_Avaliation rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
         sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
 

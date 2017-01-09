@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.dao.entity;
 
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
@@ -22,7 +17,9 @@ import java.util.List;
 
 /**
  *
- * @author wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
 
@@ -70,11 +67,43 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
             ex.printStackTrace();
             result = false;
         }
-        
+
         for (Integer row : obj.getPeriod().getRows()) {
 
             try {
                 StringBuilder sql = new StringBuilder("INSERT INTO resource_time_rows(id_resource, start_time, end_time, numero_da_linha)");
+                sql.append(" values (?, ?, ?, ?)");
+                ps = getConnection().prepareStatement(sql.toString());
+
+                int i = 1;
+                ps.setString(i++, obj.getIdResource());
+                ps.setTimestamp(i++, new Timestamp(obj.getPeriod().getStartDate().getDate().getTime()));
+                ps.setTimestamp(i++, new Timestamp(obj.getPeriod().getEndDate().getDate().getTime()));
+                ps.setInt(i++, row);
+
+                result = (ps.executeUpdate() != 0);
+            } catch (Exception ex) {
+                System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            }
+        }
+
+        try {
+            ps.close();
+        } catch (Exception ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        }
+
+        return result;
+    }
+
+    public boolean insertRR(KeyTime obj) {
+        PreparedStatement ps = null;
+        boolean result = false;
+
+        for (Integer row : obj.getPeriod().getRows()) {
+
+            try {
+                StringBuilder sql = new StringBuilder("INSERT INTO resource_time_rows_avaliation(id_resource, start_time, end_time, numero_da_linha)");
                 sql.append(" values (?, ?, ?, ?)");
                 ps = getConnection().prepareStatement(sql.toString());
 
@@ -181,6 +210,33 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
 
         if (!listKeyTimes.isEmpty()) {
             System.out.println("100.0 %");
+        }
+
+        try {
+            desconectar();
+        } catch (Exception ex) {
+//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean insertAllRR(List<KeyTime> listKeyTimes) {
+
+        try {
+            conectar();
+        } catch (Exception ex) {
+//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage
+            ex.printStackTrace();
+            return false;
+        }
+
+        for (KeyTime keyTime : listKeyTimes) {
+            if (insertRR(keyTime)) {
+                System.out.println("Inserido Com Sucesso");
+            }
         }
 
         try {

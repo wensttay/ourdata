@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.reader;
 
 import br.ifpb.simba.ourdata.entity.KeyTime;
@@ -15,19 +10,18 @@ import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissing
 import eu.trentorise.opendata.jackan.model.CkanDataset;
 import eu.trentorise.opendata.jackan.model.CkanResource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jdom.JDOMException;
 
 /**
  *
- * @author kieckegard
+ * @author Pedro Arthur
  */
 public class KeyTimeBo {
 
@@ -173,6 +167,101 @@ public class KeyTimeBo {
                 if (placeByDescriptions != null) {
                     resultKeyTimes.add(placeByDescriptions);
                 }
+                System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYPLACE !!");
+                break;
+            }
+
+            //percent feedback
+            percent = percentFeedback(resultKeyTimes, rowIndex, csvRowsSize, percent);
+
+        } //ends rows iteration
+
+        if (!resultKeyTimes.isEmpty()) {
+            System.out.println("100 %");
+        }
+
+        cSVReaderOD.closeAll();
+        return resultKeyTimes;
+    }
+
+    public List<KeyTime> getKeyTimes(InputStream in, int colum1, int colum2, String resourceId) throws IOException, JDOMException, DocumentCreationTimeMissingException {
+
+        float percent = 0;
+
+        List<KeyTime> resultKeyTimes = new ArrayList<>();
+
+        CSVReaderOD cSVReaderOD = new CSVReaderOD();
+
+        //get a List which contains all csv content
+        List<String[]> csvRows = cSVReaderOD.build(in);
+
+        if (csvRows == null) {
+            csvRows = new ArrayList<>();
+        }
+
+        int csvRowsSize = csvRows.size();
+        int realCsvRowSize = csvRowsSize - 1;
+        System.out.println("File Row Size: " + csvRowsSize + " |||| ");
+
+        for (int rowIndex = 1; rowIndex < csvRowsSize; rowIndex++) {
+
+            //getting current row
+            String[] row = csvRows.get(rowIndex);
+
+            //creating current row keyplace list
+            List<Period> rowPeriods = new ArrayList<>();
+            //Iterating each csvRow's columns
+            for (int colIndex = 0; colIndex < row.length; colIndex++) {
+//              Dentro desse comando se faz o filtro para a lista de colunas que apresentaram
+//              resutados encontrados na pesquisa no Gazetteer
+
+                while (colIndex < row.length) {
+                    if (colum1 == colIndex
+                            || colum2 == colIndex) {
+                        break;
+                    } else {
+                        ++colIndex;
+                    }
+                }
+
+                if (colIndex >= row.length) {
+                    break;
+                }
+
+                String colValue = row[colIndex].replace("\n", " ");
+                colValue = colValue.trim();
+
+                Geometry geom;
+                try {
+                    geom = new WKTReader().read(colValue);
+                } catch (ParseException ex) {
+                    geom = null;
+                }
+
+                if (colValue != null && !colValue.equals("") && geom == null) {
+
+                    Period findPeriod = periodUtils.findPeriod(colValue, colIndex, null);
+
+                    if (findPeriod != null) {
+                        findPeriod.addRow(rowIndex);
+                        rowPeriods.add(findPeriod);
+                    }
+                }
+
+            } //ends col iteration
+
+            if (!rowPeriods.isEmpty()) {
+                Period joinPeriods = periodUtils.joinPeriods(rowPeriods);
+                KeyTime preencherKeyTime = preencherKeyTime(realCsvRowSize, resourceId, joinPeriods, 1);
+                resultKeyTimes.add(preencherKeyTime);
+            }
+
+            /*
+             * If there's no places found in the csv file and we already verify
+             * the whole thing until row 10,
+             * I guess the csv does not contains any place xD
+             */
+            if (rowIndex >= numRowsCheck && resultKeyTimes.isEmpty()) {
                 System.out.println(TextColor.ANSI_RED.getCode() + " " + "ERRO: ATINGIU O NUMERO MAX DE " + numRowsCheck + " ROWS VERIFICADAS SEM ENCONTRAR NENHUMA KEYPLACE !!");
                 break;
             }

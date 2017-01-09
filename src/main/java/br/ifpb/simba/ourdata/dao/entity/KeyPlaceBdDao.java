@@ -20,7 +20,9 @@ import java.util.logging.Logger;
 /**
  * Class that know how CRUD a KeyPlace type into a JDBC
  *
- * @author Wensttay, kieckegard
+ * @version 1.0
+ * @author Pedro Arthur, Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
 
@@ -41,12 +43,55 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
     public KeyPlaceBdDao(String properties_path) {
         super.setProperties_path(properties_path);
     }
-    
+
+    public boolean remove(String resourceId) {
+        try {
+            conectar();
+            PreparedStatement pstm = getConnection().prepareCall("DELETE FROM RESOURCE_PLACE WHERE id_resource = ?");
+            pstm.setString(1, resourceId);
+
+            return pstm.executeUpdate() != 0;
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
+
+    public boolean exists(String resourceId) {
+        try {
+            conectar();
+            PreparedStatement pstm = getConnection().prepareCall("SELECT * FROM RESOURCE_PLACE WHERE id_resource = ?");
+            pstm.setString(1, resourceId);
+
+            ResultSet executeQuery = pstm.executeQuery();
+
+            return executeQuery.next();
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
+
+    public boolean existsOnAvaliation(String resourceId) {
+        try {
+            conectar();
+            PreparedStatement pstm = getConnection().prepareCall("SELECT * FROM RESOURCE_PLACE_AVALIATION WHERE id_resource = ?");
+            pstm.setString(1, resourceId);
+
+            ResultSet executeQuery = pstm.executeQuery();
+
+            return executeQuery.next();
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
+
     @Override
     public boolean insert(KeyPlace obj) {
         PreparedStatement ps = null;
         boolean result;
-        
+
         try {
             StringBuilder sql = new StringBuilder("INSERT INTO resource_place(COLUM_NUMBER, COLUM_VALUE,");
             sql.append("REPEAT_NUMBER, ROWS_NUMBER, METADATA_CREATED, WAY, minX, minY, maxX, maxY, ID_PLACE, ID_RESOURCE)");
@@ -70,8 +115,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
 
             result = (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            System.out.println(TextColor.ANSI_RED.getCode() + "Já existe no banco");
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             result = false;
         }
         try {
@@ -96,6 +140,30 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         try {
             conectar();
             String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place";
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                KeyPlace p = preencherObjeto(rs);
+                if (p != null) {
+                    places.add(p);
+                }
+            }
+
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
+        } finally {
+            desconectar();
+        }
+        return places;
+    }
+
+    public List<KeyPlace> getAllOnAvaliation() {
+        List<KeyPlace> places = new ArrayList<>();
+
+        try {
+            conectar();
+            String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place_avaliation";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -142,7 +210,7 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
      *
      * @return A new KeyPlace with ResulSet's Values
      */
-    private KeyPlace preencherObjeto(ResultSet rs) {
+    public KeyPlace preencherObjeto(ResultSet rs) {
         try {
             KeyPlace kw = new KeyPlace();
             kw.setColumNumber(rs.getInt("COLUM_NUMBER"));
@@ -154,7 +222,6 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
 
             Place place = new Place();
             place.setWay(new WKTReader().read(rs.getString("geo")));
-            place.setWay((Geometry) rs.getObject("WAY"));
             place.setId(rs.getInt("ID_PLACE"));
             place.setMaxX(rs.getDouble("maxx"));
             place.setMaxY(rs.getDouble("maxy"));
@@ -181,39 +248,39 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         long count = 0;
         float porcent = 0;
         float oldPorcent = 0;
-        
+
         try {
             conectar();
         } catch (Exception ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
-        
+
         for (KeyPlace keyPlace : listKeyPlaces) {
-            if(insert(keyPlace)){
+            if (insert(keyPlace)) {
                 System.out.println("Inserido Com Sucesso");
             }
-            
+
             count++;
             porcent = (count * 100) / size;
-            
+
             if (porcent > oldPorcent + 10) {
                 oldPorcent = porcent;
                 System.out.println(porcent + " %");
             }
         }
-        
+
         if (!listKeyPlaces.isEmpty()) {
             System.out.println("100.0 %");
         }
-        
+
         try {
             desconectar();
         } catch (Exception ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
-        
+
         return true;
     }
 

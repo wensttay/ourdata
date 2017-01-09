@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.controll;
 
 import br.ifpb.simba.ourdata.entity.Resource;
@@ -14,7 +9,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,8 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author wensttay
+ * 
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 @WebServlet(name = "SearchResourcesByTime", urlPatterns = {"/SearchResourcesByTime"})
 public class SearchResourcesByTimeControll extends HttpServlet {
@@ -78,13 +74,13 @@ public class SearchResourcesByTimeControll extends HttpServlet {
         }
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-       
+
         request.setAttribute("resourseList", itensSearch);
         request.setAttribute("size", itensSearch.size());
-        
+
         String formatedStart = df.format(startDate);
         String formatedEnd = df.format(endDate);
-        
+
         request.setAttribute("nameOfPlace", "From " + formatedStart + " to " + formatedEnd);
 
         RequestDispatcher rd = request.getRequestDispatcher("/result.jsp");

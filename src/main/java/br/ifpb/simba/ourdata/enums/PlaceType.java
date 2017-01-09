@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.enums;
 
 /**
  * Enum of Place Types
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public enum PlaceType{
+public enum PlaceType {
     MICRORREGIAO("Microrregião", "microrregiao"),
     ESTADO("Estado", "estado"),
     MUNICIPIO("Município", "municipio"),
@@ -26,7 +23,7 @@ public enum PlaceType{
      * @param nameToUser Name used to show for the users
      * @param nameToBd Name used to persist on Data Base
      */
-    PlaceType( String nameToUser, String nameToBd ){
+    PlaceType(String nameToUser, String nameToBd) {
         this.nameToUser = nameToUser;
         this.nameToBd = nameToBd;
     }
@@ -34,28 +31,28 @@ public enum PlaceType{
     /**
      * @return the nameToUser
      */
-    public String getNameToUser(){
+    public String getNameToUser() {
         return nameToUser;
     }
 
     /**
      * @param nameToUser the nameToUser to set
      */
-    public void setNameToUser( String nameToUser ){
+    public void setNameToUser(String nameToUser) {
         this.nameToUser = nameToUser;
     }
 
     /**
      * @return the nameToBd
      */
-    public String getNameToBd(){
+    public String getNameToBd() {
         return nameToBd;
     }
 
     /**
      * @param nameToBd the nameToBd to set
      */
-    public void setNameToBd( String nameToBd ){
+    public void setNameToBd(String nameToBd) {
         this.nameToBd = nameToBd;
     }
 

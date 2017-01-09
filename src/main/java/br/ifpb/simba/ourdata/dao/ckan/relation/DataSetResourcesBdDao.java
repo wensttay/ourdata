@@ -1,4 +1,3 @@
-
 package br.ifpb.simba.ourdata.dao.ckan.relation;
 
 import br.ifpb.simba.ourdata.dao.GenericRelationBdDao;
@@ -11,15 +10,17 @@ import java.sql.SQLException;
 /**
  * Class that know how CRUD a relation between DataSet and Resource into a JDBC
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
-public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>{
+public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String> {
+
     /**
      * This constructor create a DataSetResourcesBdDao using the default
-     * properties_path
-     * 'PROPERTIES_PATH_DEFAULT' to JDBC connection
+     * properties_path 'PROPERTIES_PATH_DEFAULT' to JDBC connection
      */
-    public DataSetResourcesBdDao(){
+    public DataSetResourcesBdDao() {
     }
 
     /**
@@ -28,7 +29,7 @@ public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>{
      *
      * @param properties_path The path will be used to JDBC connection
      */
-    public DataSetResourcesBdDao( String properties_path ){
+    public DataSetResourcesBdDao(String properties_path) {
         super.setProperties_path(properties_path);
     }
 
@@ -42,8 +43,8 @@ public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>{
      * insert with sucess or inserssion is not possible.
      */
     @Override
-    public boolean insert( String id, String otherId ){
-        try{
+    public boolean insert(String id, String otherId) {
+        try {
             conectar();
             String sql = "INSERT INTO DATASET_RESOURCE(id_dataset, id_resource) values (?, ?)";
             PreparedStatement ps = getConnection().prepareStatement(sql);
@@ -55,9 +56,9 @@ public class DataSetResourcesBdDao extends GenericRelationBdDao<String, String>{
             ps.executeUpdate();
 
             return true;
-        } catch ( URISyntaxException | IOException | SQLException | ClassNotFoundException ex ){
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-        } finally{
+        } finally {
             desconectar();
         }
         return false;

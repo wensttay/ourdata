@@ -1,14 +1,17 @@
-
 package br.ifpb.simba.ourdata.dao;
 
 /**
  * Interface of methods to CRUD Ckan relations
  *
- * @author Wensttay
+ * @version 1.0
+ * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
+ *
  * @param <T> Type of First Object ID
  * @param <I> Type of Secound Object ID
  */
-public interface DaoRelation<T, I>{
+public interface DaoRelation<T, I> {
+
     /**
      * Method to insert a relation between a T type and I type on some secure
      * repository
@@ -18,5 +21,5 @@ public interface DaoRelation<T, I>{
      *
      * @return True = Sucess / False = Fail
      */
-    boolean insert( T id, I otherId );
+    boolean insert(T id, I otherId);
 }

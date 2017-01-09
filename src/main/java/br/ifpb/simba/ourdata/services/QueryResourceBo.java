@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ifpb.simba.ourdata.services;
 
 import br.ifpb.simba.ourdata.dao.entity.ResourceBdDao;
@@ -10,25 +5,44 @@ import br.ifpb.simba.ourdata.entity.Period;
 import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.Resource;
 import br.ifpb.simba.ourdata.entity.ResourceTimeSearch;
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
 
 /**
  *
- * @author kieckegard
+ * @author Pedro Arthur
  */
-public class QueryResourceBo{
+public class QueryResourceBo {
+
     private ResourceBdDao resourceDao;
 
-    public QueryResourceBo(){
+    public QueryResourceBo() {
         resourceDao = new ResourceBdDao();
     }
 
-    public List<Resource> listResourcesIntersectedBy( Place place ){
-        return resourceDao.getResourcesIntersectedBy(place);
+    public List<Resource> listResourcesIntersectedBy(Place place) {
+        return getResourceDao().getResourcesIntersectedBy(place);
+    }
+
+    public List<Resource> listResourcesIntersectedByAvaliation(Place place) {
+        return getResourceDao().getResourcesIntersectedByAvaliation(place);
+    }
+
+    public List<ResourceTimeSearch> listResourcesIntersectedBy(Period period) {
+        return getResourceDao().getResourcesIntersectedBy(period);
+    }
+
+    /**
+     * @return the resourceDao
+     */
+    public ResourceBdDao getResourceDao() {
+        return resourceDao;
+    }
+
+    /**
+     * @param resourceDao the resourceDao to set
+     */
+    public void setResourceDao(ResourceBdDao resourceDao) {
+        this.resourceDao = resourceDao;
     }
     
-    public List<ResourceTimeSearch> listResourcesIntersectedBy( Period period){
-        return resourceDao.getResourcesIntersectedBy(period);
-    }
 }

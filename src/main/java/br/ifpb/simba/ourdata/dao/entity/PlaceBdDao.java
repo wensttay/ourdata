@@ -16,7 +16,9 @@ import java.util.List;
 /**
  * Class that know how CRUD a PlaceBdDao type into a JDBC
  *
- * @author Wensttay, kieckegard
+ * @version 1.0
+ * @author Pedro Arthur, Wensttay de Sousa Alencar <yattsnew@gmail.com>
+ * @date 07/01/2017 - 12:01:31
  */
 public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
 
@@ -63,7 +65,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
             String sql = "SELECT *, ST_AsText(way) as geo FROM place";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
                 Place p = preencherObjeto(rs);
                 if (p != null) {
@@ -71,7 +73,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
                 }
             }
             return places;
-            
+
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         } finally {
@@ -95,28 +97,28 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
             conectar();
             StringBuilder sql = new StringBuilder("SELECT *, ST_AsText(way) as geo FROM place WHERE (nome");
             sql.append(" ILIKE ? OR sigla ILIKE ?) AND (tipo ILIKE ?)");
-            
+
             PreparedStatement ps = getConnection().prepareStatement(sql.toString());
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
             ps.setString(i++, tipo);
-            
+
             ResultSet rs = ps.executeQuery();
-            
+
             Place p = null;
-            
+
             if (rs.next()) {
                 p = preencherObjeto(rs);
             }
-            
+
             return p;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         } finally {
             desconectar();
         }
-        
+
         return null;
     }
 
@@ -137,7 +139,7 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
             int i = 1;
             ps.setString(i++, titulo);
             ps.setString(i++, titulo);
-            
+
             ResultSet rs = ps.executeQuery();
             List<Place> places = new ArrayList<>();
             while (rs.next()) {
@@ -146,14 +148,14 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
                     places.add(p);
                 }
             }
-            
+
             return places;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
             System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         } finally {
             desconectar();
         }
-        
+
         return new ArrayList<>();
     }
 
@@ -176,11 +178,11 @@ public class PlaceBdDao extends GenericGeometricBdDao<Place, String> {
             p.setSigla(sigla);
             p.setTipo(rs.getString("tipo"));
             String way = rs.getString("geo");
-            
-            if ( way != null ){
+
+            if (way != null) {
                 p.setWay(new WKTReader().read(way));
             }
-            
+
             p.setMaxX(rs.getDouble("maxx"));
             p.setMaxY(rs.getDouble("maxy"));
             p.setMinX(rs.getDouble("minx"));
