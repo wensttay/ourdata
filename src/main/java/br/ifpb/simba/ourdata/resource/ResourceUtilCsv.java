@@ -6,9 +6,6 @@
 package br.ifpb.simba.ourdata.resource;
 
 import br.ifpb.simba.ourdata.reader.CSVReader;
-import br.ifpb.simba.ourdata.resource.Column;
-import br.ifpb.simba.ourdata.resource.ResourceHeader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

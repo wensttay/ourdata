@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<!--
+        Interphase by TEMPLATED
+        templated.co @templatedco
+        Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>OurData</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="description" content="" />
+        <!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/skel.min.js"></script>
+        <script src="js/skel-layers.min.js"></script>
+        <script src="js/init.js"></script>
+        <noscript>
+
+        <link rel="stylesheet" href="css/skel.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/style-xlarge.css" />
+        </noscript>
+        <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+        <link rel="stylesheet" type="text/css" href="ourdata.css">
+
+        <!-- Bootstrap -->
+        <link href="bootstrap-3.3.6-dist/css/bootstrap-theme.min.css" rel="stylesheet">
+        <link href="bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body class="landing">
+
+        <!-- Header -->
+        <header id="header">
+            <h1 class="tittle" >
+                <a href="index.html">
+                    <img src="images/OurData.png" alt="Logo" width="60" style="margin: 12px 20px 0 5px; float: left; top: 40px;">
+                    OurData
+                </a>
+            </h1>
+            <nav id="nav">
+                <ul>
+                    <li><a href="#pac-input">Search</a></li>
+                    <li><a href="generic.html">About</a></li>
+                    <li><a href="#footer">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Banner -->
+        <section id="banner">
+            <h2>This is OurData </h2>
+            <p>An easy way to find all open data from your country!</p>
+            <br/>
+            <div style="padding: 20px 60px; border-radius: 10px; border: 5px solid black; display: table; margin: 50px auto;">
+                <h3 style="color: black;">Select how you whant to Search:</h3>
+                <ul class="actions" style="margin: 0;">
+                    <li>
+                        <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
+                           data-toggle="modal" data-target="#byTime" ><i class="fa fa-clock-o"></i></a>
+                        <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
+                           data-toggle="modal" data-target="#byPosition" ><i class="fa fa-globe"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="modal fade" id="byPosition" style="z-index: 99999;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!--One--> 
+                    <form method="GET" id="search-form" action="SearchResources" style="margin-bottom: 0px;">
+                        <input id="pac-input" class="search-input" type="text" placeholder="Type a geoname">
+                        <div class="hidden-inputs">
+                            <input type="text" name="placeName">
+                            <input type="text" name="maxx">
+                            <input type="text" name="maxy">
+                            <input type="text" name="minx">
+                            <input type="text" name="miny">
+                        </div>
+                        <button type='submit' onclick='validate(event);' id="btnSearch" class="button big map-button">
+                            <span>Search</span>
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <section id="map" class="wrapper align-center" style="height: 600px; padding: 0;">
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="byTime" style="z-index: 99999">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!--One--> 
+                    <form method="GET" id="search-form" action="SearchResourcesByTime" style="margin: 20px;">
+                        <div class="form-group">
+                            <label for="start-imput">Start:</label>
+                            <input name="startInput" id="start-imput" class="form-control" type="datetime-local">
+                        </div>
+                        <div class="form-group">
+                            <label for="end-imput">End:</label>
+                            <input name="endInput" id="end-imput" class="form-control" type="datetime-local">
+                        </div>
+                        
+                        <input type='submit'
+                               class="button big" 
+                               value="Search"
+                               style=" width: 100%;"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer id="footer">
+            <div class="container">
+                <div class="row">
+
+                    <section class="4u 12u(medium) 12u(small)">
+                        <h3>Contact Us</h3>
+                        <ul class="icons">
+                            <li><a href="#" class="icon rounded fa-twitter"><span class="label">Twitter</span></a></li>
+                            <li><a href="#" class="icon rounded fa-facebook"><span class="label">Facebook</span></a></li>
+                            <li><a href="#" class="icon rounded fa-google-plus"><span class="label">Google+</span></a></li>
+                            <li><a href="#" class="icon rounded fa-linkedin"><span class="label">LinkedIn</span></a></li>
+                        </ul>
+                        <ul class="tabular">
+                            <li>
+                                <h3>Address</h3>
+                                1234 Somewhere Road<br>
+                                Nashville, TN 00000
+                            </li>
+                            <li>
+                                <h3>Mail</h3>
+                                <a href="#">someone@untitled.com</a>
+                            </li>
+                            <li>
+                                <h3>Phone</h3>
+                                (99) 99999-9999
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+                <ul class="copyright">
+                    <li>&copy; Untitled. All rights reserved.</li>
+                </ul>
+            </div>
+        </footer>
+        <script type="text/javascript" src="js/maps.js"></script>
+        <script src="bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
+    </body>
+</html>
