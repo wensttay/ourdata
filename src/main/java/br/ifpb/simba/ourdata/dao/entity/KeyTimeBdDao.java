@@ -103,7 +103,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         for (Integer row : obj.getPeriod().getRows()) {
 
             try {
-                StringBuilder sql = new StringBuilder("INSERT INTO resource_time_rows_avaliation(id_resource, start_time, end_time, numero_da_linha)");
+                StringBuilder sql = new StringBuilder("INSERT INTO resource_time_rows_evaluation(id_resource, start_time, end_time, numero_da_linha)");
                 sql.append(" values (?, ?, ?, ?)");
                 ps = getConnection().prepareStatement(sql.toString());
 

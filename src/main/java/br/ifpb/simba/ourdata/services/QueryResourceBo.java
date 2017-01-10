@@ -23,8 +23,8 @@ public class QueryResourceBo {
         return getResourceDao().getResourcesIntersectedBy(place);
     }
 
-    public List<Resource> listResourcesIntersectedByAvaliation(Place place) {
-        return getResourceDao().getResourcesIntersectedByAvaliation(place);
+    public List<Resource> listResourcesIntersectedByEvaluation(Place place) {
+        return getResourceDao().getResourcesIntersectedByEvaluation(place);
     }
 
     public List<ResourceTimeSearch> listResourcesIntersectedBy(Period period) {

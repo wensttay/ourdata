@@ -56,7 +56,7 @@ public class QueryResourceItemSearchBo {
     private List<ResourceItemSearch> getResourceItemSearchSortedByRank(Place place) {
 
         List<Resource> resources = new ArrayList<>();
-        List<Resource> resourcesAvaliation = new ArrayList<>();
+        List<Resource> resourcesEvaluation = new ArrayList<>();
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
 
         if (place != null) {
@@ -66,11 +66,11 @@ public class QueryResourceItemSearchBo {
             //Todos os recursos cuja geometria intersectou com o lugar passado por parâmetro são adicionados nessa lista.
 
             resources.addAll(getQueryResourceBo().listResourcesIntersectedBy(place));
-            resourcesAvaliation.addAll(getQueryResourceBo().listResourcesIntersectedByAvaliation(place));
+            resourcesEvaluation.addAll(getQueryResourceBo().listResourcesIntersectedByEvaluation(place));
 
             int count = 0;
             for (Resource r : resources) {
-                for (Resource rA : resourcesAvaliation) {
+                for (Resource rA : resourcesEvaluation) {
                     if (r.getId().equals(rA.getId())) {
                         count++;
                         break;
@@ -79,8 +79,8 @@ public class QueryResourceItemSearchBo {
             }
 
             System.out.println("ENCONTRADOS NO RESOURCE_PLACE: " + resources.size());
-            System.out.println("ENCONTRADOS NO RESOURCE_PLACE_AVALIATION: " + resourcesAvaliation.size());
-            System.out.println("REACALL: " + ((float) count * 100) / (float) resourcesAvaliation.size());
+            System.out.println("ENCONTRADOS NO RESOURCE_PLACE_EVALUATION: " + resourcesEvaluation.size());
+            System.out.println("REACALL: " + ((float) count * 100) / (float) resourcesEvaluation.size());
             System.out.println("PRECISION: " + ((float) count * 100) / (float) resources.size());
 //            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
 

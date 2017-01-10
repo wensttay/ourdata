@@ -145,7 +145,7 @@ public class ResourceBdDao extends GenericBdDao {
         return resources;
     }
 
-    public List<Resource> getResourcesIntersectedByAvaliation(Place placeToSearch) {
+    public List<Resource> getResourcesIntersectedByEvaluation(Place placeToSearch) {
 
         Date start;
 
@@ -154,7 +154,7 @@ public class ResourceBdDao extends GenericBdDao {
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
         sql.append("rp.metadata_Created, rp.minX, rp.minY, rp.maxX, rp.maxY, ST_AsEWKT(rp.way) way, ");
         sql.append("d.title dataset_title ");
-        sql.append("FROM Resource r JOIN Resource_Place_Avaliation rp ON r.id = rp.id_resource ");
+        sql.append("FROM Resource r JOIN Resource_Place_evaluation rp ON r.id = rp.id_resource ");
         sql.append("JOIN dataset d ON r.id_dataset = d.id ");
         sql.append("WHERE ST_Intersects(rp.way, ?) ORDER BY id ");
 

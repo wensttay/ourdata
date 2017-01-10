@@ -38,7 +38,7 @@ public class SearchResourceControll extends HttpServlet {
         //String nameOfPlace = request.getParameter("nameOfPlace");
         //String typeOfPlace = request.getParameter("typeOfPlace");
         QueryResourceItemSearchBo bo = new QueryResourceItemSearchBo();
-        bo.getQueryResourceBo().getResourceDao().setProperties_path("/banco/bancoAvaliation.properties");
+        bo.getQueryResourceBo().getResourceDao().setProperties_path("/banco/bancoEvaluation.properties");
         
         //List<ResourceItemSearch> itensSearch = bo.getResourceItemSearchSortedByRank(nameOfPlace, typeOfPlace);
         //request.setAttribute("nameOfPlace",nameOfPlace);

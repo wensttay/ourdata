@@ -72,10 +72,10 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         }
     }
 
-    public boolean existsOnAvaliation(String resourceId) {
+    public boolean existsOnEvaluation(String resourceId) {
         try {
             conectar();
-            PreparedStatement pstm = getConnection().prepareCall("SELECT * FROM RESOURCE_PLACE_AVALIATION WHERE id_resource = ?");
+            PreparedStatement pstm = getConnection().prepareCall("SELECT * FROM RESOURCE_PLACE_EVALUATION WHERE id_resource = ?");
             pstm.setString(1, resourceId);
 
             ResultSet executeQuery = pstm.executeQuery();
@@ -158,12 +158,12 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         return places;
     }
 
-    public List<KeyPlace> getAllOnAvaliation() {
+    public List<KeyPlace> getAllOnEvaluation() {
         List<KeyPlace> places = new ArrayList<>();
 
         try {
             conectar();
-            String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place_avaliation";
+            String sql = "SELECT *, ST_AsText(way) as geo FROM resource_place_evaluation";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
