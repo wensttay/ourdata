@@ -40,9 +40,9 @@
             </h1>
             <nav id="nav">
                 <ul>
-                    <li><a href="#pac-input">Search</a></li>
-                    <li><a href="generic.html">About</a></li>
-                    <li><a href="#footer">Contact</a></li>
+                    <li><a class="anchor" href="#pac-input">Search</a></li>
+                    <li><a class="anchor" href="generic.html">About</a></li>
+                    <li><a class="anchor" href="#footer">Contact</a></li>
                 </ul>
             </nav>
         </header>
@@ -58,7 +58,7 @@
                     <li>
                         <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
                            data-toggle="modal" data-target="#byTime" ><i class="fa fa-clock-o"></i></a>
-                        <a class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
+                        <a id="show-map-btn" class="" style="cursor: pointer; font-size: 100px; color: black; margin: 10px;"
                            data-toggle="modal" data-target="#byPosition" ><i class="fa fa-globe"></i></a>
                     </li>
                 </ul>
@@ -68,7 +68,7 @@
         <div class="modal fade" id="byPosition" style="z-index: 99999;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <!--One--> 
+                    <!--One-->
                     <form method="GET" id="search-form" action="SearchResources" style="margin-bottom: 0px;">
                         <input id="pac-input" class="search-input" type="text" placeholder="Type a geoname">
                         <div class="hidden-inputs">
@@ -92,7 +92,7 @@
         <div class="modal fade" id="byTime" style="z-index: 99999">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
-                    <!--One--> 
+                    <!--One-->
                     <form method="GET" id="search-form" action="SearchResourcesByTime" style="margin: 20px;">
                         <div class="form-group">
                             <label for="start-imput">Start:</label>
@@ -102,16 +102,16 @@
                             <label for="end-imput">End:</label>
                             <input name="endInput" id="end-imput" class="form-control" type="datetime-local">
                         </div>
-                        
+
                         <input type='submit'
-                               class="button big" 
+                               class="button big"
                                value="Search"
                                style=" width: 100%;"/>
                     </form>
                 </div>
             </div>
         </div>
-        
+
         <!-- Footer -->
         <footer id="footer">
             <div class="container">
