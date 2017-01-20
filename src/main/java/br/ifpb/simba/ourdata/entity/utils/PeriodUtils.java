@@ -44,8 +44,6 @@ public class PeriodUtils {
     public List<Date> readDates(String text, Date date) throws JDOMException, IOException, DocumentCreationTimeMissingException {
         List<Date> list = new ArrayList<>();
 
-        System.out.println("Processando:" + text + " | " + date);
-
         List listtimevalues = timeMLReader.ListFromXml(text, date);
         Iterator i = listtimevalues.iterator();
 

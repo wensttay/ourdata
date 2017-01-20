@@ -37,9 +37,6 @@ public class QueryResourceItemSearchBo {
     }
 
     public List<ResourceItemSearch> getResourceItemSearchSortedByRank(Envelope envelope) {
-
-        System.out.println("Criando objeto de pesquisa...");
-        start = new Date(System.currentTimeMillis());
         GeometryFactory fac = new GeometryFactory();
         Geometry geometry = fac.toGeometry(envelope);
         Place place = new Place();
@@ -49,7 +46,6 @@ public class QueryResourceItemSearchBo {
         place.setMaxY(envelope.getMaxY());
         place.setMinY(envelope.getMinY());
 
-        System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         return getResourceItemSearchSortedByRank(place);
     }
 
@@ -60,32 +56,39 @@ public class QueryResourceItemSearchBo {
         List<ResourceItemSearch> itensSearch = new ArrayList<>();
 
         if (place != null) {
-
-            start = new Date(System.currentTimeMillis());
-//            System.out.println("Obtendo todos os resources que intersectão com o lugar passado por parâmetro...");
+            
             //Todos os recursos cuja geometria intersectou com o lugar passado por parâmetro são adicionados nessa lista.
-
             resources.addAll(getQueryResourceBo().listResourcesIntersectedBy(place));
             resourcesEvaluation.addAll(getQueryResourceBo().listResourcesIntersectedByEvaluation(place));
-
-            int count = 0;
-            for (Resource r : resources) {
-                for (Resource rA : resourcesEvaluation) {
+            
+            int match = 0;
+            int noMatch = 0;
+            for (Resource rA : resourcesEvaluation) {
+                boolean encontrou = false;
+                for (Resource r : resources) {
                     if (r.getId().equals(rA.getId())) {
-                        count++;
+                        match++;
+                        encontrou = true;
                         break;
                     }
                 }
+            
+                if(!encontrou){
+                    System.out.println( ++noMatch + " - ID: " + rA.getId());
+                }
             }
-
+            
+            System.out.println("MATCHs: " + match);
             System.out.println("ENCONTRADOS NO RESOURCE_PLACE: " + resources.size());
             System.out.println("ENCONTRADOS NO RESOURCE_PLACE_EVALUATION: " + resourcesEvaluation.size());
-            System.out.println("REACALL: " + ((float) count * 100) / (float) resourcesEvaluation.size());
-            System.out.println("PRECISION: " + ((float) count * 100) / (float) resources.size());
-//            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
-
-            start = new Date(System.currentTimeMillis());
-            System.out.println("Obtendo calculo do RankingPercent (repeatPercent + overlapPercent)...");
+            float recall = ((float) match * 100) / (float) resourcesEvaluation.size();
+            System.out.println("REACALL: " + recall);
+            float precision = ((float) match * 100) / (float) resources.size();
+            System.out.println("PRECISION: " + precision);
+            int allRight = (resourcesEvaluation.size() - match) - (resources.size() - match); 
+            System.out.println("ACCURACY: " + ((float) ((match + allRight) * 100) / (float) resourcesEvaluation.size()));
+            System.out.println("MÉDIA HARMÔNICA: " + 2 * ((float) (precision * recall) / (float) (precision + recall)));
+            
             for (Resource resource : resources) {
                 double repeatPercent = resource.getRepeatPercent(0.2f);
                 double overlapPercent = PlaceUtils.getOverlap(resource.getPlace(), place, 0.8f) * 0.8f;
@@ -93,14 +96,9 @@ public class QueryResourceItemSearchBo {
                 ResourceItemSearch itemSearch = new ResourceItemSearch(resource, rankingPercent * 100);
                 itensSearch.add(itemSearch);
             }
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
         }
-
-        start = new Date(System.currentTimeMillis());
-        System.out.println("Ordenando SearchResources encontrados...");
         Collections.sort(itensSearch);
-        System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
-
+        
         return itensSearch;
     }
 
@@ -141,5 +139,5 @@ public class QueryResourceItemSearchBo {
     public void setQueryResourceBo(QueryResourceBo queryResourceBo) {
         this.queryResourceBo = queryResourceBo;
     }
-    
+
 }

@@ -96,8 +96,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String> 
 
             return (ps.executeUpdate() != 0);
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            System.out.println("ERRRRRRRRRRRRRRRRRRRRRRRRRRROUUUUUUUUUUU");
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
         } finally {
             desconectar();
         }

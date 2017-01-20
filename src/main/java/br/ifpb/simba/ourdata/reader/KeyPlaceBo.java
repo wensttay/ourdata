@@ -47,15 +47,19 @@ public class KeyPlaceBo {
     }
 
     public List<Place> buscarPorTitulos(String value) {
-        String upperValue, upperName;
-        upperValue = value.toUpperCase();
+        String upperValue, upperName, upperSigla;
+        upperValue = value.toUpperCase().trim();
         List<Place> result = new ArrayList<>();
+        
         for (Place p : placesGazetteer) {
-            upperName = p.getNome().toUpperCase();
-            if (upperValue.equals(upperName) || upperValue.equals(p.getSigla())) {
+            upperName = p.getNome().toUpperCase().trim();
+            upperSigla = p.getSigla().toUpperCase().trim();
+            
+            if (upperValue.contains(upperName) || upperValue.equals(upperSigla)) {
                 result.add(p);
             }
         }
+        
         return result;
     }
 
@@ -278,7 +282,7 @@ public class KeyPlaceBo {
 
             return place;
         } catch (ParseException | NullPointerException ex) {
-//            System.out.println("Não foi possível converter " + colValue + " para Well Known Text.");
+            System.out.println(ex.getMessage());
             return null;
         }
     }

@@ -189,8 +189,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         try {
             conectar();
         } catch (Exception ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage
-            ex.printStackTrace();
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
 
@@ -215,8 +214,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         try {
             desconectar();
         } catch (Exception ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            ex.printStackTrace();
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
 
@@ -228,8 +226,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         try {
             conectar();
         } catch (Exception ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage
-            ex.printStackTrace();
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
 
@@ -242,8 +239,7 @@ public class KeyTimeBdDao extends GenericGeometricBdDao<KeyTime, Integer> {
         try {
             desconectar();
         } catch (Exception ex) {
-//            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
-            ex.printStackTrace();
+            System.out.println(TextColor.ANSI_RED.getCode() + ex.getMessage());
             return false;
         }
 

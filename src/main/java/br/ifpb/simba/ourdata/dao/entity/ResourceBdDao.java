@@ -55,8 +55,7 @@ public class ResourceBdDao extends GenericBdDao {
 
             pstm.setTimestamp(i++, end);
             pstm.setTimestamp(i++, end);
-
-            System.out.println(pstm.toString());
+            
             ResultSet rs = pstm.executeQuery();
 
             while (rs.next()) {
@@ -102,8 +101,6 @@ public class ResourceBdDao extends GenericBdDao {
 
     public List<Resource> getResourcesIntersectedBy(Place placeToSearch) {
 
-        Date start;
-
         List<Resource> resources = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.name, r.format, r.url, r.id_dataset, ");
         sql.append("rp.repeat_number, rp.rows_number, rp.colum_value, ");
@@ -119,24 +116,14 @@ public class ResourceBdDao extends GenericBdDao {
 
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, writer.write(placeToSearch.getWay()));
-            System.out.println(pstm.toString());
-
-            System.out.println("Executando consulta...");
-            start = new Date(System.currentTimeMillis());
 
             ResultSet rs = pstm.executeQuery();
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
             Resource r;
-
-            System.out.println("Preenchendo Objetos com  consulta...");
-            start = new Date(System.currentTimeMillis());
 
             while (rs.next()) {
                 r = formaResource(rs);
                 resources.add(r);
             }
-
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
 
             return resources;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex) {
@@ -146,8 +133,6 @@ public class ResourceBdDao extends GenericBdDao {
     }
 
     public List<Resource> getResourcesIntersectedByEvaluation(Place placeToSearch) {
-
-        Date start;
 
         List<Resource> resources = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT r.id, r.description, r.name, r.format, r.url, r.id_dataset, ");
@@ -164,24 +149,14 @@ public class ResourceBdDao extends GenericBdDao {
 
             PreparedStatement pstm = getConnection().prepareCall(sql.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstm.setString(1, writer.write(placeToSearch.getWay()));
-            System.out.println(pstm.toString());
-
-            System.out.println("Executando consulta...");
-            start = new Date(System.currentTimeMillis());
 
             ResultSet rs = pstm.executeQuery();
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
             Resource r;
-
-            System.out.println("Preenchendo Objetos com  consulta...");
-            start = new Date(System.currentTimeMillis());
-
+            
             while (rs.next()) {
                 r = formaResource(rs);
                 resources.add(r);
             }
-
-            System.out.println("Duração em ms: " + (System.currentTimeMillis() - start.getTime()));
 
             return resources;
         } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException | ParseException ex) {

@@ -4,7 +4,6 @@ import br.ifpb.simba.ourdata.entity.Place;
 import br.ifpb.simba.ourdata.entity.KeyPlace;
 import br.ifpb.simba.ourdata.dao.GenericGeometricBdDao;
 import br.ifpb.simba.ourdata.reader.TextColor;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
@@ -282,6 +281,10 @@ public class KeyPlaceBdDao extends GenericGeometricBdDao<KeyPlace, Integer> {
         }
 
         return true;
+    }
+
+    public List<KeyPlace> getAllOnAvaliation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

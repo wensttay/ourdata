@@ -30,8 +30,6 @@ public class ResourceHeaderAnalityCsv implements ResourceHeaderAnality<ResourceH
         int qtd_columns = header.length;
         int qtd_rows = rows.size() - 1;
 
-//        System.out.println("colunas: "+qtd_columns);
-//        System.out.println("linhas: "+qtd_rows); 
         Set<String> set;
         for (int j = 0; j < qtd_columns; j++) {
             set = new TreeSet<>();

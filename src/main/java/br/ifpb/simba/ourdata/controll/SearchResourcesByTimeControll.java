@@ -44,8 +44,6 @@ public class SearchResourcesByTimeControll extends HttpServlet {
 
         String startTime = request.getParameter("startInput");
         String endTime = request.getParameter("endInput");
-        System.out.println("StartTime = " + startTime);
-        System.out.println("EndTime = " + endTime);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
