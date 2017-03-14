@@ -1,0 +1,54 @@
+.dark-select option {
+	color: white;
+}
+
+.background{
+	/*background-image: url(images/stardust.png);*/
+        background-color: white;
+	background-repeat: repeat;
+} 
+
+/*@font-face {
+    font-family: snaphand;
+    src: url(fonts/snaphand-v1-free.ttf);
+}*/
+
+
+.tittle a{
+	/*font-family: snaphand;*/
+	color: black;
+	font-size: 40px !important;
+}
+
+.skyblue {
+	color: skyblue;
+}
+
+.border-skyblue:focus{
+	border-color: skyblue !important;
+}
+
+.white thead tr th, .white tbody tr, .white{
+	color : #000;
+}
+
+.search-input{
+	box-shadow: 0 0.6px 3px rgba(0, 0, 0, 0.9);
+	width: 500px !important;
+	margin: 10px !important;
+	background-color: rgba(255,255,255,0.8) !important;
+	position: absolute;
+}
+
+.map-button{
+	margin: 10px !important;
+}
+
+.hidden-inputs input {
+	display: none;
+}
+
+#header h1, #header #nav ul li a, #banner h2, #banner p, #banner .actions li .button{
+    color: #000 !important;
+    border-color: #000 !important;
+}
