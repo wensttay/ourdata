@@ -5,7 +5,7 @@
  */
 package br.ifpb.simba.ourdata.test;
 
-import br.edu.ifpb.dac.ourdata.shared.domain.ResourceItemSearch;
+import br.ifpb.simba.ourdata.shared.domain.ResourceItemSearch;
 import br.ifpb.simba.ourdata.thematic.service.ThematicResourceService;
 import java.util.List;
 

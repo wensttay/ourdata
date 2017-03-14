@@ -13,5 +13,6 @@
     <modules>
         <module>OurData</module>
         <module>ourdata-thematic</module>
+        <module>ourdata-shared</module>
     </modules>
 </project>

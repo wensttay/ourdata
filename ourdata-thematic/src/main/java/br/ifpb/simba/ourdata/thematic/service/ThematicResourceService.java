@@ -5,8 +5,8 @@
  */
 package br.ifpb.simba.ourdata.thematic.service;
 
-import br.edu.ifpb.dac.ourdata.shared.domain.Resource;
-import br.edu.ifpb.dac.ourdata.shared.domain.ResourceItemSearch;
+import br.ifpb.simba.ourdata.shared.domain.Resource;
+import br.ifpb.simba.ourdata.shared.domain.ResourceItemSearch;
 import br.ifpb.simba.ourdata.persistence.CkanResourceBdDao;
 import br.ifpb.simba.ourdata.thematic.indexer.LuceneResourceIndexer;
 import br.ifpb.simba.ourdata.thematic.indexer.ResourceIndexerLuceneImpl;
