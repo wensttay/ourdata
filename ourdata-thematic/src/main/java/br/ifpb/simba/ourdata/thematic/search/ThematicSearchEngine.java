@@ -19,5 +19,6 @@ public interface ThematicSearchEngine {
      * @return - List of ResourceIds
      */
     Map<String, Float> search(String argument);
+    Map<String, Float> getAll();
     
 }

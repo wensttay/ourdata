@@ -63,6 +63,40 @@ public class ThematicResourceService {
     public List<ResourceItemSearch> search(String argument) { 
         //Recebe Map<ResourceId,Score>
         Map<String, Float> resultMap = this.searchEngine.search(argument);
+        System.out.println("resultado final");
+        //Extrai todos os ResourceId em Set
+        Set<String> keySet = resultMap.keySet();
+        System.out.println("keySet");
+        //Recebe cria Lista com todos os ResourceId
+        List<String> resourceIds = new ArrayList<>();
+        resourceIds.addAll(keySet);
+        System.out.println("resourceIds");
+        //Realiza uma busca no banco de dados por todos os CkanResources que batem com os resourceIds
+        List<CkanResource> ckanResources = resourceDao.searchByIds(resourceIds);
+        
+        System.out.println("ckanResources "+ckanResources.size());
+        //Cria Lista de resultado da consulta
+        List<ResourceItemSearch> result = new ArrayList<>();
+        /*Itera sobre a lista de CkanResources retornado do banco, 
+          pegando a pontuação referente ao id no resultMap 
+          e criando e adicionando, pra cada CkanResource, um ResourceItemSearch.
+        */
+        for(CkanResource resource : ckanResources) {
+            Resource resourceAux = new Resource(resource.getId(),resource.getName(), resource.getDescription(), resource.getFormat(),
+                    resource.getUrl(),resource.getPackageId());
+            
+            Float score = resultMap.get(resource.getId());
+            result.add(new ResourceItemSearch(resourceAux, score));
+        }
+        
+        System.out.println("fim");
+        
+        return result;
+    }
+    
+    public List<ResourceItemSearch> listAll() {
+        //Recebe Map<ResourceId,Score>
+        Map<String, Float> resultMap = this.searchEngine.getAll();
         //Extrai todos os ResourceId em Set
         Set<String> keySet = resultMap.keySet();
         //Recebe cria Lista com todos os ResourceId
@@ -83,7 +117,6 @@ public class ThematicResourceService {
             Float score = resultMap.get(resource.getId());
             result.add(new ResourceItemSearch(resourceAux, score));
         }
-        
         return result;
     }
 

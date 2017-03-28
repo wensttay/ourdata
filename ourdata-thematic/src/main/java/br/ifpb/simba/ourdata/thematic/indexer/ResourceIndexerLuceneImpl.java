@@ -18,6 +18,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
@@ -72,13 +73,13 @@ public class ResourceIndexerLuceneImpl implements LuceneResourceIndexer {
 
     private Document createResourceDocument(CkanResource resource) throws CSVReaderException {
         
-        //String path = "C:\\lucene\\ourdata\\documents\\";
+        String path = "C:\\lucene\\ourdata\\documents\\";
 
         System.out.println("Creating document for " + resource.getId());
 
         String strDoc = this.parser.parse(resource);
 
-        //Log.log(path + resource.getId() + ".txt", strDoc);
+        Log.log(path + resource.getId() + ".txt", strDoc);
 
         Document document = new Document();
         document.add(new TextField("resourceText", strDoc, Field.Store.YES));

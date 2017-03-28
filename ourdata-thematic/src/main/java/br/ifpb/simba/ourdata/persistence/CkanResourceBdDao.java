@@ -218,6 +218,7 @@ public class CkanResourceBdDao extends GenericObjectBdDao<CkanResource, String>{
         try{
             conectar();
             String sql = buildSQL(ids);
+            System.out.println("SQL: "+sql);
             PreparedStatement ps = getConnection().prepareStatement(sql);
             
             ParameterMetaData parameterMetaData = ps.getParameterMetaData();

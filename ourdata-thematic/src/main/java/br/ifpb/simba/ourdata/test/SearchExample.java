@@ -22,9 +22,10 @@ public class SearchExample {
         
         //Exemplo de indexação
         //Indexe todos os resources de 1 à 1000
-        thematicService.indexResources(1, 1000);
+        //thematicService.indexResources(1, 1220);
 
         //Exemplo de busca pelo argumento "SOCIAL"
-        //List<ResourceItemSearch> searchResult = thematicService.search("SOCIAL"); 
+        List<ResourceItemSearch> searchResult = thematicService.search("Saúde");
+        System.out.println(searchResult.size());
     }
 }

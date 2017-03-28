@@ -20,6 +20,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
@@ -48,7 +49,7 @@ public class ThematicSearchEngineLuceneImpl implements ThematicSearchEngine {
 
         try {
 
-            int hitsPerPage = 10;
+            int hitsPerPage = 1220;
 
             Query q = new QueryParser(Version.LUCENE_42, "resourceText", indexer.getAnalyzer()).parse(argument);
 
@@ -64,7 +65,7 @@ public class ThematicSearchEngineLuceneImpl implements ThematicSearchEngine {
                 searcher.search(q, collector);
                 //recebe os resultados e itera sobre eles
                 ScoreDoc[] hits = collector.topDocs().scoreDocs;
-                
+
                 return getResult(hits, searcher);
 
             } catch (IOException ex) {
@@ -76,24 +77,51 @@ public class ThematicSearchEngineLuceneImpl implements ThematicSearchEngine {
         }
 
         return null;
+    }
 
+    @Override
+    public Map<String, Float> getAll() {
+
+        int hitsPerPage = 1220;
+
+        Query q = new MatchAllDocsQuery();
+
+        try {
+
+            IndexReader reader = DirectoryReader.open(indexer.getDirectory());
+            //Cria objeto que irá realizar a consulta em cima do Reader
+            IndexSearcher searcher = new IndexSearcher(reader);
+            //cria o coletor de resultados da consulta através de uma pontuação
+            TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+
+            //usa o objeto que realiza a consulta usando o obj de consulta e o coletor
+            searcher.search(q, collector);
+            //recebe os resultados e itera sobre eles
+            ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+            return getResult(hits, searcher);
+
+        } catch (IOException ex) {
+            Logger.getLogger(ThematicSearchEngineLuceneImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 
     private Map<String, Float> getResult(ScoreDoc[] hits, IndexSearcher searcher) throws IOException {
-        System.out.println("oi");
         //List<String> result = new ArrayList<>();
         Map<String, Float> result = new HashMap<>();
         for (ScoreDoc hit : hits) {
             int docId = hit.doc;
-            System.out.println("Doc id: "+docId);
+            System.out.println("Doc id: " + docId);
             Document d = searcher.doc(docId);
             String resourceId = d.get("resourceId");
-            System.out.println("Resouce id fount: "+resourceId);
-            System.out.println("Score found: "+hit.score);
+            System.out.println("Resouce id fount: " + resourceId);
+            System.out.println("Score found: " + hit.score);
             //result.add(resourceId);
             result.put(resourceId, hit.score);
         }
-        
+        System.out.println("fim");
         return result;
     }
 
