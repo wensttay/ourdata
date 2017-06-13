@@ -2,19 +2,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.ifpb.simba</groupId>
-    <artifactId>OurData</artifactId>
+    <artifactId>ourdata</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>OurData-Shared</module>
-        <module>OurData-Core-FileReader</module>
-        <module>OurData-Core-Temporal-HeidelTime</module>
-        <module>OurData-Core-Temporal</module>
-        <module>OurData-Core-Thematic</module>
-        <module>OurData-Core-Geographic</module>
-        <module>OurData-Core</module>
-        <module>OurData-Web</module>
-        <module>OurData-Evaluation</module>
+        <module>ourdata-shared</module>
+        
+        <module>ourdata-file-reader</module>
+        <module>ourdata-heideltime</module>
+        
+        <module>ourdata-core-facade</module>
+        <module>ourdata-core-shared</module>
+        <module>ourdata-core</module>
+        <module>ourdata-core-geographic</module>
+        <module>ourdata-core-temporal</module>
+        <module>ourdata-core-thematic</module>
+        
+        <module>ourdata-db-facade</module>
+        <module>ourdata-db-shared</module>
+        <module>ourdata-db</module>
+        <module>ourdata-db-postgresql</module>
+        <module>ourdata-db-postgresql-geographic</module>
+        <module>ourdata-db-postgresql-temporal</module>
+        <module>ourdata-db-postgresql-thematic</module>
+        
+        <module>ourdata-evaluation</module>
+        <module>ourdata-web</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
