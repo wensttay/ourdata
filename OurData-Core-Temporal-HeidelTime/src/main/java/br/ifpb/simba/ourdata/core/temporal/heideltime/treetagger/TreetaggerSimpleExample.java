@@ -1,6 +1,11 @@
 package br.ifpb.simba.ourdata.core.temporal.heideltime.treetagger;
 
+import br.ifpb.simba.ourdata.core.temporal.heideltime.path.EnvironmentVariablesUtils;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.annolab.tt4j.TreeTaggerException;
@@ -15,13 +20,22 @@ import org.annolab.tt4j.TreeTaggerException;
 public class TreetaggerSimpleExample {
 
     public static void main(String[] args) {
+        Properties prop = new Properties();
+
+        try {
+            prop.load(new FileInputStream(System.getProperty("user.dir") + File.separator + "config.props"));
+        } catch (IOException ex) {
+            Logger.getLogger(TreetaggerSimpleExample.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // Define the treetaggerHomePath, where the Treetagger are installed.
-        String treetaggerHomePath = "/home/wensttay/ProgramFiles/tree-tagger-linux-3.2.1";
+        String treetaggerHomePath = EnvironmentVariablesUtils.source(prop.getProperty("treeTaggerHome"));
 
         // Define the treetageerModelPath, where there is a Treetagger lib.
-        String treetageerModelPath = treetaggerHomePath + "/lib/english-utf8.par";
-
+        String treetageerModelPath = treetaggerHomePath 
+                + File.separator + "lib" 
+                + File.separator + "english-utf8.par";
+        
         // Define the text to be processed.
         String text = "I worked there from 2014 to 2017";
 
@@ -38,5 +52,12 @@ public class TreetaggerSimpleExample {
         } catch (IOException | TreeTaggerException ex) {
             Logger.getLogger(TreetaggerSimpleExample.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        // Getting the process result
+        List<TreetaggerToken> treetaggerTokens = treetaggerEngine
+                .getTreetaggerTokenHandler().getTreetaggerTokens();
+        
+        // Printing the process result
+        treetaggerTokens.forEach((x) -> System.out.println(x));
     }
 }

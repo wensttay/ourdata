@@ -1,31 +1,70 @@
 package br.ifpb.simba.ourdata.core.temporal.heideltime.treetagger;
 
-import org.annolab.tt4j.TokenHandler;
-
 /**
- * This class is a example of TokenHandler for
- * {@link br.ifpb.simba.ourdata.core.temporal.heideltime.treetagger.TreetaggerEngine}.
- *
+ * This class is a example of Token for
+ * {@link br.ifpb.simba.ourdata.core.temporal.heideltime.treetagger.TreetaggerTokenHandler}
+ * and {@link br.ifpb.simba.ourdata.core.temporal.heideltime.treetagger.TreetaggerEngine}.
+ * 
  * @author Wensttay de Sousa Alencar <yattsnew@gmail.com>
- * @date 28/03/2017, 19:39:05
+ * @date 13/06/2017, 01:39:30
  */
-public class TreetaggerToken implements TokenHandler<String> {
+public class TreetaggerToken {
+
+    private String token;
+    private String pos;
+    private String lemma;
+
+    public TreetaggerToken(String token, String pos, String lemma) {
+        this.token = token;
+        this.pos = pos;
+        this.lemma = lemma;
+    }
+
+    @Override
+    public String toString() {
+        return "TreetaggerToken{" + "token=" + token + ", pos=" + pos + ", lemma=" + lemma + '}';
+    }
 
     /**
-     * This method is auto called to print all the tokens values when the method
-     * {@link org.annolab.tt4j.TreeTaggerWrapper#process(java.util.Collection)}
-     * is invoked.
-     *
-     * @param token the one of the token objects passed to
-     * {@link org.annolab.tt4j.TreeTaggerWrapper#process(java.util.Collection)}.
-     * @param pos the Part-of-Speech tag as produced by TreeTagger or null.
-     * @param lemma the lemma as produced by TreeTagger or null.
+     * @return the token
      */
-    @Override
-    public void token(String token, String pos, String lemma) {
-        System.out.println("Token -> " + token);
-        System.out.println("Pos -> " + pos);
-        System.out.println("Lemma -> " + lemma);
-        System.out.println("");
+    public String getToken() {
+        return token;
     }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * @return the pos
+     */
+    public String getPos() {
+        return pos;
+    }
+
+    /**
+     * @param pos the pos to set
+     */
+    public void setPos(String pos) {
+        this.pos = pos;
+    }
+
+    /**
+     * @return the lemma
+     */
+    public String getLemma() {
+        return lemma;
+    }
+
+    /**
+     * @param lemma the lemma to set
+     */
+    public void setLemma(String lemma) {
+        this.lemma = lemma;
+    }
+
 }

@@ -2,6 +2,7 @@ package br.ifpb.simba.ourdata.core.temporal.heideltime;
 
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +26,7 @@ public class HeidelTimeSimpleExample {
         // For this to work is necessary to be changed the attribute "treeTaggerHome"
         // in this config.props to the Treetagger's Path instalation or to define
         // the same into "TREE_TAGGER_HOME" environment variable.
-        String configPropsPath = System.getProperty("user.dir") + "/config.props";
+        String configPropsPath = System.getProperty("user.dir") + File.separator + "config.props";
         
         // Define the text to be processed
         String text = "Yeah yeah yeah. I'll pay (yeah yeah yeah). When tomorrow. "
@@ -46,9 +47,10 @@ public class HeidelTimeSimpleExample {
         }
         
         // Show all results.
-        System.out.println(">>> Results:");
-        for (HeidelTimeToken proces : results) {
-            System.out.println(proces.toString());
-        }
+//        System.out.println(">>> Results:");
+//        for (HeidelTimeToken proces : results) {
+//            System.out.println(proces.toString());
+//        }
+        System.out.println(results.toString());
     }
 }

@@ -7,6 +7,7 @@ import de.unihd.dbs.heideltime.standalone.POSTagger;
 import de.unihd.dbs.heideltime.standalone.components.impl.TimeMLResultFormatter;
 import de.unihd.dbs.heideltime.standalone.exceptions.DocumentCreationTimeMissingException;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -30,6 +31,12 @@ import org.jdom.input.SAXBuilder;
 public class HeidelTimeEngine {
 
     private HeidelTimeStandalone heidelTimeStandalone;
+
+    public HeidelTimeEngine() {
+        String configPropsPath = System.getProperty("user.dir") + File.separator + "config.props";
+        this.heidelTimeStandalone = new HeidelTimeStandalone(Language.ENGLISH, DocumentType.NEWS,
+                OutputType.TIMEML, configPropsPath, POSTagger.NO, false);
+    }
 
     public HeidelTimeEngine(String configPropsPath) {
         this.heidelTimeStandalone = new HeidelTimeStandalone(Language.ENGLISH, DocumentType.NEWS,
